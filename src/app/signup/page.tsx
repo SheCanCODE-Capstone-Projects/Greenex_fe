@@ -98,7 +98,7 @@ export default function SignupPage() {
         </div>
       </div>
 
-      <div className="w-1/2 relative">
+      <div className="w-1/2 relative backdrop-opacity-60">
       
         <Image
           src="/landingImage.png"
@@ -106,6 +106,8 @@ export default function SignupPage() {
           fill
           className="object-cover"
         />
+          <div className="absolute inset-0 bg-green-950 opacity-80"></div>
+
       </div>
     </div>
   );
