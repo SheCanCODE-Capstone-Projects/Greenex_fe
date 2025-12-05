@@ -86,14 +86,14 @@ export default function SignupPage() {
       </div>
 
     
-      {/* <div className="w-1/2 relative">
+      <div className="w-1/2 relative">
         <Image
           src="/street-cleaning.jpg"
           alt="Cleaning workers"
           fill
           className="object-cover"
         />
-      </div> */}
+      </div>
     </div>
   );
 }
