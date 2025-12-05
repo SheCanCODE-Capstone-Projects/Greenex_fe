@@ -7,16 +7,18 @@ export default function SignupPage() {
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userType, setUserType] = useState("citizen");
 
   return (
     <div className="min-h-screen flex">
-      {/* LEFT SECTION */}
+      
       <div className="w-1/2 bg-[#dbe6d0] flex items-center justify-center p-10">
         <div className="w-full max-w-md">
           
           <h1 className="text-3xl font-semibold mb-8">Get Started Now</h1>
 
-          {/* Fullname */}
+          
           <label className="text-sm font-medium">FullName</label>
           <input
             type="text"
@@ -25,8 +27,6 @@ export default function SignupPage() {
             onChange={(e) => setFullname(e.target.value)}
             className="w-full mt-1 mb-4 p-3 border rounded-lg bg-white/60"
           />
-
-          {/* Email */}
           <label className="text-sm font-medium">Email address</label>
           <input
             type="email"
@@ -35,8 +35,16 @@ export default function SignupPage() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full mt-1 mb-4 p-3 border rounded-lg bg-white/60"
           />
+           <label className="text-sm font-medium">User Type</label>
+          <select
+            value={userType}
+            onChange={(e) => setUserType(e.target.value)}
+            className="w-full mt-1 mb-4 p-3 border rounded-lg bg-white/60"
+          >
+            <option value="citizen">Citizen</option>
+            <option value="company">Company</option>
+          </select>
 
-          {/* Password */}
           <label className="text-sm font-medium">Password</label>
           <input
             type="password"
@@ -45,8 +53,14 @@ export default function SignupPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full mt-1 mb-4 p-3 border rounded-lg bg-white/60"
           />
-
-          
+          <label className="text-sm font-medium">Confirm Password</label>
+          <input
+            type="password"
+            placeholder="******"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full mt-1 mb-4 p-3 border rounded-lg bg-white/60"
+          />
           <div className="flex items-center mb-4">
             <input type="checkbox" className="mr-2" />
             <p className="text-sm">I agree to the terms & policy</p>
@@ -66,7 +80,7 @@ export default function SignupPage() {
           
           <button className="w-full flex items-center justify-center border py-3 rounded-lg hover:bg-gray-100">
             <Image
-              src="/google.png"
+              src="/image.png"
               width={20}
               height={20}
               alt="Google"
@@ -74,8 +88,7 @@ export default function SignupPage() {
             />
             Sign in with Google
           </button>
-
-          
+ 
           <p className="text-center mt-4 text-sm">
             Have an account?{" "}
             <a href="/login" className="text-blue-600 font-medium">
@@ -85,10 +98,10 @@ export default function SignupPage() {
         </div>
       </div>
 
-    
       <div className="w-1/2 relative">
+      
         <Image
-          src="/street-cleaning.jpg"
+          src="/landingImage.png"
           alt="Cleaning workers"
           fill
           className="object-cover"
