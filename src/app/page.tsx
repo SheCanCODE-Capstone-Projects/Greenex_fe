@@ -1,4 +1,5 @@
 import HomePage from "@/components/HomePage";
+import Servicepage from "@/components/Servicepage";
 
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
     
       <div className="w-full">
         <HomePage />
+        <Servicepage />
       </div>
     </div>
   );
