@@ -56,8 +56,8 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
     <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${headerBgClass}`}>
       <nav className="flex justify-between items-center px-4 md:px-10 py-4">
         <div className="flex items-center gap-2">
-          <Truck size={45} className="text-primary-white dark:text-secondary-green" />
-          <h1 className="text-foreground text-2xl md:text-3xl font-bold tracking-wide">
+          <Truck size={45} className="text-primary-green dark:text-secondary-green" />
+          <h1 className="text-primary-green text-2xl md:text-3xl font-bold tracking-wide dark:text-secondary-green">
             GreenEx
           </h1>
         </div>
