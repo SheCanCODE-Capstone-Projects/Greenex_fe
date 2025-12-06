@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
           </h1>
         </div>
         <div className="hidden md:flex items-center space-x-90">
-          <div className="flex items-center gap-20 text-foreground font-medium text-lg">
+          <div className="flex items-center gap-20 font-medium text-lg ">
             <button 
               onClick={() => scrollToSection("home")}
               className={`${isActive("home")} hover:text-primary-green dark:hover:text-secondary-green transition-colors`}
@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
             </button>
             <button 
               onClick={() => scrollToSection("about")}
-              className={`${isActive("about")} hover:text-primary-green dark:hover:text-secondary-green transition-colors`}
+              className={`${isActive("about")}  hover:text-primary-green dark:hover:text-secondary-green transition-colors`}
             >
               About
             </button>
