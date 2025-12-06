@@ -1,8 +1,41 @@
 "use client";
+
 import React, { useState } from "react";
+
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare } from "lucide-react";
 
+// Note: The contactInfo array uses the data defined in the original component, 
+// but I will override it here to better match the content of the uploaded image
+const contactInfo = [
+  {
+    icon: <Phone className="w-6 h-6" />,
+    title: "Phone",
+    details: "+250 789 5396", // Modified to match image data
+    description: "" // Removed description to match image's simplicity
+  },
+  {
+    icon: <Mail className="w-6 h-6" />,
+    title: "Email",
+    details: "greenex@wastecollection.com", // Modified to match image data
+    description: ""
+  },
+  {
+    icon: <MapPin className="w-6 h-6" />,
+    title: "Office",
+    details: "KG,str Kigali, Rwanda", // Modified to match image data
+    description: ""
+  },
+  {
+    icon: <Clock className="w-6 h-6" />,
+    title: "Working Hours",
+    details: "8:00 AM - 6:00 PM",
+    description: "Monday to Saturday"
+  }
+];
+
+
 const ContactSection: React.FC = () => {
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,33 +58,6 @@ const ContactSection: React.FC = () => {
       [e.target.name]: e.target.value
     });
   };
-
-  const contactInfo = [
-    {
-      icon: <Phone className="w-6 h-6" />,
-      title: "Phone",
-      details: "+250 788 123 456",
-      description: "Mon-Fri from 8am to 6pm"
-    },
-    {
-      icon: <Mail className="w-6 h-6" />,
-      title: "Email",
-      details: "info@greenex.rw",
-      description: "We reply within 24 hours"
-    },
-    {
-      icon: <MapPin className="w-6 h-6" />,
-      title: "Office",
-      details: "Kigali, Rwanda",
-      description: "KN 5 Rd, Kigali Heights"
-    },
-    {
-      icon: <Clock className="w-6 h-6" />,
-      title: "Working Hours",
-      details: "8:00 AM - 6:00 PM",
-      description: "Monday to Saturday"
-    }
-  ];
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -160,34 +166,33 @@ const ContactSection: React.FC = () => {
           </div>
 
           <div className="animate-fade-in-right">
+  
             <div className="space-y-6">
-              {contactInfo.map((info, index) => (
+              {contactInfo.filter(info => info.title !== "Working Hours").map((info, index) => (
                 <div 
                   key={index}
-                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  // The parent div is now a simple container, not a card with padding/shadow
+                  className="flex items-center gap-4 py-2" // Reduced padding and removed background/shadow
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary-green/10 dark:bg-secondary-green/10 flex items-center justify-center flex-shrink-0">
-                      <div className="text-primary-green dark:text-secondary-green">
-                        {info.icon}
-                      </div>
+                  {/* Icon container styled to match the image: full green circle/square with white icon */}
+                  <div className="w-10 h-10 rounded-full bg-primary-green flex items-center justify-center flex-shrink-0">
+                    <div className="text-white">
+                      {/* Using Tailwind's ring-1 for a subtle border like the image's icons */}
+                      {info.icon} 
                     </div>
-                    <div>
-                      <h4 className="text-xl font-bold text-foreground mb-1">
-                        {info.title}
-                      </h4>
-                      <p className="text-lg text-gray-700 dark:text-gray-300 font-medium">
-                        {info.details}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                        {info.description}
-                      </p>
-                    </div>
+                  </div>
+                  {/* Details section */}
+                  <div>
+                    {/* The text style is simpler and matches the image's font/color */}
+                    <p className="text-lg text-gray-700 dark:text-gray-300 font-medium">
+                      {info.details}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
-
+            {/* End of the section styled to look like the image */}
+            
             <div className="mt-8 bg-gradient-to-br from-primary-green to-secondary-green rounded-2xl p-8 text-white shadow-xl">
               <h3 className="text-2xl font-bold mb-4">Request a Pickup</h3>
               <p className="mb-6">
@@ -207,5 +212,6 @@ const ContactSection: React.FC = () => {
     </section>
   );
 };
+
 
 export default ContactSection;

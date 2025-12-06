@@ -46,7 +46,7 @@ const AboutSection: React.FC = () => {
               <div className="col-span-2 flex flex-col gap-4">
                 <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px]">
                   <img
-                    src="/About1.png"
+                    src="/About3.png"
                     alt="About Image 1"
                     className="w-full h-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-110"
                   />
@@ -54,7 +54,7 @@ const AboutSection: React.FC = () => {
 
                 <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px]">
                   <img
-                    src="/About3.png"
+                    src="/About3.jpg"
                     alt="About Image 2"
                     className="w-full h-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-110"
                   />
@@ -64,7 +64,7 @@ const AboutSection: React.FC = () => {
               {/* RIGHT — image */}
               <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px] mt-60 -ml-25">
                 <img
-                  src="/About3.png"
+                  src="/About2.png"
                   alt="About Image 3"
                   className="w-full h-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-110"
                 />
