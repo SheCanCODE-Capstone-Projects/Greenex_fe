@@ -111,70 +111,55 @@ const AboutSection: React.FC = () => {
           </p>
         </div>
 
-        {/* ===================== STATS SECTION ===================== */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-10 mb-20">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-              Helping a local{" "}
-              <span className="text-primary-green">village</span> keeping
-              it&apos;s <span className="text-primary-green">cleaness</span>
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
-              We started here with our hard work and ambition
-            </p>
-          </div>
+       {/* ===================== STATS SECTION ===================== */}
+<div className="bg-[#dfeee0] py-20 px-6 md:px-16">
+  <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center p-6 rounded-xl bg-light-bg dark:bg-gray-700 hover:shadow-lg transition-shadow animate-fade-in-up">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-green/10 rounded-full mb-4">
-                <Users className="text-primary-green" size={32} />
-              </div>
-              <p className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-                30,000
-              </p>
-              <p className="text-gray-600 dark:text-gray-400 font-medium">
-                Residents
-              </p>
-            </div>
+    {/* LEFT SIDE TEXT */}
+    <div>
+      <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 leading-snug">
+        Helping a local <span className="text-primary-green">village</span><br />
+        keeping it&apos;s <span className="text-primary-green">cleaness</span>
+      </h3>
+      <p className="text-gray-600">
+        We reached here with our hard work and dedication
+      </p>
+    </div>
 
-            <div className="text-center p-6 rounded-xl bg-light-bg dark:bg-gray-700 hover:shadow-lg transition-shadow animate-fade-in-up animation-delay-100">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-green/10 rounded-full mb-4">
-                <MapPin className="text-primary-green" size={32} />
-              </div>
-              <p className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-                30
-              </p>
-              <p className="text-gray-600 dark:text-gray-400 font-medium">
-                Territories
-              </p>
-            </div>
+    {/* RIGHT SIDE 2x2 GRID */}
+    <div className="grid grid-cols-2 gap-10">
 
-            <div className="text-center p-6 rounded-xl bg-light-bg dark:bg-gray-700 hover:shadow-lg transition-shadow animate-fade-in-up animation-delay-200">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-green/10 rounded-full mb-4">
-                <Users className="text-primary-green" size={32} />
-              </div>
-              <p className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-                23
-              </p>
-              <p className="text-gray-600 dark:text-gray-400 font-medium">
-                Subscribing Companies
-              </p>
-            </div>
+      {/* Item 1 */}
+      <div className="text-center">
+        <Users className="text-primary-green mb-2 mx-auto" size={36} />
+        <p className="text-3xl font-bold text-gray-800">30,000</p>
+        <p className="text-gray-600 text-sm">Members</p>
+      </div>
 
-            <div className="text-center p-6 rounded-xl bg-light-bg dark:bg-gray-700 hover:shadow-lg transition-shadow animate-fade-in-up animation-delay-300">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-green/10 rounded-full mb-4">
-                <FileText className="text-primary-green" size={32} />
-              </div>
-              <p className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-                23
-              </p>
-              <p className="text-gray-600 dark:text-gray-400 font-medium">
-                Districts
-              </p>
-            </div>
-          </div>
-        </div>
+      {/* Item 2 */}
+      <div className="text-center">
+        <MapPin className="text-primary-green mb-2 mx-auto" size={36} />
+        <p className="text-3xl font-bold text-gray-800">30</p>
+        <p className="text-gray-600 text-sm">Partnerships</p>
+      </div>
 
+      {/* Item 3 */}
+      <div className="text-center">
+        <Users className="text-primary-green mb-2 mx-auto" size={36} />
+        <p className="text-3xl font-bold text-gray-800">23</p>
+        <p className="text-gray-600 text-sm">Waste collectors companies</p>
+      </div>
+
+      {/* Item 4 */}
+      <div className="text-center">
+        <FileText className="text-primary-green mb-2 mx-auto" size={36} />
+        <p className="text-3xl font-bold text-gray-800">23</p>
+        <p className="text-gray-600 text-sm">Districts</p>
+      </div>
+    </div>
+
+  </div>
+</div>
         {/* ===================== PARTNERS SECTION ===================== */}
         <div className="text-center animate-fade-in-up">
           <h3 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
