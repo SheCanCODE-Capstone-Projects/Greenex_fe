@@ -47,8 +47,11 @@ const HomeSection: React.FC = () => {
         </h1>
 
         <p className="text-white text-xl sm:text-2xl md:text-3xl font-light opacity-90 mb-12 animate-fade-in-up delay-300">
-          Cleaner waste management
+         Smarter, Cleaner waste management Smarter, Cleaner waste management <br /> Cleaner waste management Smarter, Cleaner waste management
         </p>
+
+        
+
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-6 animate-fade-in-up delay-500">
           <button 
