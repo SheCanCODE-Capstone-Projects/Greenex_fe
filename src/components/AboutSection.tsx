@@ -74,11 +74,11 @@ const AboutSection: React.FC = () => {
 
           {/* RIGHT SIDE TEXT */}
           <div className="space-y-6 animate-fade-in-right pl-40">
-            <h2 className="text-5xl md:text-6xl font-bold text-primary-green">
+            <h2 className="text-4xl md:text-5xl font-bold text-primary-green">
               About Us
             </h2>
 
-            <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
+            <p className="text-gray-700 dark:text-foreground text-lg leading-relaxed">
               Greenex is a digital platform created to transform how waste is collected,
               tracked, and managed across Rwanda. It bridges the gap between
               households, companies, and private garbage collection companies by
@@ -128,11 +128,11 @@ const AboutSection: React.FC = () => {
 
     {/* LEFT SIDE TEXT */}
     <div>
-      <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 leading-snug">
+      <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 leading-snug dark:text-foreground">
         Helping a local <span className="text-primary-green">village</span><br />
         keeping it&apos;s <span className="text-primary-green">cleaness</span>
       </h3>
-      <p className="text-gray-600">
+      <p className="text-gray-600 dark:text-gray-400">
         We reached here with our hard work and dedication
       </p>
     </div>
@@ -143,29 +143,29 @@ const AboutSection: React.FC = () => {
       {/* Item 1 */}
       <div className="text-center">
         <Users className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">30,000+</p>
-        <p className="text-gray-600 text-sm">Members</p>
+        <p className="text-3xl font-bold text-gray-800 dark:text-white">30,000+</p>
+        <p className="text-gray-600 text-md dark:text-gray-400">Members</p>
       </div>
 
       {/* Item 2 */}
       <div className="text-center">
         <MapPin className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">10+</p>
-        <p className="text-gray-600 text-sm">Partnerships</p>
+        <p className="text-3xl font-bold text-gray-800 dark:text-white">10+</p>
+        <p className="text-gray-600 text-md dark:text-gray-400">Partnerships</p>
       </div>
 
       {/* Item 3 */}
       <div className="text-center">
         <Users className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">13+</p>
-        <p className="text-gray-600 text-sm">Waste collectors companies</p>
+        <p className="text-3xl font-bold text-gray-800 dark:text-white">13+</p>
+        <p className="text-gray-600 text-md dark:text-gray-400">Waste collectors companies</p>
       </div>
 
       {/* Item 4 */}
       <div className="text-center">
         <FileText className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">20+</p>
-        <p className="text-gray-600 text-sm">Districts</p>
+        <p className="text-3xl font-bold text-gray-800 dark:text-white">20+</p>
+        <p className="text-gray-600 text-md dark:text-gray-400">Districts</p>
       </div>
     </div>
 
@@ -173,7 +173,7 @@ const AboutSection: React.FC = () => {
 </div>
        {/* ===================== PARTNERS SECTION ===================== */}
 <div className="pt-16">
-  <h3 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">
+  <h3 className="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-white mb-4">
     Our Partners
   </h3>
 

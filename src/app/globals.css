@@ -11,11 +11,13 @@
   --dark-overlay: rgba(8, 8, 8, 0.8);
   --text-light: #ffffff;
   --text-dark: #0c351f;
+  --text-primary-muted:#BDBDBD;
   
 
   --radius: 0.625rem;
   --background: var(--light-bg);
   --foreground: var(--text-dark);
+  --primary-for:var(--text-primary-muted);
   --card: oklch(1 0 0);
   --card-foreground: var(--text-dark);
   --popover: oklch(1 0 0);
