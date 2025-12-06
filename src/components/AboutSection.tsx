@@ -5,6 +5,17 @@ import { Truck, Users, MapPin, FileText } from "lucide-react";
 import Link from "next/link";
 
 const AboutSection: React.FC = () => {
+  const logos = [
+  "/rema.png",
+  "/mtnmomo.png",
+  "/wastecollector1.png",
+  "/wastecollector2.png",
+  "/wastecollector3.png",
+  "/wastecollector4.png",
+  "/rdb.png",
+  "/rra.png",
+];
+
   return (
     <section
       id="about"
@@ -43,14 +54,14 @@ const AboutSection: React.FC = () => {
 
                 <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px]">
                   <img
-                    src="/About2.png"
+                    src="/About3.png"
                     alt="About Image 2"
                     className="w-full h-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
               </div>
 
-              {/* RIGHT — single tall image */}
+              {/* RIGHT — image */}
               <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px] mt-60 -ml-25">
                 <img
                   src="/About3.png"
@@ -112,7 +123,7 @@ const AboutSection: React.FC = () => {
         </div>
 
        {/* ===================== STATS SECTION ===================== */}
-<div className="bg-[#dfeee0] py-20 px-6 md:px-16">
+<div className=" py-20 px-6 md:px-16">
   <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
 
     {/* LEFT SIDE TEXT */}
@@ -132,70 +143,76 @@ const AboutSection: React.FC = () => {
       {/* Item 1 */}
       <div className="text-center">
         <Users className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">30,000</p>
+        <p className="text-3xl font-bold text-gray-800">30,000+</p>
         <p className="text-gray-600 text-sm">Members</p>
       </div>
 
       {/* Item 2 */}
       <div className="text-center">
         <MapPin className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">30</p>
+        <p className="text-3xl font-bold text-gray-800">10+</p>
         <p className="text-gray-600 text-sm">Partnerships</p>
       </div>
 
       {/* Item 3 */}
       <div className="text-center">
         <Users className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">23</p>
+        <p className="text-3xl font-bold text-gray-800">13+</p>
         <p className="text-gray-600 text-sm">Waste collectors companies</p>
       </div>
 
       {/* Item 4 */}
       <div className="text-center">
         <FileText className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800">23</p>
+        <p className="text-3xl font-bold text-gray-800">20+</p>
         <p className="text-gray-600 text-sm">Districts</p>
       </div>
     </div>
 
   </div>
 </div>
-        {/* ===================== PARTNERS SECTION ===================== */}
-        <div className="text-center animate-fade-in-up">
-          <h3 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
-            Our Partners
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-lg mb-12">
-            We have been working with some Fortune 5+ organaisation
-          </p>
+       {/* ===================== PARTNERS SECTION ===================== */}
+<div className="pt-16">
+  <h3 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">
+    Our Partners
+  </h3>
 
-          <div className="grid grid-cols-3 md:grid-cols-7 gap-6 items-center justify-items-center">
-            {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-              <div
-                key={item}
-                className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-md"
-              >
-                <span className="text-gray-400 dark:text-gray-500 text-xs font-bold">
-                  Logo {item}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+  <p className="text-center text-gray-600 dark:text-gray-400 text-lg mb-12">
+    We have been working with some Fortune 5+ organisations
+  </p>
 
-      {/* Animation Delays */}
-      <style jsx>{`
-        .animation-delay-100 {
-          animation-delay: 0.1s;
-        }
-        .animation-delay-200 {
-          animation-delay: 0.2s;
-        }
-        .animation-delay-300 {
-          animation-delay: 0.3s;
-        }
-      `}</style>
+  {/* Infinite Scrolling Wrapper */}
+  <div className="overflow-hidden relative py-6">
+    <div className="flex whitespace-nowrap animate-scroll">
+      {/* Duplicate logos twice for seamless infinite scrolling */}
+      {[...logos, ...logos].map((logo, index) => (
+        <img
+          key={index}
+          src={logo}
+          className="mx-10 h-20 w-auto object-contain"
+          alt="partner logo"
+        />
+      ))}
+    </div>
+  </div>
+  </div>
+
+  {/* Animation */}
+  <style jsx>{`
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    .animate-scroll {
+      animation: scroll 25s linear infinite;
+    }
+  `}</style>
+</div>
+
     </section>
   );
 };
