@@ -60,11 +60,11 @@ const Home: React.FC = () => {
             <Link className={`${isActive("/services")} hover:text-emerald-300 transition`} href="/services">Services</Link>
             <Link className={`${isActive("/contact")} hover:text-emerald-300 transition`} href="/contact">Contact Us</Link>
           </div>
-           <Link href="/signup">
+           
           <button className="ml-4 lg:ml-10 bg-[#31a366] text-white px-4 py-2 lg:px-6 lg:py-2 rounded-lg font-medium hover:bg-[#2a8f57] transition">
             Request a pickup
           </button>
-          </Link>
+          
         </div>
 
         
