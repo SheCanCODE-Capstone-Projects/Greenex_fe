@@ -71,23 +71,27 @@ export default function SignupPage() {
             Signup
           </button>
 
-          <div className="flex items-center my-6">
-            <div className="flex-1 border-t"></div>
-            <span className="mx-2 text-sm text-gray-600">OR</span>
-            <div className="flex-1 border-t"></div>
-          </div>
+          {userType !== "company" && (
+            <>
+              <div className="flex items-center my-6">
+                <div className="flex-1 border-t"></div>
+                <span className="mx-2 text-sm text-gray-600">OR</span>
+                <div className="flex-1 border-t"></div>
+              </div>
 
-          
-          <button className="w-full flex items-center justify-center border py-3 rounded-lg hover:bg-gray-100">
-            <Image
-              src="/image.png"
-              width={20}
-              height={20}
-              alt="Google"
-              className="mr-3"
-            />
-            Sign in with Google
-          </button>
+              
+              <button className="w-full flex items-center justify-center border py-3 rounded-lg hover:bg-gray-100">
+                <Image
+                  src="/image.png"
+                  width={20}
+                  height={20}
+                  alt="Google"
+                  className="mr-3"
+                />
+                Sign in with Google
+              </button>
+            </>
+          )}
  
           <p className="text-center mt-4 text-sm">
             Have an account?{" "}
