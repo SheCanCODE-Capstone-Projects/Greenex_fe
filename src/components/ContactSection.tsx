@@ -70,7 +70,7 @@ const ContactSection: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-24 px-4 bg-light-bg dark:bg-gray-900">
+    <section id="contact" className="py-24 px-4 bg-light-bg  dark:bg-dark-bg/95">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 animate-fade-in-up">
