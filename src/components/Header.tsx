@@ -99,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
             </button>
             
             <button 
-              onClick={() => scrollToSection("contact")}
+              onClick={() => scrollToSection("/signin")}
               className="bg-primary-green dark:bg-secondary-green text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all"
             >
               Request a pickup

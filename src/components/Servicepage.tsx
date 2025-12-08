@@ -28,7 +28,7 @@ export default function ServicePage() {
   const [darkMode, setDarkMode] = useState(false);
 
   return (
-    <section className={`${darkMode ? "dark" : ""}`}>
+    <section id="services" className={`${darkMode ? "dark" : ""}`}>
       {/* MAIN CONTAINER */}
       <div className="w-full bg-[#11ab54] dark:bg-gray-900 py-16 px-4 transition-all">
 
