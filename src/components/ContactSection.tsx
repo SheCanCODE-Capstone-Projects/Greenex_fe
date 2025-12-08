@@ -200,7 +200,7 @@ const ContactSection: React.FC = () => {
               </p>
               <button 
                 onClick={() => scrollToSection("contact")}
-                className="group relative w-full bg-white text-primary-green dark:text-secondary-green px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                className="group relative w-full bg-white text-primary-green text-secondary-green px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 overflow-hidden"
               >
                 <span className="relative z-10">Schedule Pickup</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-green/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
