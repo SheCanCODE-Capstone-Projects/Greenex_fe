@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Truck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Footer from "./Footer";
 
 const Home: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
