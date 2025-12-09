@@ -51,7 +51,6 @@ export default function Home() {
         onThemeToggle={toggleTheme}
         isDarkMode={isDarkMode}
       />
-      
       <main>
         <HomeSection />
         <AboutSection />

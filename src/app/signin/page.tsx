@@ -1,37 +1,10 @@
-"use client";
-
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { DUMMY_USERS } from "@/lib/dummy/users";
-
+// app/login/page.tsx
 export default function Login() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const user = DUMMY_USERS.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (!user) {
-      setError("Invalid email or password");
-      return;
-    }
-
-    // simulate login
-    localStorage.setItem("dummyUser", JSON.stringify(user));
-    router.push("/"); 
-  };
-
   return (
-    <section id="sign" className="flex h-screen w-full">
+    <div className="flex h-screen w-full">
       {/* LEFT SIDE - Login Form */}
       <div className="w-1/2 flex items-center justify-center p-10 bg-gray-50">
-        <form onSubmit={handleLogin} className="w-full max-w-md">
+        <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold mb-2 text-gray-900">
             Welcome back!
           </h1>
@@ -40,48 +13,41 @@ export default function Login() {
             Enter your credentials to access your account
           </p>
 
-          {/* Error message */}
-          {error && <p className="text-red-600 mb-3">{error}</p>}
-
           {/* Email Field */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Email address
             </label>
             <input
               type="email"
               placeholder="your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
 
           {/* Password Field */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Password
             </label>
             <input
               type="password"
               placeholder="your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
 
           {/* Remember me & Forgot password */}
           <div className="flex justify-between items-center mb-6">
             <label className="flex items-center gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
+              <input 
+                type="checkbox" 
                 className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
               />
               Remember for 30 days
             </label>
-            <a
-              href="#"
+            <a 
+              href="#" 
               className="text-sm text-blue-600 hover:text-green-800 hover:underline"
             >
               Forgot your password?
@@ -90,8 +56,7 @@ export default function Login() {
 
           {/* Login Button */}
           <button
-            type="submit"
-            className="w-full py-3 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition duration-200"
+            className="w-full py-3 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Login
           </button>
@@ -105,8 +70,7 @@ export default function Login() {
 
           {/* Google Login Button */}
           <button
-            type="button"
-            className="w-full py-3 rounded-lg flex items-center justify-center gap-3 border border-gray-300 bg-white hover:bg-gray-50 transition duration-200"
+            className="w-full py-3 rounded-lg flex items-center justify-center gap-3 border border-gray-300 bg-white hover:bg-gray-50 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
           >
             <img
               src="https://www.google.com/favicon.ico"
@@ -119,8 +83,8 @@ export default function Login() {
           {/* Sign Up Link */}
           <p className="text-sm text-center mt-6 text-gray-600">
             Don't have an account?
-            <a
-              href="#"
+            <a 
+              href="#" 
               className="ml-1 text-blue-600 hover:text-green-800 font-medium hover:underline"
             >
               Sign Up
@@ -128,19 +92,20 @@ export default function Login() {
           </p>
         </form>
       </div>
+  <div className="w-1/2 hidden md:block h-full relative">
+  <img
+    src="/landingImage.png"
+    alt="Landing"
+    className="w-full h-full object-cover"
+  />
+  {/* Green overlay using global CSS variable */}
+  <div
+    className="absolute inset-0"
+    style={{ backgroundColor: "var(--primary-green)", opacity: 0.4 }}
+  ></div>
+</div>
 
-    
-      <div className="w-1/2 hidden md:block h-full relative">
-        <img
-          src="/landingImage.png"
-          alt="Landing"
-          className="w-full h-full object-cover"
-        />
-        <div
-          className="absolute inset-0"
-          style={{ backgroundColor: "var(--primary-green)", opacity: 0.4 }}
-        ></div>
-      </div>
-    </section>
+
+    </div>
   );
 }
