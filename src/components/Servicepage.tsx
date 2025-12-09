@@ -30,7 +30,7 @@ export default function ServicePage() {
   return (
     <section id="services" className={`${darkMode ? "dark" : ""}`}>
       {/* MAIN CONTAINER */}
-      <div className="w-full bg-[#11ab54] dark:bg-gray-900 py-16 px-4 transition-all">
+      <div className="w-full bg-[#11ab54] dark:bg-gray-900 py-16 px-4 transition-all ">
 
         {/* DARK MODE TOGGLE BUTTON */}
         <div className="flex justify-end max-w-7xl mx-auto mb-4">
