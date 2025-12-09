@@ -4,25 +4,23 @@ import React, { useState } from "react";
 
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare } from "lucide-react";
 
-// Note: The contactInfo array uses the data defined in the original component, 
-// but I will override it here to better match the content of the uploaded image
 const contactInfo = [
   {
     icon: <Phone className="w-6 h-6" />,
     title: "Phone",
-    details: "+250 789 5396", // Modified to match image data
-    description: "" // Removed description to match image's simplicity
+    details: "+250 789 5396",
+    description: ""
   },
   {
     icon: <Mail className="w-6 h-6" />,
     title: "Email",
-    details: "greenex@wastecollection.com", // Modified to match image data
+    details: "greenex@wastecollection.com",
     description: ""
   },
   {
     icon: <MapPin className="w-6 h-6" />,
     title: "Office",
-    details: "KG,str Kigali, Rwanda", // Modified to match image data
+    details: "KG,str Kigali, Rwanda",
     description: ""
   },
   {
@@ -33,9 +31,7 @@ const contactInfo = [
   }
 ];
 
-
 const ContactSection: React.FC = () => {
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -45,14 +41,18 @@ const ContactSection: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+
     console.log(formData);
-    // Reset form
+
     setFormData({ name: "", email: "", message: "", service: "" });
     alert("Message sent successfully!");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -64,7 +64,7 @@ const ContactSection: React.FC = () => {
     if (element) {
       window.scrollTo({
         top: element.offsetTop - 80,
-        behavior: 'smooth'
+        behavior: "smooth"
       });
     }
   };
@@ -78,11 +78,13 @@ const ContactSection: React.FC = () => {
           </h2>
           <div className="w-24 h-1 bg-primary-green dark:bg-secondary-green mx-auto mb-8"></div>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto animate-fade-in-up delay-200">
-            Get in touch with us for efficient waste management solutions. We&apos;re here to help!
+            Get in touch with us for efficient waste management solutions.
+            We&apos;re here to help!
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
+          {/* LEFT SIDE: CONTACT FORM */}
           <div className="animate-fade-in-left">
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg">
               <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
@@ -165,40 +167,51 @@ const ContactSection: React.FC = () => {
             </div>
           </div>
 
+          {/* RIGHT SIDE: MAP + CONTACT INFO + PICKUP */}
           <div className="animate-fade-in-right">
-  
+            
+            {/* MAP ON TOP */}
+            <div className="w-full h-56 rounded-2xl overflow-hidden shadow-lg mb-8">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.83968367862!2d30.0811967749659!3d-1.944652398043902!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca7225d22be61%3A0x4d386327669c9d34!2sKacyiru%2C%20Kigali!5e0!3m2!1sen!2srw!4v1700000000000!5m2!1sen!2srw"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+
+            {/* CONTACT INFO LIST */}
             <div className="space-y-6">
-              {contactInfo.filter(info => info.title !== "Working Hours").map((info, index) => (
-                <div 
-                  key={index}
-                  // The parent div is now a simple container, not a card with padding/shadow
-                  className="flex items-center gap-4 py-2" // Reduced padding and removed background/shadow
-                >
-                  {/* Icon container styled to match the image: full green circle/square with white icon */}
-                  <div className="w-10 h-10 rounded-full bg-primary-green flex items-center justify-center flex-shrink-0">
-                    <div className="text-white">
-                      {/* Using Tailwind's ring-1 for a subtle border like the image's icons */}
-                      {info.icon} 
+              {contactInfo
+                .filter((info) => info.title !== "Working Hours")
+                .map((info, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 py-2"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-primary-green flex items-center justify-center flex-shrink-0">
+                      <div className="text-white">{info.icon}</div>
+                    </div>
+                    <div>
+                      <p className="text-lg text-gray-700 dark:text-gray-300 font-medium">
+                        {info.details}
+                      </p>
                     </div>
                   </div>
-                  {/* Details section */}
-                  <div>
-                    {/* The text style is simpler and matches the image's font/color */}
-                    <p className="text-lg text-gray-700 dark:text-gray-300 font-medium">
-                      {info.details}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
-            {/* End of the section styled to look like the image */}
-            
+
+            {/* PICKUP CARD */}
             <div className="mt-8 bg-gradient-to-br from-primary-green to-secondary-green rounded-2xl p-8 text-white shadow-xl">
               <h3 className="text-2xl font-bold mb-4">Request a Pickup</h3>
               <p className="mb-6">
-                Need immediate waste collection? Schedule a pickup now and we&apos;ll be there promptly.
+                Need immediate waste collection? Schedule a pickup now and
+                we&apos;ll be there promptly.
               </p>
-              <button 
+              <button
                 onClick={() => scrollToSection("contact")}
                 className="group relative w-full bg-white text-primary-green text-secondary-green px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 overflow-hidden"
               >
@@ -212,6 +225,5 @@ const ContactSection: React.FC = () => {
     </section>
   );
 };
-
 
 export default ContactSection;
