@@ -11,7 +11,7 @@ import {
   Check, 
   ArrowRight, 
   ArrowLeft,
-  Leaf,
+  Truck,
   Shield,
   Sparkles,
   X,
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
           <div className="flex justify-center mb-8 animate-fade-in-up">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
-                <Leaf className="w-8 h-8 text-foreground" />
+                <Truck className="w-8 h-8 text-foreground" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">Greenex</h1>
