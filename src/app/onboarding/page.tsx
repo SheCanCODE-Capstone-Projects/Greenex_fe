@@ -514,7 +514,7 @@ export default function OnboardingPage() {
               <div className="relative mb-8">
                 <div className="w-32 h-32 rounded-full bg-accent mx-auto flex items-center justify-center animate-scale-in">
                   <div className="w-24 h-24 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow animate-pulse-soft">
-                    <Check className="w-12 h-12 text-primary-foreground" />
+                    <Check className="w-12 h-12 text-primary-green" />
                   </div>
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
