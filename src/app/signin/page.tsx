@@ -24,11 +24,11 @@ export default function Login() {
 
     // simulate login
     localStorage.setItem("dummyUser", JSON.stringify(user));
-    router.push("/"); // redirect to home page
+    router.push("/"); 
   };
 
   return (
-    <div className="flex h-screen w-full">
+    <section id="sign" className="flex h-screen w-full">
       {/* LEFT SIDE - Login Form */}
       <div className="w-1/2 flex items-center justify-center p-10 bg-gray-50">
         <form onSubmit={handleLogin} className="w-full max-w-md">
@@ -129,7 +129,7 @@ export default function Login() {
         </form>
       </div>
 
-      {/* RIGHT SIDE IMAGE */}
+    
       <div className="w-1/2 hidden md:block h-full relative">
         <img
           src="/landingImage.png"
@@ -141,6 +141,6 @@ export default function Login() {
           style={{ backgroundColor: "var(--primary-green)", opacity: 0.4 }}
         ></div>
       </div>
-    </div>
+    </section>
   );
 }
