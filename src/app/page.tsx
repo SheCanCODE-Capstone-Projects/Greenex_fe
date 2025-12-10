@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import HomeSection from "@/components/HomeSection";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
+import ServicePage from "@/components/Servicepage";
 
 
 export default function Home() {
@@ -54,7 +55,9 @@ export default function Home() {
       <main>
         <HomeSection />
         <AboutSection />
+        <ServicePage />
         <ContactSection />
+        
       </main>
     </div>
   );

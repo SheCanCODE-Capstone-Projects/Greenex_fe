@@ -45,20 +45,15 @@ const HomeSection: React.FC = () => {
             <span className="border-r-4 border-white animate-pulse ml-1"></span>
           )}
         </h1>
-
         <p className="text-white text-xl sm:text-2xl md:text-3xl font-light opacity-90 mb-12 animate-fade-in-up delay-300">
          Smarter, Cleaner waste management Smarter, Cleaner waste management <br /> Cleaner waste management Smarter, Cleaner waste management
         </p>
-
-        
-
-
         <div className="flex flex-col sm:flex-row justify-center items-center gap-6 animate-fade-in-up delay-500">
           <button 
             onClick={() => scrollToSection("contact")}
             className="group relative bg-primary-green dark:bg-secondary-green text-white px-12 py-4 rounded-2xl text-lg font-semibold hover:shadow-2xl hover:shadow-primary-green/30 dark:hover:shadow-secondary-green/30 transition-all duration-300 overflow-hidden"
           >
-            <span className="relative z-10">Get Started</span>
+            <span className="relative z-10">Get Startedmm</span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           </button>
 
