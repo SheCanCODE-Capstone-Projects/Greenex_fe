@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 
 export default function OTPPage() {
-  const [step, setStep] = useState(1);
-  const [email, setEmail] = useState("");
+  const [step, setStep] = useState(2);
+  const [email] = useState("user@example.com"); // Default email or get from props/context
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -27,19 +27,7 @@ export default function OTPPage() {
     }
   };
 
-  const sendOTP = async () => {
-    if (!email) {
-      alert("Please enter your email!");
-      return;
-    }
-    setLoading(true);
 
-    // TODO: Backend API
-    setTimeout(() => {
-      setStep(2);
-      setLoading(false);
-    }, 800);
-  };
 
   const verifyOTP = async () => {
     const otpString = otp.join("");
@@ -101,34 +89,7 @@ export default function OTPPage() {
           </div>
         </div>
 
-        {/* Step 1: Email Input */}
-        {step === 1 && (
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-green-700 mb-2 text-center">
-              Enter Email
-            </h2>
-            <p className="text-gray-600 text-sm mb-6 text-center">
-              We'll send you a verification code
-            </p>
 
-            <input
-              type="email"
-              placeholder="example@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className="w-full p-3 sm:p-4 border-2 border-gray-300 rounded-lg mb-4 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100"
-            />
-
-            <button
-              onClick={sendOTP}
-              disabled={loading}
-              className="w-full bg-green-600 text-white p-3 sm:p-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition disabled:bg-gray-400"
-            >
-              {loading ? "Sending..." : "Send Code"}
-            </button>
-          </div>
-        )}
 
         {/* Step 2: OTP */}
         {step === 2 && (
@@ -166,20 +127,12 @@ export default function OTPPage() {
               {loading ? "Verifying..." : "Verify Code"}
             </button>
 
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-center text-sm">
               <button
                 onClick={() => {
-                  setStep(1);
                   setOtp(["", "", "", "", "", ""]);
+                  // TODO: Resend OTP API call
                 }}
-                disabled={loading}
-                className="text-gray-600 hover:text-gray-800"
-              >
-                ← Change Email
-              </button>
-
-              <button
-                onClick={sendOTP}
                 disabled={loading}
                 className="text-green-600 font-semibold hover:underline"
               >
@@ -204,17 +157,6 @@ export default function OTPPage() {
 
             <p className="text-gray-600 mb-2">Your email</p>
             <p className="text-green-700 font-semibold text-lg break-all">{email}</p>
-
-            <button
-              onClick={() => {
-                setStep(1);
-                setEmail("");
-                setOtp(["", "", "", "", "", ""]);
-              }}
-              className="mt-6 bg-green-600 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
-            >
-              Verify Another Email
-            </button>
           </div>
         )}
 
