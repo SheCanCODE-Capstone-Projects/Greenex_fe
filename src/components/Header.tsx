@@ -12,6 +12,8 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -99,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
             </button>
             
             <button 
-              onClick={() => scrollToSection("/signin")}
+              onClick={() => router.push("/signin")}
               className="bg-primary-green dark:bg-secondary-green text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all"
             >
               Request a pickup
@@ -159,7 +161,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
           </button>
 
           <button 
-            onClick={() => scrollToSection("contact")}
+            onClick={() => router.push("/signin")}
             className="bg-primary-green dark:bg-secondary-green text-white px-8 py-3 rounded-xl font-medium mt-6 text-base hover:bg-opacity-90 transition-colors w-full"
           >
             Request a pickup

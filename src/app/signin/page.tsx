@@ -90,7 +90,7 @@ export default function Login() {
               Sign Up
             </a>
           </p>
-        </div>
+        </form>
       </div>
   <div className="w-1/2 hidden md:block h-full relative">
   <img
