@@ -41,7 +41,7 @@ export default function SignupPage() {
             onChange={(e) => setUserType(e.target.value)}
             className="w-full mt-1 mb-4 p-3 border rounded-lg bg-white/60"
           >
-            <option value="citizen">Citizen</option>
+            <option value="citizen">Household</option>
             <option value="company">Company</option>
           </select>
 
