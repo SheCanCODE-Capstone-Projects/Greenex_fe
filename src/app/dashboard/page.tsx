@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Bell, User, Settings, Mail, LogOut, LayoutDashboard, Route, Home, MapPin, CreditCard, MessageSquare, Truck } from "lucide-react";
 
 interface Truck {
   id: string;
@@ -45,6 +46,7 @@ interface Stats {
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Dashboard');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [stats, setStats] = useState<Stats>({
     households: 2847,
     pickups: { completed: 156, total: 160 },
@@ -83,6 +85,15 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setDropdownOpen(false);
+    if (dropdownOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [dropdownOpen]);
+
   const validateZoneData = (zone: Zone): boolean => {
     return zone.name.length > 0 && zone.households > 0;
   };
@@ -113,48 +124,85 @@ export default function Dashboard() {
 
 
   return (
-    <main className="min-h-screen bg-gray-50 flex">
-      <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block">
-        <h2 className="text-2xl font-bold">Green Ex</h2>
-        <ul className="space-y-3 text-sm">
-          {['Dashboard', 'Routes', 'Households', 'Zones', 'Payments', 'Complaints'].map(item => (
-            <SidebarItem 
-              key={item}
-              label={item} 
-              active={activeTab === item}
-              onClick={() => setActiveTab(item)}
-            />
-          ))}
-        </ul>
-      </aside>
-
-      <section className="flex-1 p-6 space-y-8">
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {error}
-            <button onClick={() => setError(null)} className="float-right font-bold">×</button>
-          </div>
-        )}
-
-        <header className="flex justify-between items-center">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="sticky top-0 z-40 bg-white shadow-sm border-b px-6 py-4">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold">Green Ex Manager</h1>
-            <p className="text-gray-600">Waste Collection Company - {activeTab}</p>
+            <h1 className="text-xl font-bold text-gray-900">Green Ex Manager</h1>
+            <p className="text-sm text-gray-600">Waste Collection Company</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative">
-              <button className="text-gray-600 text-xl"></button>
+              <button className="text-gray-600 hover:text-gray-800 p-2">
+                <Bell size={20} />
+              </button>
               {stats.complaints > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {stats.complaints}
                 </span>
               )}
             </div>
-            <div className="w-10 h-10 rounded-full bg-green-400 flex items-center justify-center font-semibold">
-              CM
+            <div className="relative">
+              <button 
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="w-10 h-10 rounded-full bg-green-400 flex items-center justify-center font-semibold hover:bg-green-500 transition-colors"
+              >
+                CM
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
+                  <div className="py-1">
+                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                      <User size={16} /> Profile
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                      <Settings size={16} /> Settings
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                      <Mail size={16} /> Email
+                    </button>
+                    <hr className="my-1" />
+                    <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </header>
+        </div>
+      </nav>
+
+      <div className="flex">
+        <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block h-screen sticky top-[80px] overflow-y-auto">
+          <ul className="space-y-3 text-sm">
+            {[
+              { label: 'Dashboard', icon: LayoutDashboard },
+              { label: 'Routes', icon: Route },
+              { label: 'Households', icon: Home },
+              { label: 'Zones', icon: MapPin },
+              { label: 'Payments', icon: CreditCard },
+              { label: 'Complaints', icon: MessageSquare },
+              { label: 'Pickup Session', icon: Truck }
+            ].map(item => (
+              <SidebarItem 
+                key={item.label}
+                label={item.label}
+                icon={item.icon}
+                active={activeTab === item.label}
+                onClick={() => setActiveTab(item.label)}
+              />
+            ))}
+          </ul>
+        </aside>
+
+        <section className="flex-1 p-6 space-y-8 overflow-y-auto">
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              {error}
+              <button onClick={() => setError(null)} className="float-right font-bold">×</button>
+            </div>
+          )}
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <StatCard 
@@ -335,24 +383,26 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-      </section>
-    </main>
+        </section>
+      </div>
+    </div>
   );
 }
 
-function SidebarItem({ label, active, onClick }: { 
-  label: string; 
+function SidebarItem({ label, icon: Icon, active, onClick }: { 
+  label: string;
+  icon: any;
   active?: boolean; 
   onClick: () => void;
 }) {
   return (
     <li
       onClick={onClick}
-      className={`px-3 py-2 rounded flex items-center gap-2 cursor-pointer transition-colors ${
+      className={`px-3 py-2 rounded flex items-center gap-3 cursor-pointer transition-colors ${
         active ? "bg-green-700" : "hover:bg-green-800"
       }`}
     >
-      <span></span>
+      <Icon size={18} />
       {label}
     </li>
   );
