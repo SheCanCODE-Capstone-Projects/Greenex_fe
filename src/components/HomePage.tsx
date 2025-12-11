@@ -1,17 +1,18 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Truck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const Home: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
-
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+
   const isActive = (path: string) =>
     pathname === path ? "underline underline-offset-8 text-emerald-300" : "";
 
-
+  // Typing animation
   const fullText = "GreenEx";
   const [typedText, setTypedText] = useState("");
   const [isTypingDone, setIsTypingDone] = useState(false);
@@ -28,15 +29,12 @@ const Home: React.FC = () => {
     }, 130);
     return () => clearInterval(interval);
   }, []);
+
+  // Disable scroll when mobile menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [menuOpen]);
 
@@ -46,6 +44,8 @@ const Home: React.FC = () => {
       style={{ backgroundImage: "url('/landingImage.png')" }}
     >
       <div className="absolute inset-0 bg-[#0c351f]/80"></div>
+
+      {/* NAVBAR */}
       <nav className="absolute top-0 inset-x-0 flex justify-between items-center px-4 md:px-10 py-5 z-30">
         <div className="flex items-center gap-2">
           <Truck size={45} className="text-white" />
@@ -53,6 +53,8 @@ const Home: React.FC = () => {
             GreenEx
           </h1>
         </div>
+
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center">
           <div className="flex items-center gap-25 text-white font-medium text-lg pr-10 lg:pr-40 pl-25">
             <Link className={`${isActive("/")} hover:text-emerald-300 transition`} href="/">Home</Link>
@@ -60,72 +62,53 @@ const Home: React.FC = () => {
             <Link className={`${isActive("/services")} hover:text-emerald-300 transition`} href="/services">Services</Link>
             <Link className={`${isActive("/contact")} hover:text-emerald-300 transition`} href="/contact">Contact Us</Link>
           </div>
-           <Link href="/signup">
-          <button className="ml-4 lg:ml-10 bg-[#31a366] text-white px-4 py-2 lg:px-6 lg:py-2 rounded-lg font-medium hover:bg-[#2a8f57] transition">
-            Request a pickup
-          </button>
+
+          <Link href="/signup">
+            <button className="ml-4 lg:ml-10 bg-[#31a366] text-white px-4 py-2 lg:px-6 lg:py-2 rounded-lg font-medium hover:bg-[#2a8f57] transition">
+              Request a pickup
+            </button>
           </Link>
         </div>
 
-        
+        {/* Mobile Menu Button */}
         <button
           className="text-white text-3xl md:hidden z-40"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
-          {menuOpen ? '✕' : '☰'}
+          {menuOpen ? "✕" : "☰"}
         </button>
       </nav>
 
-    
+      {/* MOBILE MENU OVERLAY */}
       <div
-        className={`fixed top-0 left-0 right-0 bottom-0 md:hidden bg-[#0c351f] w-full h-full z-30 flex flex-col items-center justify-center text-white transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 right-0 bottom-0 md:hidden bg-[#0c351f] w-full h-full z-30 flex flex-col items-center justify-center text-white transition-all duration-300 ${
           menuOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
       >
         <div className="flex flex-col items-center gap-4 text-xl font-medium p-4 w-full max-w-xs">
-          <Link 
-            onClick={() => setMenuOpen(false)} 
-            className="hover:text-emerald-300 transition-colors duration-200 py-2 w-full text-center"
-            href="/"
-          >
-            Home
-          </Link>
-          <Link 
-            onClick={() => setMenuOpen(false)} 
-            className="hover:text-emerald-300 transition-colors duration-200 py-2 w-full text-center"
-            href="/about"
-          >
-            About
-          </Link>
-          <Link 
-            onClick={() => setMenuOpen(false)} 
-            className="hover:text-emerald-300 transition-colors duration-200 py-2 w-full text-center"
-            href="/services"
-          >
-            Services
-          </Link>
-          <Link 
-            onClick={() => setMenuOpen(false)} 
-            className="hover:text-emerald-300 transition-colors duration-200 py-2 w-full text-center"
-            href="/contact"
-          >
-            Contact Us
-          </Link>
+          {["/", "/about", "/services", "/contact"].map((path, index) => (
+            <Link
+              key={index}
+              href={path}
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-emerald-300 transition py-2 w-full text-center"
+            >
+              {path === "/" ? "Home" : path.replace("/", "").charAt(0).toUpperCase() + path.slice(2)}
+            </Link>
+          ))}
 
-          <button className="bg-[#25b86a] text-white px-8 py-3 rounded-xl font-medium mt-6 text-base hover:bg-[#1f9c58] transition-colors w-full">
+          <button className="bg-[#25b86a] text-white px-8 py-3 rounded-xl font-medium mt-6 text-base hover:bg-[#1f9c58] transition w-full">
             Request a pickup
           </button>
         </div>
       </div>
+
+      {/* HERO CONTENT */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
-        <h1
-          className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-extrabold mb-4 drop-shadow-lg tracking-tight bg-gradient-to-r from-white via-white to-[#25b86a] text-transparent bg-clip-text"
-        >
+        <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-extrabold mb-4 drop-shadow-lg tracking-tight bg-gradient-to-r from-white via-white to-[#25b86a] text-transparent bg-clip-text">
           {typedText}
-          {!isTypingDone && (
-            <span className="border-r-4 border-white animate-pulse ml-1"></span>
-          )}
+          {!isTypingDone && <span className="border-r-4 border-white animate-pulse ml-1"></span>}
         </h1>
 
         <p className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-light opacity-90 mb-8 sm:mb-10 md:mb-14 px-4">
@@ -143,7 +126,7 @@ const Home: React.FC = () => {
         </div>
       </div>
     </section>
-  ); 
+  );
 };
 
 export default Home;
