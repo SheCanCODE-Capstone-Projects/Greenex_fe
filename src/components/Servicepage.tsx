@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import { useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 const services = [
   {
@@ -26,31 +27,64 @@ const services = [
 
 export default function ServicePage() {
   const [darkMode, setDarkMode] = useState(false);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="services" className={`${darkMode ? "dark" : ""}`}>
-      <div className="w-full bg-primary-green py-16 px-4 transition-all ">
-        <div className="flex justify-end max-w-7xl mx-auto mb-4">
-    
-        </div>
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-white dark:text-secondary-green text-4xl font-bold mb-4">
+    <section id="services" className={`${darkMode ? "dark" : ""}`} ref={ref}>
+      <div className="w-full bg-primary-green py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 transition-all">
+        <motion.div 
+          className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 lg:mb-12"
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2 
+            className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             Our services
-          </h2>
-          <div className="w-24 h-1 bg-white dark:bg-secondary-green mx-auto mb-6"></div>
+          </motion.h2>
+          <motion.div 
+            className="w-16 sm:w-20 lg:w-24 h-1 bg-white mx-auto mb-4 sm:mb-6"
+            initial={{ width: 0, scaleX: 0 }}
+            animate={isInView ? { width: 96, scaleX: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          ></motion.div>
 
-          <p className="text-white dark:text-gray-300 text-lg leading-relaxed">
-            Save Time Managing Your waste collecting <br />
-            With Our Best Services
-          </p>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3 max-w-7xl mx-auto">
+          <motion.p 
+            className="text-white dark:text-gray-300 text-base sm:text-lg leading-relaxed px-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            Save Time Managing Your waste collecting <br className="hidden sm:block" />
+            <span className="sm:hidden"> </span>With Our Best Services
+          </motion.p>
+        </motion.div>
+        <motion.div 
+          className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto"
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
           {services.map((srv, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-light-bg dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:hover:shadow-secondary-green/20 transition-all"
+              className="bg-light-bg dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:hover:shadow-secondary-green/20 transition-all cursor-pointer"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
+              whileHover={{ 
+                scale: 1.05,
+                y: -10,
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="w-full h-70 relative">
+              <div className="w-full h-48 sm:h-56 lg:h-64 relative overflow-hidden rounded-t-xl">
                 <Image
                   src={srv.image}
                   alt={srv.title}
@@ -62,18 +96,29 @@ export default function ServicePage() {
                 />
               </div>
 
-              <div className="p-6">
-                <h3 className="font-semibold text-lg mb-2 text-black dark:text-white">
+              <motion.div 
+                className="p-4 sm:p-6"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
+              >
+                <motion.h3 
+                  className="font-semibold text-base sm:text-lg mb-2 text-black dark:text-white"
+                  whileHover={{ 
+                    color: "#059669",
+                    scale: 1.02,
+                    transition: { duration: 0.2 }
+                  }}
+                >
                   {srv.title}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                </motion.h3>
+                <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base leading-relaxed">
                   {srv.description}
                 </p>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
-
+        </motion.div>
       </div>
     </section>
   );
