@@ -53,7 +53,7 @@ const HomeSection: React.FC = () => {
             onClick={() => scrollToSection("contact")}
             className="group relative bg-primary-green dark:bg-secondary-green text-white px-12 py-4 rounded-2xl text-lg font-semibold hover:shadow-2xl hover:shadow-primary-green/30 dark:hover:shadow-secondary-green/30 transition-all duration-300 overflow-hidden"
           >
-            <span className="relative z-10">Get Startedmm</span>
+            <span className="relative z-10">Get Started</span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           </button>
 
