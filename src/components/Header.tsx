@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Truck, Moon, Sun } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Truck, Moon, Sun} from "lucide-react";
 
 interface HeaderProps {
   activeSection: string;
@@ -11,6 +12,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMode }) => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
     <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${headerBgClass}`}>
       <nav className="flex justify-between items-center px-4 md:px-10 py-4">
         <div className="flex items-center gap-2">
-          <Truck size={45} className="text-primary-green dark:text-secondary-green" />
+         <Truck size={45} className="text-primary-green dark:text-secondary-green" />
           <h1 className="text-primary-green text-2xl md:text-3xl font-bold tracking-wide dark:text-secondary-green">
             GreenEx
           </h1>
@@ -99,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
             </button>
             
             <button 
-              onClick={() => scrollToSection("contact")}
+              onClick={() => router.push("/signin")}
               className="bg-primary-green dark:bg-secondary-green text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all"
             >
               Request a pickup
@@ -159,7 +162,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
           </button>
 
           <button 
-            onClick={() => scrollToSection("contact")}
+            onClick={() => router.push("/signin")}
             className="bg-primary-green dark:bg-secondary-green text-white px-8 py-3 rounded-xl font-medium mt-6 text-base hover:bg-opacity-90 transition-colors w-full"
           >
             Request a pickup

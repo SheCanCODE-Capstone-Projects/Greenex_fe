@@ -35,7 +35,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="w-1/2 bg-[#dbe6d0] flex items-center justify-center p-10">
+      <div className="w-1/2 bg-gray-50 flex items-center justify-center p-10">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-semibold mb-8">Get Started Now</h1>
 
@@ -57,7 +57,7 @@ export default function SignupPage() {
           )}
           {(!fullname || validFullname) && <div className="mb-4"></div>}
 
-          {/* Email */}
+          
           <label className="text-sm font-medium">Email address</label>
           <input
             type="email"
@@ -73,7 +73,7 @@ export default function SignupPage() {
           )}
           {(!email || validEmail) && <div className="mb-4"></div>}
 
-          {/* User Type */}
+          
           <label className="text-sm font-medium">User Type</label>
           <select
             value={userType}
@@ -84,7 +84,7 @@ export default function SignupPage() {
             <option value="company">Company</option>
           </select>
 
-          {/* Password */}
+          
           <label className="text-sm font-medium">Password</label>
           <input
             type="password"
@@ -100,7 +100,7 @@ export default function SignupPage() {
           )}
           {(!password || validPassword) && <div className="mb-4"></div>}
 
-          {/* Confirm Password */}
+        
           <label className="text-sm font-medium">Confirm Password</label>
           <input
             type="password"
@@ -116,7 +116,7 @@ export default function SignupPage() {
           )}
           {(!confirmPassword || validConfirm) && <div className="mb-4"></div>}
 
-          {/* Checkbox (Protected) */}
+        
           <div className="flex items-start mb-6">
             <input
               type="checkbox"
@@ -137,7 +137,7 @@ export default function SignupPage() {
             </div>
           </div>
 
-          {/* Signup Button */}
+          
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
@@ -187,7 +187,10 @@ export default function SignupPage() {
           fill
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-green-950 opacity-50"></div>
+         <div
+    className="absolute inset-0"
+    style={{ backgroundColor: "var(--primary-green)", opacity: 0.4 }}
+  ></div>
       </div>
     </div>
   );
