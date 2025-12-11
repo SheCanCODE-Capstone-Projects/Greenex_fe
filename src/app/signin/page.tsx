@@ -82,15 +82,15 @@ export default function Login() {
 
           {/* Sign Up Link */}
           <p className="text-sm text-center mt-6 text-gray-600">
-            Don't have an account?
+            Do not have an account?
             <a 
-              href="#" 
+              href="/signup" 
               className="ml-1 text-blue-600 hover:text-green-800 font-medium hover:underline"
             >
               Sign Up
             </a>
           </p>
-        </form>
+        </div>
       </div>
   <div className="w-1/2 hidden md:block h-full relative">
   <img
