@@ -4,6 +4,7 @@ export default function Login() {
     <div className="flex h-screen w-full">
       {/* LEFT SIDE - Login Form */}
       <div className="w-1/2 flex items-center justify-center p-10 bg-gray-50">
+     
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold mb-2 text-gray-900">
             Welcome back!
@@ -90,7 +91,9 @@ export default function Login() {
               Sign Up
             </a>
           </p>
-        </form>
+          
+        </div>
+       
       </div>
   <div className="w-1/2 hidden md:block h-full relative">
   <img
