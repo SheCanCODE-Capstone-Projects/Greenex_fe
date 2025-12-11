@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [fullname, setFullname] = useState("");
@@ -9,6 +10,28 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [userType, setUserType] = useState("citizen");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSignup = async () => {
+    if (!fullname || !email || !password || !confirmPassword) {
+      alert("Please fill in all fields!");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    
+    setLoading(true);
+    
+    // TODO: Backend API call for signup
+    setTimeout(() => {
+      // Navigate to OTP page with email
+      router.push(`/pages/otp?email=${encodeURIComponent(email)}`);
+      setLoading(false);
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -67,8 +90,12 @@ export default function SignupPage() {
           </div>
 
           
-          <button className="w-full bg-green-700 text-white py-3 rounded-lg font-semibold">
-            Signup
+          <button 
+            onClick={handleSignup}
+            disabled={loading}
+            className="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800 transition disabled:bg-gray-400"
+          >
+            {loading ? "Creating Account..." : "Signup"}
           </button>
 
           <div className="flex items-center my-6">

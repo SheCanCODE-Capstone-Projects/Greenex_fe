@@ -1,13 +1,22 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function OTPPage() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(2);
-  const [email] = useState("user@example.com"); // Default email or get from props/context
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    const emailParam = searchParams.get('email');
+    if (emailParam) {
+      setEmail(emailParam);
+    }
+  }, [searchParams]);
 
   const handleDigitInput = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
