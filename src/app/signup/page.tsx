@@ -187,7 +187,7 @@ export default function SignupPage() {
           fill
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-green-950 opacity-80"></div>
+        <div className="absolute inset-0 bg-green-950 opacity-50"></div>
       </div>
     </div>
   );

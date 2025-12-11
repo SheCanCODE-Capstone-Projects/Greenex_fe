@@ -47,6 +47,7 @@ interface Stats {
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [animateCharts, setAnimateCharts] = useState(false);
   const [stats, setStats] = useState<Stats>({
     households: 2847,
     pickups: { completed: 156, total: 160 },
@@ -74,7 +75,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Simulate real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       setPickupSessions(prev => prev.map(session => ({
@@ -84,8 +84,6 @@ export default function Dashboard() {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = () => setDropdownOpen(false);
     if (dropdownOpen) {
@@ -93,6 +91,12 @@ export default function Dashboard() {
       return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [dropdownOpen]);
+
+ 
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimateCharts(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const validateZoneData = (zone: Zone): boolean => {
     return zone.name.length > 0 && zone.households > 0;
@@ -124,79 +128,77 @@ export default function Dashboard() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="sticky top-0 z-40 bg-white shadow-sm border-b px-6 py-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Green Ex Manager</h1>
-            <p className="text-sm text-gray-600">Waste Collection Company</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <button className="text-gray-600 hover:text-gray-800 p-2">
-                <Bell size={20} />
-              </button>
-              {stats.complaints > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {stats.complaints}
-                </span>
-              )}
+    <div className="min-h-screen bg-gray-50 flex">
+      <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block h-screen fixed left-0 top-0 overflow-y-auto z-30">
+        <ul className="space-y-3 text-sm">
+          {[
+            { label: 'Dashboard', icon: LayoutDashboard },
+            { label: 'Routes', icon: Route },
+            { label: 'Households', icon: Home },
+            { label: 'Zones', icon: MapPin },
+            { label: 'Payments', icon: CreditCard },
+            { label: 'Complaints', icon: MessageSquare },
+            { label: 'Pickup Session', icon: Truck }
+          ].map(item => (
+            <SidebarItem 
+              key={item.label}
+              label={item.label}
+              icon={item.icon}
+              active={activeTab === item.label}
+              onClick={() => setActiveTab(item.label)}
+            />
+          ))}
+        </ul>
+      </aside>
+
+      <div className="flex-1 ml-64">
+        <nav className="sticky top-0 z-40 bg-white shadow-sm border-b px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Green Ex Manager</h1>
+              <p className="text-sm text-gray-600">Waste Collection Company</p>
             </div>
-            <div className="relative">
-              <button 
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="w-10 h-10 rounded-full bg-green-400 flex items-center justify-center font-semibold hover:bg-green-500 transition-colors"
-              >
-                CM
-              </button>
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
-                  <div className="py-1">
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                      <User size={16} /> Profile
-                    </button>
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                      <Settings size={16} /> Settings
-                    </button>
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                      <Mail size={16} /> Email
-                    </button>
-                    <hr className="my-1" />
-                    <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
-                      <LogOut size={16} /> Logout
-                    </button>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <button className="text-gray-600 hover:text-gray-800 p-2">
+                  <Bell size={20} />
+                </button>
+                {stats.complaints > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {stats.complaints}
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <button 
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="w-10 h-10 rounded-full bg-green-400 flex items-center justify-center font-semibold hover:bg-green-500 transition-colors"
+                >
+                  CM
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
+                    <div className="py-1">
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                        <User size={16} /> Profile
+                      </button>
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                        <Settings size={16} /> Settings
+                      </button>
+
+                      <hr className="my-1" />
+                      <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                        <LogOut size={16} /> Logout
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      <div className="flex">
-        <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block h-screen sticky top-[80px] overflow-y-auto">
-          <ul className="space-y-3 text-sm">
-            {[
-              { label: 'Dashboard', icon: LayoutDashboard },
-              { label: 'Routes', icon: Route },
-              { label: 'Households', icon: Home },
-              { label: 'Zones', icon: MapPin },
-              { label: 'Payments', icon: CreditCard },
-              { label: 'Complaints', icon: MessageSquare },
-              { label: 'Pickup Session', icon: Truck }
-            ].map(item => (
-              <SidebarItem 
-                key={item.label}
-                label={item.label}
-                icon={item.icon}
-                active={activeTab === item.label}
-                onClick={() => setActiveTab(item.label)}
-              />
-            ))}
-          </ul>
-        </aside>
-
-        <section className="flex-1 p-6 space-y-8 overflow-y-auto">
+        <section className="p-6 space-y-8 overflow-y-auto">
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
               {error}
@@ -230,135 +232,143 @@ export default function Dashboard() {
           />
         </div>
 
-        <div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-xl shadow border">
+            <h3 className="text-lg font-semibold mb-6">District Complaints Overview</h3>
+            <div className="relative h-64">
+              <div className="absolute inset-0 flex flex-col justify-between">
+                {[0, 1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="border-t border-gray-100 w-full"></div>
+                ))}
+              </div>
+              
+              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 -ml-10">
+                <span>70</span>
+                <span>56</span>
+                <span>42</span>
+                <span>28</span>
+                <span>14</span>
+                <span>0</span>
+              </div>
+              
+              <div className="relative h-full flex items-end justify-between px-4 pt-4">
+                {[
+                  { district: 'Kicukiro', value: 45, color: ' #388E3C' },
+                  { district: 'Gasabo', value: 32, color: '#09eb72' },
+                  { district: 'Nyarugenge', value: 58, color: '#388E3C' },
+                  { district: 'Remera', value: 28, color: '#09eb72' },
+                  { district: 'Kimisagara', value: 67, color: '#388E3C' },
+                  { district: 'Gisozi', value: 41, color: '#09eb72' }
+                ].map((item, index) => (
+                  <div key={index} className="flex flex-col items-center flex-1 mx-1">
+                    <div className="relative w-full max-w-10 group">
+                      <div 
+                        className="rounded-t-md transition-all duration-1000 hover:scale-105 cursor-pointer shadow-sm"
+                        style={{ 
+                          backgroundColor: item.color,
+                          height: animateCharts ? `${(item.value / 70) * 200}px` : '0px'
+                        }}
+                      >
+                        <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700">
+                          {animateCharts ? item.value : 0}
+                        </div>
+                        
+                        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          {item.value} complaints
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs mt-3 text-gray-700 font-medium text-center leading-tight">{item.district}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="mt-4 flex justify-center">
+              <div className="flex items-center space-x-2 text-xs text-gray-600">
+                <div className="w-3 h-3" style={{backgroundColor: '#388E3C'}}></div>
+                <span>Complaints per District</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow border">
+            <h3 className="text-lg font-semibold mb-4">Monthly Revenue Distribution</h3>
+            <div className="flex items-center justify-center">
+              <div className="relative w-80 h-80">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="35" fill="none" stroke="#f3f4f6" strokeWidth="6"/>
+                  <circle 
+                    cx="50" cy="50" r="35" fill="none" stroke="#388E3C" strokeWidth="6"
+                    strokeDasharray="131.9 219.9" 
+                    strokeDashoffset={animateCharts ? "0" : "219.9"}
+                    className="transition-all duration-2000 ease-out"
+                  />
+                  <circle 
+                    cx="50" cy="50" r="35" fill="none" stroke="#25b86a" strokeWidth="6"
+                    strokeDasharray="65.9 219.9" 
+                    strokeDashoffset={animateCharts ? "-131.9" : "219.9"}
+                    className="transition-all duration-2000 ease-out delay-500"
+                  />
+                  <circle 
+                    cx="50" cy="50" r="35" fill="none" stroke="#388E3C" strokeWidth="6"
+                    strokeDasharray="22.1 219.9" 
+                    strokeDashoffset={animateCharts ? "-197.8" : "219.9"}
+                    className="transition-all duration-2000 ease-out delay-1000"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-lg font-bold">{animateCharts ? '85K' : '0'}</div>
+                    <div className="text-sm text-gray-600">RWF</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3" style={{backgroundColor: '#388E3C'}}></div>
+                  <span>Nyarugenge</span>
+                </div>
+                <span className="font-medium">100000rwf</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3" style={{backgroundColor: '#25b86a'}}></div>
+                  <span>Gasabo</span>
+                </div>
+                <span className="font-medium">80000rwf</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3" style={{backgroundColor: '#388E3C'}}></div>
+                  <span>Kicukiro</span>
+                </div>
+                <span className="font-medium">60000rwf</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold">Pickup Sessions</h2>
             <div className="text-sm text-gray-600">
               Last updated: {new Date().toLocaleTimeString()}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              {pickupSessions.map(session => (
-                <PickupSessionCard 
-                  key={session.id}
-                  zone={session.zone}
-                  time={session.time}
-                  status={session.status}
-                  collected={Math.round(session.collected)}
-                  total={session.total}
-                />
-              ))}
-            </div>
-            <div className="space-y-6">
-          
-              <div className="bg-white p-6 rounded-xl shadow border">
-                <h3 className="text-lg font-semibold mb-6">District Complaints Overview</h3>
-                <div className="relative h-56">
-                  
-                  <div className="absolute inset-0 flex flex-col justify-between">
-                    {[0, 1, 2, 3, 4, 5].map(i => (
-                      <div key={i} className="border-t border-gray-100 w-full"></div>
-                    ))}
-                  </div>
-                  
-                 
-                  <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 -ml-10">
-                    <span>70</span>
-                    <span>56</span>
-                    <span>42</span>
-                    <span>28</span>
-                    <span>14</span>
-                    <span>0</span>
-                  </div>
-                  
-                 
-                  <div className="relative h-full flex items-end justify-between px-4 pt-4">
-                    {[
-                      { district: 'Kicukiro', value: 45, color: 'from-green-500 to-green-400' },
-                      { district: 'Gasabo', value: 32, color: 'from-green-600 to-green-500' },
-                      { district: 'Nyarugenge', value: 58, color: 'from-green-400 to-green-300' },
-                      { district: 'Remera', value: 28, color: 'from-green-700 to-green-600' },
-                      { district: 'Kimisagara', value: 67, color: 'from-green-500 to-green-400' },
-                      { district: 'Gisozi', value: 41, color: 'from-green-600 to-green-500' }
-                    ].map((item, index) => (
-                      <div key={index} className="flex flex-col items-center flex-1 mx-1">
-                        <div className="relative w-full max-w-12 group">
-                          <div 
-                            className={`bg-gradient-to-t ${item.color} rounded-t-md transition-all duration-300 hover:scale-105 cursor-pointer shadow-sm`}
-                            style={{ height: `${(item.value / 70) * 180}px` }}
-                          >
-                         
-                            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700">
-                              {item.value}
-                            </div>
-                            
-                            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                              {item.value} complaints
-                            </div>
-                          </div>
-                        </div>
-                        <span className="text-xs mt-3 text-gray-700 font-medium text-center leading-tight">{item.district}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-             
-                <div className="mt-4 flex justify-center">
-                  <div className="flex items-center space-x-2 text-xs text-gray-600">
-                    <div className="w-3 h-3 bg-gradient-to-r from-green-600 to-green-400 rounded"></div>
-                    <span>Complaints per District</span>
-                  </div>
-                </div>
-              </div>
-
-
-              <div className="bg-white p-6 rounded-xl shadow border">
-                <h3 className="text-lg font-semibold mb-4">Monthly Revenue Distribution</h3>
-                <div className="flex items-center justify-center">
-                  <div className="relative w-32 h-32">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" fill="none" stroke="#f3f4f6" strokeWidth="8"/>
-                      <circle cx="50" cy="50" r="35" fill="none" stroke="#10b981" strokeWidth="8" 
-                        strokeDasharray="131.9 219.9" strokeDashoffset="0"/>
-                      <circle cx="50" cy="50" r="35" fill="none" stroke="#3b82f6" strokeWidth="8" 
-                        strokeDasharray="65.9 219.9" strokeDashoffset="-131.9"/>
-                      <circle cx="50" cy="50" r="35" fill="none" stroke="#f59e0b" strokeWidth="8" 
-                        strokeDasharray="22.1 219.9" strokeDashoffset="-197.8"/>
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-sm font-bold">85K</div>
-                        <div className="text-xs text-gray-600">RWF</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-green-500 rounded"></div>
-                      <span>Collections</span>
-                    </div>
-                    <span className="font-medium">60%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                      <span>Subscriptions</span>
-                    </div>
-                    <span className="font-medium">30%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                      <span>Other</span>
-                    </div>
-                    <span className="font-medium">10%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {pickupSessions.map(session => (
+              <PickupSessionCard 
+                key={session.id}
+                zone={session.zone}
+                time={session.time}
+                status={session.status}
+                collected={Math.round(session.collected)}
+                total={session.total}
+              />
+            ))}
           </div>
         </div>
 
@@ -391,7 +401,7 @@ export default function Dashboard() {
 
 function SidebarItem({ label, icon: Icon, active, onClick }: { 
   label: string;
-  icon: any;
+  icon: React.ComponentType<{ size?: number }>;
   active?: boolean; 
   onClick: () => void;
 }) {
