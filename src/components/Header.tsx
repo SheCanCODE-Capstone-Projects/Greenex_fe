@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Truck, Moon, Sun} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   activeSection: string;

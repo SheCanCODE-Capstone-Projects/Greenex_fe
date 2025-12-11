@@ -22,7 +22,6 @@ const AboutSection: React.FC = () => {
       className="min-h-screen w-full bg-light-bg dark:bg-gray-900 py-20 px-4 md:px-10"
     >
       <div className="max-w-7xl mx-auto">
-        {/* ===================== IMAGE GRID + TEXT ===================== */}
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
           {/* LEFT SIDE — 3 Image Group */}
           <div className="relative w-full">
@@ -34,7 +33,7 @@ const AboutSection: React.FC = () => {
     z-30 rounded-full bg-light-bg shadow-xl 
     w-24 h-24 flex items-center justify-center
     cursor-pointer text-foreground font-semibold text-lg
-    transition-all duration-300 hover:scale-110
+    transition-all duration-300 hover:scale-110  dark:bg-gray-800
   "
             >
               GreenEx

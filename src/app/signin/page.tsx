@@ -1,8 +1,7 @@
-// app/login/page.tsx
+/* eslint-disable @next/next/no-img-element */
 export default function Login() {
   return (
     <div className="flex h-screen w-full">
-      {/* LEFT SIDE - Login Form */}
       <div className="w-1/2 flex items-center justify-center p-10 bg-gray-50">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold mb-2 text-gray-900">
@@ -12,8 +11,6 @@ export default function Login() {
           <p className="mb-8 text-gray-600">
             Enter your credentials to access your account
           </p>
-
-          {/* Email Field */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-white mb-1">
               Email address
@@ -24,8 +21,6 @@ export default function Login() {
               className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
-
-          {/* Password Field */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-white mb-1">
               Password
@@ -36,8 +31,6 @@ export default function Login() {
               className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
-
-          {/* Remember me & Forgot password */}
           <div className="flex justify-between items-center mb-6">
             <label className="flex items-center gap-2 text-sm text-gray-700">
               <input 
@@ -79,10 +72,8 @@ export default function Login() {
             />
             <span className="text-gray-700 font-medium">Sign in with Google</span>
           </button>
-
-          {/* Sign Up Link */}
           <p className="text-sm text-center mt-6 text-gray-600">
-            Don't have an account?
+            Don&apos;t have an account?
             <a 
               href="#" 
               className="ml-1 text-blue-600 hover:text-green-800 font-medium hover:underline"
@@ -90,7 +81,7 @@ export default function Login() {
               Sign Up
             </a>
           </p>
-        </form>
+        </div>
       </div>
   <div className="w-1/2 hidden md:block h-full relative">
   <img
