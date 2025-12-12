@@ -56,8 +56,6 @@ export default function Home() {
         <AboutSection />
         <Servicepage />
         <ContactSection />
-        
-
       </main>
     </div>
   );

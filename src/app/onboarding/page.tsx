@@ -146,16 +146,16 @@ export default function OnboardingPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/3 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="w-full max-w-3xl">
           {/* Logo */}
-          <div className="flex justify-center mb-8 animate-fade-in-up">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
-                <Truck className="w-8 h-8 text-foreground" />
+          <div className="flex justify-center mb-6 sm:mb-8 animate-fade-in-up">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
+                <Truck className="w-6 h-6 sm:w-8 sm:h-8 text-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Greenex</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground">Greenex</h1>
                 <p className="text-xs text-muted-foreground">Powering Rwanda's Green Future</p>
               </div>
             </div>
@@ -163,7 +163,7 @@ export default function OnboardingPage() {
 
           {/* Step Indicator */}
           {step !== 3 && (
-            <div className="mb-10 animate-fade-in-up animate-delay-100">
+            <div className="mb-8 sm:mb-10 animate-fade-in-up animate-delay-100">
               <StepIndicator steps={steps} currentStep={step} />
             </div>
           )}
@@ -172,14 +172,14 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="animate-fade-in-up animate-delay-200">
               {/* Header */}
-              <div className="text-center mb-10">
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-accent mb-6">
-                  <Building2 className="w-12 h-12 text-primary" />
+              <div className="text-center mb-8 sm:mb-10">
+                <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-accent mb-4 sm:mb-6">
+                  <Building2 className="w-10 h-10 sm:w-12 sm:h-12 text-primary" />
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2 sm:mb-3">
                   Let's Get Started
                 </h2>
-                <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                <p className="text-base sm:text-lg text-muted-foreground max-w-md mx-auto px-4">
                   Tell us about your company to begin your journey with Greenex
                 </p>
               </div>
@@ -187,19 +187,19 @@ export default function OnboardingPage() {
               {/* Form Card */}
               <form
                 onSubmit={handleSubmit(onCompanySubmit)}
-                className="glass-card p-8 md:p-10"
+                className="glass-card p-6 sm:p-8 lg:p-10"
               >
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                   {/* Company Name */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold flex items-center gap-2 text-foreground">
-                      <Building2 className="w-5 h-5 text-primary" />
+                  <div className="space-y-2 sm:space-y-3">
+                    <Label className="text-sm sm:text-base font-semibold flex items-center gap-2 text-foreground">
+                      <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                       Official Company Name
                     </Label>
                     <Input
                       {...register('companyName')}
                       placeholder="e.g. Green Energy Rwanda Ltd"
-                      className="h-14 text-base bg-input/50 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      className="h-12 sm:h-14 text-sm sm:text-base bg-input/50 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                     {errors.companyName && (
                       <p className="text-destructive text-sm flex items-center gap-1">
@@ -210,9 +210,9 @@ export default function OnboardingPage() {
                   </div>
 
                   {/* District */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold flex items-center gap-2 text-foreground">
-                      <MapPin className="w-5 h-5 text-primary" />
+                  <div className="space-y-2 sm:space-y-3">
+                    <Label className="text-sm sm:text-base font-semibold flex items-center gap-2 text-foreground">
+                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                       District Location
                     </Label>
 
@@ -222,12 +222,12 @@ export default function OnboardingPage() {
                           variant="outline"
                           role="combobox"
                           aria-expanded={districtOpen}
-                          className="w-full justify-between h-14 text-base bg-input/50 border-border hover:border-primary hover:bg-input transition-all"
+                          className="w-full justify-between h-12 sm:h-14 text-sm sm:text-base bg-input/50 border-border hover:border-primary hover:bg-input transition-all"
                         >
                           <span className={cn(!watchedDistrict && "text-muted-foreground")}>
                             {watchedDistrict || "Select your district..."}
                           </span>
-                          <MapPin className="ml-2 h-5 w-5 text-muted-foreground" />
+                          <MapPin className="ml-2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
                         </Button>
                       </PopoverTrigger>
 
@@ -271,11 +271,11 @@ export default function OnboardingPage() {
                   </div>
 
                   {/* Info Card */}
-                  <div className="p-4 rounded-xl bg-accent/50 border border-primary/20">
-                    <div className="flex items-start gap-3">
-                      <Shield className="w-5 h-5 text-primary mt-0.5" />
+                  <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-accent/50 border border-primary/20">
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-foreground">Your data is secure</p>
+                        <p className="text-xs sm:text-sm font-medium text-foreground">Your data is secure</p>
                         <p className="text-xs text-muted-foreground mt-1">
                           All information is encrypted and stored securely following international standards.
                         </p>
@@ -285,12 +285,12 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex justify-between mt-10 pt-6 border-t border-border">
+                <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0 mt-8 sm:mt-10 pt-4 sm:pt-6 border-t border-border">
                   <Button 
                     type="button" 
                     variant="ghost" 
-                    size="lg"
-                    className="text-muted-foreground hover:text-foreground"
+                    size="default"
+                    className="text-muted-foreground hover:text-foreground order-2 sm:order-1"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back
@@ -298,9 +298,9 @@ export default function OnboardingPage() {
 
                   <Button
                     type="submit"
-                    size="lg"
+                    size="default"
                     disabled={!isValid}
-                    className="bg-gradient-primary text-primary-foreground shadow-glow hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none px-8"
+                    className="bg-gradient-primary text-primary-foreground shadow-glow hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none px-6 sm:px-8 order-1 sm:order-2"
                   >
                     Continue
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -314,21 +314,21 @@ export default function OnboardingPage() {
           {step === 2 && (
             <div className="animate-fade-in-up">
               {/* Header */}
-              <div className="text-center mb-10">
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-accent mb-6">
-                  <FileText className="w-12 h-12 text-primary" />
+              <div className="text-center mb-8 sm:mb-10">
+                <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-accent mb-4 sm:mb-6">
+                  <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-primary" />
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2 sm:mb-3">
                   Upload Your Documents
                 </h2>
-                <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                <p className="text-base sm:text-lg text-muted-foreground max-w-md mx-auto px-4">
                   We need these certificates to verify your company
                 </p>
               </div>
 
               {/* Upload Cards */}
-              <div className="glass-card p-8 md:p-10">
-                <div className="space-y-6">
+              <div className="glass-card p-6 sm:p-8 lg:p-10">
+                <div className="space-y-4 sm:space-y-6">
                   {/* RDB Certificate */}
                   <div
                     onClick={() => setUploadModalOpen('rdb')}
@@ -337,28 +337,28 @@ export default function OnboardingPage() {
                       rdbDocument && "border-primary bg-accent/30"
                     )}
                   >
-                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                    <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 lg:gap-6">
                       <div className={cn(
-                        "w-16 h-16 rounded-2xl flex items-center justify-center transition-all",
+                        "w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all",
                         rdbDocument ? "bg-primary" : "bg-accent group-hover:bg-primary/10"
                       )}>
                         {rdbDocument ? (
-                          <CheckCircle2 className="w-8 h-8 text-primary-foreground" />
+                          <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary-foreground" />
                         ) : (
-                          <Upload className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
+                          <Upload className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary group-hover:scale-110 transition-transform" />
                         )}
                       </div>
                       
-                      <div className="flex-1 text-center md:text-left">
-                        <h3 className="text-lg font-semibold text-foreground">
+                      <div className="flex-1 text-center sm:text-left">
+                        <h3 className="text-base sm:text-lg font-semibold text-foreground">
                           RDB Certificate of Incorporation
                         </h3>
                         {rdbDocument ? (
-                          <p className="text-sm text-primary font-medium mt-1">
+                          <p className="text-xs sm:text-sm text-primary font-medium mt-1">
                             {rdbDocument.name}
                           </p>
                         ) : (
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                             PDF format, max 5MB
                           </p>
                         )}
@@ -368,9 +368,10 @@ export default function OnboardingPage() {
                         <Button
                           type="button"
                           variant="outline"
-                          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                          size="sm"
+                          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-xs sm:text-sm"
                         >
-                          <Upload className="w-4 h-4 mr-2" />
+                          <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                           Upload
                         </Button>
                       )}
@@ -400,28 +401,28 @@ export default function OnboardingPage() {
                       remaDocument && "border-primary bg-accent/30"
                     )}
                   >
-                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                    <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 lg:gap-6">
                       <div className={cn(
-                        "w-16 h-16 rounded-2xl flex items-center justify-center transition-all",
+                        "w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all",
                         remaDocument ? "bg-primary" : "bg-accent group-hover:bg-primary/10"
                       )}>
                         {remaDocument ? (
-                          <CheckCircle2 className="w-8 h-8 text-primary-foreground" />
+                          <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary-foreground" />
                         ) : (
-                          <Upload className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
+                          <Upload className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary group-hover:scale-110 transition-transform" />
                         )}
                       </div>
                       
-                      <div className="flex-1 text-center md:text-left">
-                        <h3 className="text-lg font-semibold text-foreground">
+                      <div className="flex-1 text-center sm:text-left">
+                        <h3 className="text-base sm:text-lg font-semibold text-foreground">
                           REMA Environmental License
                         </h3>
                         {remaDocument ? (
-                          <p className="text-sm text-primary font-medium mt-1">
+                          <p className="text-xs sm:text-sm text-primary font-medium mt-1">
                             {remaDocument.name}
                           </p>
                         ) : (
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                             PDF format, max 5MB
                           </p>
                         )}
@@ -431,9 +432,10 @@ export default function OnboardingPage() {
                         <Button
                           type="button"
                           variant="outline"
-                          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                          size="sm"
+                          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-xs sm:text-sm"
                         >
-                          <Upload className="w-4 h-4 mr-2" />
+                          <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                           Upload
                         </Button>
                       )}
@@ -456,11 +458,11 @@ export default function OnboardingPage() {
                   </div>
 
                   {/* Tips */}
-                  <div className="p-4 rounded-xl bg-accent/50 border border-primary/20">
-                    <div className="flex items-start gap-3">
-                      <Sparkles className="w-5 h-5 text-primary mt-0.5" />
+                  <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-accent/50 border border-primary/20">
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-foreground">Quick Tips</p>
+                        <p className="text-xs sm:text-sm font-medium text-foreground">Quick Tips</p>
                         <ul className="text-xs text-muted-foreground mt-1 space-y-1">
                           <li>• Ensure documents are clearly legible</li>
                           <li>• Documents should be current and not expired</li>
@@ -472,32 +474,34 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex justify-between mt-10 pt-6 border-t border-border">
+                <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0 mt-8 sm:mt-10 pt-4 sm:pt-6 border-t border-border">
                   <Button
                     type="button"
                     variant="ghost"
-                    size="lg"
+                    size="default"
                     onClick={() => setStep(1)}
-                    className="text-muted-foreground hover:text-foreground"
+                    className="text-muted-foreground hover:text-foreground order-2 sm:order-1"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back
                   </Button>
 
                   <Button
-                    size="lg"
+                    size="default"
                     onClick={onFinalSubmit}
                     disabled={!rdbDocument || !remaDocument || isUploading}
-                    className="bg-gradient-primary text-primary-foreground shadow-glow hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none px-8"
+                    className="bg-gradient-primary text-primary-foreground shadow-glow hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none px-6 sm:px-8 order-1 sm:order-2"
                   >
                     {isUploading ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Submitting...
+                        <span className="hidden sm:inline">Submitting...</span>
+                        <span className="sm:hidden">Submitting</span>
                       </>
                     ) : (
                       <>
-                        Complete Registration
+                        <span className="hidden sm:inline">Complete Registration</span>
+                        <span className="sm:hidden">Complete</span>
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </>
                     )}
@@ -511,37 +515,37 @@ export default function OnboardingPage() {
           {step === 3 && (
             <div className="animate-fade-in-up text-center">
               {/* Success Animation */}
-              <div className="relative mb-8">
-                <div className="w-32 h-32 rounded-full bg-accent mx-auto flex items-center justify-center animate-scale-in">
-                  <div className="w-24 h-24 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow animate-pulse-soft">
-                    <Check className="w-12 h-12 text-primary-green" />
+              <div className="relative mb-6 sm:mb-8">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-accent mx-auto flex items-center justify-center animate-scale-in">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow animate-pulse-soft">
+                    <Check className="w-8 h-8 sm:w-12 sm:h-12 text-primary-green" />
                   </div>
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-40 h-40 rounded-full border-4 border-primary/20 animate-ping" style={{ animationDuration: '2s' }} />
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-primary/20 animate-ping" style={{ animationDuration: '2s' }} />
                 </div>
               </div>
 
               {/* Success Message */}
-              <div className="glass-card p-10 md:p-12 max-w-lg mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <div className="glass-card p-6 sm:p-8 lg:p-12 max-w-lg mx-auto">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4">
                   Application Submitted!
                 </h2>
-                <p className="text-lg text-muted-foreground mb-6">
+                <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6">
                   Thank you for registering with Greenex. Your application has been submitted successfully.
                 </p>
 
-                <div className="p-4 rounded-xl bg-accent border border-primary/20 mb-8">
-                  <p className="text-base font-medium text-foreground">
+                <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-accent border border-primary/20 mb-6 sm:mb-8">
+                  <p className="text-sm sm:text-base font-medium text-foreground">
                     We'll review your documents and get back to you within
                   </p>
-                  <p className="text-2xl font-bold text-primary mt-2">
+                  <p className="text-xl sm:text-2xl font-bold text-primary mt-2">
                     3–5 Business Days
                   </p>
                 </div>
 
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
+                <div className="space-y-3 sm:space-y-4">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Already have an account?{' '}
                     <a href="/signin" className="text-primary font-semibold hover:underline">
                       Sign in
@@ -550,6 +554,7 @@ export default function OnboardingPage() {
 
                   <Button
                     variant="ghost"
+                    size="sm"
                     onClick={() => router.push('/')}
                     className="text-primary hover:text-primary/80"
                   >
@@ -558,7 +563,7 @@ export default function OnboardingPage() {
                   </Button>
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-8 animate-pulse-soft">
+                <p className="text-xs text-muted-foreground mt-6 sm:mt-8 animate-pulse-soft">
                   Redirecting to homepage in 8 seconds...
                 </p>
               </div>
