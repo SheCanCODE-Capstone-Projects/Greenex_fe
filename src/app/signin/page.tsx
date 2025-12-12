@@ -72,10 +72,12 @@ export default function Login() {
             />
             <span className="text-gray-700 font-medium text-sm sm:text-base">Sign in with Google</span>
           </button>
-          <p className="text-xs sm:text-sm text-center mt-4 sm:mt-6 text-gray-600">
-            Don&apos;t have an account?
+
+          {/* Sign Up Link */}
+          <p className="text-sm text-center mt-6 text-gray-600">
+            Do not have an account?
             <a 
-              href="#" 
+              href="/signup" 
               className="ml-1 text-blue-600 hover:text-green-800 font-medium hover:underline"
             >
               Sign Up
