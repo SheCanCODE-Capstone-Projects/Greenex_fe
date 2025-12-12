@@ -173,7 +173,7 @@ export default function SignupPage() {
 
           <p className="text-center mt-4 text-sm">
             Have an account?{" "}
-            <a href="/login" className="text-blue-600 font-medium">
+            <a href="/signin" className="text-blue-600 font-medium">
               Sign In
             </a>
           </p>
