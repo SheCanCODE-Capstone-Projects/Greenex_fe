@@ -4,8 +4,6 @@ import { useRouter } from 'next/navigation';
 import { Building2, FileText, CheckCircle2, Truck, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
-
-// Import reusable components
 import { StepIndicator } from '@/components/onboarding/StepIndicator';
 import { CompanyInfoStep, CompanyFormData } from '@/components/onboarding/CompanyInfoStep';
 import { DocumentStep } from '@/components/onboarding/DocumentStep';
@@ -47,7 +45,6 @@ export default function OnboardingPage() {
 
     setIsSubmitting(true);
     try {
-      // Use the existing API route
       const formData = new FormData();
       formData.append('companyName', companyData.companyName);
       formData.append('phoneNumber', companyData.phoneNumber);
@@ -106,7 +103,7 @@ export default function OnboardingPage() {
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-4">
-        <div className="w-full max-w-5xl">
+        <div className="w-full max-w-[90rem]">
           {/* Logo Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-4 mb-4">
@@ -129,7 +126,7 @@ export default function OnboardingPage() {
 
           {/* Step Content */}
           {step !== 3 ? (
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Side - Visual Content */}
               <OnboardingVisual step={step} />
               

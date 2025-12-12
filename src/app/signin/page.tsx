@@ -18,7 +18,7 @@ export default function Login() {
             <input
               type="email"
               placeholder="your email"
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent"
             />
           </div>
           <div className="mb-4">
@@ -28,14 +28,14 @@ export default function Login() {
             <input
               type="password"
               placeholder="your password"
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent"
             />
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
             <label className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
               <input 
                 type="checkbox" 
-                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-primary-green"
               />
               Remember for 30 days
             </label>
@@ -49,7 +49,7 @@ export default function Login() {
 
           {/* Login Button */}
           <button
-            className="w-full py-2 sm:py-3 text-sm sm:text-base rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="w-full py-2 sm:py-3 text-sm sm:text-base rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-primary-green focus:ring-offset-2"
           >
             Login
           </button>
