@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { Bell, User, Settings, Mail, LogOut, LayoutDashboard, Route, Home, MapPin, CreditCard, MessageSquare, Truck } from "lucide-react";
 
 interface Truck {
@@ -45,6 +46,7 @@ interface Stats {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [animateCharts, setAnimateCharts] = useState(false);
@@ -135,7 +137,7 @@ export default function Dashboard() {
             { label: 'Dashboard', icon: LayoutDashboard },
             { label: 'Routes', icon: Route },
             { label: 'Households', icon: Home },
-            { label: 'Zones', icon: MapPin },
+            { label: 'Zones', icon: MapPin, route: '/dashboard/zones' },
             { label: 'Payments', icon: CreditCard },
             { label: 'Complaints', icon: MessageSquare },
             { label: 'Pickup Session', icon: Truck }
@@ -145,7 +147,13 @@ export default function Dashboard() {
               label={item.label}
               icon={item.icon}
               active={activeTab === item.label}
-              onClick={() => setActiveTab(item.label)}
+              onClick={() => {
+                if (item.route) {
+                  router.push(item.route);
+                } else {
+                  setActiveTab(item.label);
+                }
+              }}
             />
           ))}
         </ul>
