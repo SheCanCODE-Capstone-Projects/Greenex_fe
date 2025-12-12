@@ -136,7 +136,7 @@ export default function Dashboard() {
           {[
             { label: 'Dashboard', icon: LayoutDashboard },
             { label: 'Routes', icon: Route },
-            { label: 'Households', icon: Home },
+            { label: 'Households', icon: Home, route: '/dashboard/households' },
             { label: 'Zones', icon: MapPin, route: '/dashboard/zones' },
             { label: 'Payments', icon: CreditCard },
             { label: 'Complaints', icon: MessageSquare },
