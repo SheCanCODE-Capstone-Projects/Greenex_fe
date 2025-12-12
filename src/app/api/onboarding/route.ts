@@ -6,28 +6,23 @@ export async function POST(request: NextRequest) {
     
     const companyData = {
       companyName: formData.get('companyName'),
-      tinVat: formData.get('tinVat'),
-      district: formData.get('district'),
-      registrationDate: formData.get('registrationDate'),
-      employees: formData.get('employees'),
-      contactPerson: formData.get('contactPerson'),
+      phoneNumber: formData.get('phoneNumber'),
+      sectors: JSON.parse(formData.get('sectors') as string || '[]'),
     };
 
     const files = {
+      kigaliContract: formData.get('kigaliContract') as File,
       rdbCertificate: formData.get('rdbCertificate') as File,
       remaCertificate: formData.get('remaCertificate') as File,
-      taxCertificate: formData.get('taxCertificate') as File,
     };
 
-    // TODO: Upload files to storage (S3, Cloudinary, etc.)
-    // TODO: Save company data to database
-    // TODO: Send confirmation email
+
 
     console.log('Company Data:', companyData);
     console.log('Files:', {
+      kigali: files.kigaliContract?.name,
       rdb: files.rdbCertificate?.name,
       rema: files.remaCertificate?.name,
-      tax: files.taxCertificate?.name,
     });
 
     // Simulate processing
