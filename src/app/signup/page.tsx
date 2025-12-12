@@ -42,7 +42,7 @@ export default function SignupPage() {
           {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
 
           
-          <label className="text-sm font-medium">FullName</label>
+          <label className="text-xs sm:text-sm font-medium">FullName</label>
           <input
             type="text"
             placeholder="Enter your name"
@@ -78,7 +78,7 @@ export default function SignupPage() {
           <select
             value={userType}
             onChange={(e) => setUserType(e.target.value)}
-            className="w-full mt-1 mb-4 p-3 border rounded-lg bg-white/60"
+            className="w-full mt-1 mb-3 sm:mb-4 p-2 sm:p-3 text-sm sm:text-base border rounded-lg bg-white/60"
           >
             <option value="citizen">Household</option>
             <option value="company">Company</option>
@@ -152,19 +152,19 @@ export default function SignupPage() {
 
           {userType !== "company" && (
             <>
-              <div className="flex items-center my-6">
+              <div className="flex items-center my-4 sm:my-6">
                 <div className="flex-1 border-t"></div>
-                <span className="mx-2 text-sm text-gray-600">OR</span>
+                <span className="mx-2 text-xs sm:text-sm text-gray-600">OR</span>
                 <div className="flex-1 border-t"></div>
               </div>
 
               <button className="w-full flex items-center justify-center border py-3 rounded-lg hover:bg-gray-100">
                 <Image
                   src="/image.png"
-                  width={20}
-                  height={20}
+                  width={16}
+                  height={16}
                   alt="Google"
-                  className="mr-3"
+                  className="mr-2 sm:mr-3 sm:w-5 sm:h-5"
                 />
                 Sign in with Google
               </button>
@@ -173,7 +173,7 @@ export default function SignupPage() {
 
           <p className="text-center mt-4 text-sm">
             Have an account?{" "}
-            <a href="/login" className="text-blue-600 font-medium">
+            <a href="/signin" className="text-blue-600 font-medium">
               Sign In
             </a>
           </p>

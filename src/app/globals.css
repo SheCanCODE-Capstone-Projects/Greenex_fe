@@ -3,8 +3,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --primary-green: #18e322;
-  --secondary-green: #09eb72;
+  --primary-green: #388E3C;
+  --secondary-green: #25B86A;
   --light-bg: #D6E7D7;
   --dark-bg: #0e1627;
   --dark-overlay: rgba(8, 8, 8, 0.8);

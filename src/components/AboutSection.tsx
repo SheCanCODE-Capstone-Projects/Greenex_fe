@@ -1,8 +1,35 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Truck, Users, MapPin, FileText } from "lucide-react";
 import Link from "next/link";
+import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
+
+// Animated Counter Component
+const AnimatedCounter = ({ value, duration = 2 }: { value: number; duration?: number }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, { duration: duration * 1000, bounce: 0 });
+  const displayed = useTransform(springValue, (latest) => Math.round(latest));
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (isInView) {
+      motionValue.set(value);
+    }
+  }, [motionValue, isInView, value]);
+
+  useEffect(() => {
+    return displayed.onChange(setDisplayValue);
+  }, [displayed]);
+
+  return (
+    <span ref={ref} className="text-3xl font-bold text-gray-800 dark:text-white">
+      {displayValue.toLocaleString()}+
+    </span>
+  );
+};
 
 const AboutSection: React.FC = () => {
   const logos = [
@@ -19,13 +46,12 @@ const AboutSection: React.FC = () => {
   return (
     <section
       id="about"
-      className="min-h-screen w-full bg-light-bg dark:bg-gray-900 py-20 px-4 md:px-10"
+      className="min-h-screen w-full bg-light-bg dark:bg-gray-900 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-10"
     >
       <div className="max-w-7xl mx-auto">
-        {/* ===================== IMAGE GRID + TEXT ===================== */}
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12 lg:mb-20">
           {/* LEFT SIDE — 3 Image Group */}
-          <div className="relative w-full">
+          <div className="relative w-full order-2 lg:order-1">
             {/*  Greenex FLOATING CIRCLE */}
             <div
               className="
@@ -34,15 +60,12 @@ const AboutSection: React.FC = () => {
     z-30 rounded-full bg-light-bg shadow-xl 
     w-24 h-24 flex items-center justify-center
     cursor-pointer text-foreground font-semibold text-lg
-    transition-all duration-300 hover:scale-110
+    transition-all duration-300 hover:scale-110  dark:bg-gray-800
   "
             >
               GreenEx
             </div>
-
-            {/* IMAGES GRID */}
             <div className="grid grid-cols-3 gap-4">
-              {/* LEFT — 2 stacked images */}
               <div className="col-span-2 flex flex-col gap-4">
                 <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px]">
                   <img
@@ -73,11 +96,10 @@ const AboutSection: React.FC = () => {
           </div>
 
           {/* RIGHT SIDE TEXT */}
-          <div className="space-y-6 animate-fade-in-right pl-40">
+          <div className="space-y-6 animate-fade-in-right order-1 lg:order-2 pl-40">
             <h2 className="text-4xl md:text-5xl font-bold text-primary-green">
               About Us
             </h2>
-
             <p className="text-gray-700 dark:text-foreground text-lg leading-relaxed">
               Greenex is a digital platform created to transform how waste is collected,
               tracked, and managed across Rwanda. It bridges the gap between
@@ -101,11 +123,11 @@ const AboutSection: React.FC = () => {
         </div>
 
         {/* ===================== MISSION SECTION ===================== */}
-        <div className="bg-primary-green rounded-3xl p-10 md:p-16 text-center mb-20 animate-scale-in shadow-2xl">
-          <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">
+        <div className="bg-primary-green rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-16 text-center mb-12 lg:mb-20 animate-scale-in shadow-2xl">
+          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
             Our Mission
           </h3>
-          <p className="text-white text-lg md:text-xl leading-relaxed max-w-4xl mx-auto mb-8">
+          <p className="text-white text-base sm:text-lg lg:text-xl leading-relaxed max-w-4xl mx-auto mb-6 sm:mb-8 px-2">
             GreenEx is committed to revolutionizing waste collection in
             Rwanda&apos;s technology. We empower citizens, companies, and
             private garbage collectors for a cleaner, healthier, and more
@@ -113,71 +135,196 @@ const AboutSection: React.FC = () => {
             management brings vibrant and eco-friendly communities.
           </p>
 
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full backdrop-blur-sm mb-4">
-            <Truck className="text-white" size={48} />
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full backdrop-blur-sm mb-4">
+            <Truck className="text-white" size={32} />
           </div>
 
-          <p className="text-white/90 text-sm font-medium">
+          <p className="text-white/90 text-xs sm:text-sm font-medium">
             GreenEx - for sustainable Rwanda
           </p>
         </div>
 
        {/* ===================== STATS SECTION ===================== */}
-<div className=" py-20 px-6 md:px-16">
-  <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<motion.div 
+  className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-16"
+  initial={{ opacity: 0, y: 50 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, ease: "easeOut" }}
+  viewport={{ once: true }}
+>
+  <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
     {/* LEFT SIDE TEXT */}
-    <div>
-      <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 leading-snug dark:text-foreground">
-        Helping a local <span className="text-primary-green">village</span><br />
-        keeping it&apos;s <span className="text-primary-green">cleaness</span>
+    <motion.div
+      initial={{ opacity: 0, x: -50 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4 leading-snug dark:text-foreground">
+        Helping a local <span className="text-primary-green">village</span><br className="hidden sm:block" />
+        <span className="sm:hidden"> </span>keeping it&apos;s <span className="text-primary-green">cleaness</span>
       </h3>
-      <p className="text-gray-600 dark:text-gray-400">
+      <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
         We reached here with our hard work and dedication
       </p>
-    </div>
+    </motion.div>
 
     {/* RIGHT SIDE 2x2 GRID */}
-    <div className="grid grid-cols-2 gap-10">
+    <motion.div 
+      className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-10"
+      initial={{ opacity: 0, x: 50 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+      viewport={{ once: true }}
+    >
 
       {/* Item 1 */}
-      <div className="text-center">
-        <Users className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800 dark:text-white">30,000+</p>
-        <p className="text-gray-600 text-md dark:text-gray-400">Members</p>
-      </div>
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ 
+          type: "spring",
+          stiffness: 100,
+          damping: 10,
+          delay: 0.6
+        }}
+        viewport={{ once: true }}
+        whileHover={{ 
+          scale: 1.1,
+          transition: { type: "spring", stiffness: 400, damping: 10 }
+        }}
+      >
+        <motion.div
+          animate={{ 
+            rotate: [0, 10, -10, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ 
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 3
+          }}
+        >
+          <Users className="text-primary-green mb-2 mx-auto" size={36} />
+        </motion.div>
+        <AnimatedCounter value={30000} duration={2.5} />
+        <p className="text-gray-600 text-xs sm:text-sm lg:text-base dark:text-gray-400">Members</p>
+      </motion.div>
 
       {/* Item 2 */}
-      <div className="text-center">
-        <MapPin className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800 dark:text-white">10+</p>
-        <p className="text-gray-600 text-md dark:text-gray-400">Partnerships</p>
-      </div>
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ 
+          type: "spring",
+          stiffness: 100,
+          damping: 10,
+          delay: 0.8
+        }}
+        viewport={{ once: true }}
+        whileHover={{ 
+          scale: 1.1,
+          transition: { type: "spring", stiffness: 400, damping: 10 }
+        }}
+      >
+        <motion.div
+          animate={{ 
+            y: [0, -5, 0],
+            rotate: [0, 5, -5, 0]
+          }}
+          transition={{ 
+            duration: 2.5,
+            repeat: Infinity,
+            repeatDelay: 2
+          }}
+        >
+          <MapPin className="text-primary-green mb-2 mx-auto" size={36} />
+        </motion.div>
+        <AnimatedCounter value={10} duration={1.5} />
+        <p className="text-gray-600 text-xs sm:text-sm lg:text-base dark:text-gray-400">Partnerships</p>
+      </motion.div>
 
       {/* Item 3 */}
-      <div className="text-center">
-        <Users className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800 dark:text-white">13+</p>
-        <p className="text-gray-600 text-md dark:text-gray-400">Waste collectors companies</p>
-      </div>
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ 
+          type: "spring",
+          stiffness: 100,
+          damping: 10,
+          delay: 1.0
+        }}
+        viewport={{ once: true }}
+        whileHover={{ 
+          scale: 1.1,
+          transition: { type: "spring", stiffness: 400, damping: 10 }
+        }}
+      >
+        <motion.div
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [0, 15, -15, 0]
+          }}
+          transition={{ 
+            duration: 3,
+            repeat: Infinity,
+            repeatDelay: 4
+          }}
+        >
+          <Users className="text-primary-green mb-2 mx-auto" size={36} />
+        </motion.div>
+        <AnimatedCounter value={13} duration={1.8} />
+        <p className="text-gray-600 text-xs sm:text-sm lg:text-base dark:text-gray-400">Waste collectors companies</p>
+      </motion.div>
 
       {/* Item 4 */}
-      <div className="text-center">
-        <FileText className="text-primary-green mb-2 mx-auto" size={36} />
-        <p className="text-3xl font-bold text-gray-800 dark:text-white">20+</p>
-        <p className="text-gray-600 text-md dark:text-gray-400">Districts</p>
-      </div>
-    </div>
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ 
+          type: "spring",
+          stiffness: 100,
+          damping: 10,
+          delay: 1.2
+        }}
+        viewport={{ once: true }}
+        whileHover={{ 
+          scale: 1.1,
+          transition: { type: "spring", stiffness: 400, damping: 10 }
+        }}
+      >
+        <motion.div
+          animate={{ 
+            rotate: [0, -10, 10, 0],
+            y: [0, -3, 0]
+          }}
+          transition={{ 
+            duration: 2.2,
+            repeat: Infinity,
+            repeatDelay: 3.5
+          }}
+        >
+          <FileText className="text-primary-green mb-2 mx-auto" size={36} />
+        </motion.div>
+        <AnimatedCounter value={20} duration={2} />
+        <p className="text-gray-600 text-xs sm:text-sm lg:text-base dark:text-gray-400">Districts</p>
+      </motion.div>
+    </motion.div>
 
   </div>
-</div>
+</motion.div>
        {/* ===================== PARTNERS SECTION ===================== */}
-<div className="pt-16">
-  <h3 className="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-white mb-4">
+<div className="pt-12 sm:pt-16">
+  <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-800 dark:text-white mb-4">
     Our Partners
   </h3>
-
-  <p className="text-center text-gray-600 dark:text-gray-400 text-lg mb-12">
+<div className="w-16 sm:w-20 lg:w-24 h-1 bg-gray-800 dark:bg-white mx-auto mb-6 sm:mb-8"></div>
+  <p className="text-center text-gray-600 dark:text-gray-400 text-base sm:text-lg mb-8 sm:mb-12 px-4">
     We have been working with some Fortune 5+ organisations
   </p>
 
@@ -189,7 +336,7 @@ const AboutSection: React.FC = () => {
         <img
           key={index}
           src={logo}
-          className="mx-10 h-20 w-auto object-contain"
+          className="mx-4 sm:mx-6 lg:mx-10 h-12 sm:h-16 lg:h-20 w-auto object-contain"
           alt="partner logo"
         />
       ))}
