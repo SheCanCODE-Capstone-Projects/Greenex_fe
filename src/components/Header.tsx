@@ -1,8 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Truck, Moon, Sun} from "lucide-react";
+import { Truck, Moon, Sun, Menu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
   activeSection: string;
@@ -163,6 +165,34 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
+            {/* Navigation Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <Menu size={20} />
+                  </Button>
+                </motion.div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => router.push('/onboarding')}>
+                  Onboarding
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/wasteCompanyDashboard')}>
+                  Waste Company Dashboard
+                </DropdownMenuItem>
+                {/* any other page made meanwhile should be added here   */}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <motion.button
               onClick={onThemeToggle}
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -266,6 +296,26 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
                 whileTap={{ scale: 0.95 }}
               >
                 Contact Us
+              </motion.button>
+
+              {/* Navigation Links */}
+              <motion.button 
+                onClick={() => { router.push('/onboarding'); setMenuOpen(false); }}
+                className="hover:text-primary-green dark:hover:text-secondary-green transition-colors duration-200 py-2 w-full text-center"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05, x: 10 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Onboarding
+              </motion.button>
+              <motion.button 
+                onClick={() => { router.push('/wasteCompanyDashboard'); setMenuOpen(false); }}
+                className="hover:text-primary-green dark:hover:text-secondary-green transition-colors duration-200 py-2 w-full text-center"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05, x: 10 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Waste Company Dashboard
               </motion.button>
 
               <motion.button 

@@ -79,7 +79,7 @@ export function FileUploadModal({
           <div
             className={cn(
               "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
-              dragActive ? "border-green-500 bg-green-50" : "border-gray-300"
+              dragActive ? "border-secondary-green bg-green-50" : "border-gray-300"
             )}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
