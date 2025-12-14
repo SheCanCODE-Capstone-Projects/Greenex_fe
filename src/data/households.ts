@@ -1,125 +1,72 @@
 export interface Household {
   id: string;
+  waste_company_id: string;
   zone_id: string;
-  household_code: string;
-  head_of_household: string;
-  phone: string;
-  house_type: 'Apartment' | 'Bungalow' | 'Duplex' | 'Other';
-  number_of_people: number;
-  address_description: string;
-}
-
-export interface Zone {
-  id: string;
-  sector: string;
-  cell: string;
-  village: string;
   code: string;
-  description: string;
+  address: string;
+  houseType: 'resident' | 'restaurant' | 'vila' | 'hotel' | 'school' | 'company' | 'industry' | 'other';
+  otherHouseType?: string;
+  status: 'active' | 'inactive';
 }
 
-export const dummyZones: Zone[] = [
-  {
-    id: "1",
-    sector: "Kicukiro",
-    cell: "Gahanga",
-    village: "Kabuga",
-    code: "KIC-GAH-001",
-    description: "Residential area with mixed commercial activities"
-  },
-  {
-    id: "2",
-    sector: "Gasabo",
-    cell: "Remera",
-    village: "Kisimenti",
-    code: "GAS-REM-002",
-    description: "Urban commercial district with high-rise buildings"
-  },
-  {
-    id: "3",
-    sector: "Nyarugenge",
-    cell: "Nyamirambo",
-    village: "Biryogo",
-    code: "NYA-NYA-003",
-    description: "Dense residential area with local markets"
-  },
-  {
-    id: "4",
-    sector: "Kicukiro",
-    cell: "Niboye",
-    village: "Gatenga",
-    code: "KIC-NIB-004",
-    description: "Suburban residential zone with schools"
-  },
-  {
-    id: "5",
-    sector: "Gasabo",
-    cell: "Kinyinya",
-    village: "Kagugu",
-    code: "GAS-KIN-005",
-    description: "Mixed residential and commercial development"
-  }
-];
+
 
 export const dummyHouseholds: Household[] = [
   {
     id: "1",
+    waste_company_id: "comp_001",
     zone_id: "1",
-    household_code: "HH-KIC-001",
-    head_of_household: "Jean Baptiste Uwimana",
-    phone: "+250788123456",
-    house_type: "Bungalow",
-    number_of_people: 5,
-    address_description: "Near Kabuga market, blue gate house"
+    code: "HH-KIC-001",
+    address: "Near Kabuga market, blue gate house",
+    houseType: "resident",
+    status: "active"
   },
   {
     id: "2",
+    waste_company_id: "comp_001",
     zone_id: "2",
-    household_code: "HH-GAS-002",
-    head_of_household: "Marie Claire Mukamana",
-    phone: "+250789234567",
-    house_type: "Apartment",
-    number_of_people: 3,
-    address_description: "Kisimenti Heights, Block A, Apt 205"
+    code: "HH-GAS-002",
+    address: "Kisimenti Heights, Block A, Apt 205",
+    houseType: "resident",
+    status: "active"
   },
   {
     id: "3",
+    waste_company_id: "comp_001",
     zone_id: "3",
-    household_code: "HH-NYA-003",
-    head_of_household: "Paul Nkurunziza",
-    phone: "+250787345678",
-    house_type: "Duplex",
-    number_of_people: 7,
-    address_description: "Biryogo sector, near mosque"
+    code: "HH-NYA-003",
+    address: "Biryogo sector, near mosque",
+    houseType: "restaurant",
+    status: "active"
   },
   {
     id: "4",
+    waste_company_id: "comp_001",
     zone_id: "1",
-    household_code: "HH-KIC-004",
-    head_of_household: "Grace Uwimana",
-    phone: "+250786456789",
-    house_type: "Bungalow",
-    number_of_people: 4,
-    address_description: "Gatenga cell, opposite primary school"
+    code: "HH-KIC-004",
+    address: "Gatenga cell, opposite primary school",
+    houseType: "school",
+    status: "inactive"
   },
   {
     id: "5",
+    waste_company_id: "comp_001",
     zone_id: "4",
-    household_code: "HH-KIC-005",
-    head_of_household: "Emmanuel Habimana",
-    phone: "+250785567890",
-    house_type: "Other",
-    number_of_people: 6,
-    address_description: "Traditional house near health center"
-  },
-  {
-    id: "6",
-    zone_id: "5",
-    household_code: "HH-GAS-006",
-    head_of_household: "Immaculee Nyirahabimana",
-    phone: "+250784678901",
-    house_type: "Apartment",
-    number_of_people: 2,
-    address_description: "Kagugu modern complex, Unit 12"
+    code: "HH-KIC-005",
+    address: "Traditional house near health center",
+    houseType: "other",
+    otherHouseType: "Health Center",
+    status: "active"
   }
+];
+
+export const houseTypes = [
+  { value: 'resident', label: 'Resident' },
+  { value: 'restaurant', label: 'Restaurant' },
+  { value: 'vila', label: 'Vila' },
+  { value: 'hotel', label: 'Hotel' },
+  { value: 'school', label: 'School' },
+  { value: 'company', label: 'Company' },
+  { value: 'industry', label: 'Industry' },
+  { value: 'other', label: 'Other' }
 ];

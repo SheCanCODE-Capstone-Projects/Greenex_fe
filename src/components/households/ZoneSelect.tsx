@@ -1,5 +1,5 @@
 'use client'
-import { Zone } from '@/data/households';
+import { Zone } from '@/data/zones';
 
 interface ZoneSelectProps {
   zones: Zone[];
@@ -19,7 +19,7 @@ export function ZoneSelect({ zones, value, onChange, placeholder = "Select a zon
       <option value="">{placeholder}</option>
       {zones.map((zone) => (
         <option key={zone.id} value={zone.id}>
-          {zone.sector} - {zone.cell} ({zone.code})
+          {zone.sectorName || zone.sector} - {zone.cellName || zone.cell} ({zone.code})
         </option>
       ))}
     </select>

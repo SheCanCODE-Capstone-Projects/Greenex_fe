@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Household, Zone, dummyHouseholds, dummyZones } from '@/data/households';
+import { Household, dummyHouseholds } from '@/data/households';
+import { Zone, dummyZones } from '@/data/zones';
 import { HouseholdTable } from '@/components/households/HouseholdTable';
 import { HouseholdDetailsModal } from '@/components/households/HouseholdDetailsModal';
 import { Button } from '@/components/ui/button';

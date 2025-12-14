@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HouseholdForm } from '@/components/households/HouseholdForm';
-import { dummyZones } from '@/data/households';
+import { dummyZones } from '@/data/zones';
 import { toast } from 'react-toastify';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 

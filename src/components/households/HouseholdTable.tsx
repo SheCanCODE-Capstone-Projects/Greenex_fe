@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react';
-import { Household, Zone } from '@/data/households';
+import { Household } from '@/data/households';
+import { Zone } from '@/data/zones';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ZoneSelect } from './ZoneSelect';
@@ -20,8 +21,8 @@ export function HouseholdTable({ households, zones, onView, onEdit, onDelete }: 
 
   const filteredHouseholds = households.filter(household => {
     const matchesSearch = 
-      household.household_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      household.head_of_household.toLowerCase().includes(searchTerm.toLowerCase());
+      (household.code || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (household.address || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesZone = selectedZone === '' || household.zone_id === selectedZone;
     
@@ -30,7 +31,7 @@ export function HouseholdTable({ households, zones, onView, onEdit, onDelete }: 
 
   const getZoneDisplay = (zoneId: string) => {
     const zone = zones.find(z => z.id === zoneId);
-    return zone ? `${zone.sector} - ${zone.cell}` : 'Unknown Zone';
+    return zone ? `${zone.sectorName || zone.sector} - ${zone.cellName || zone.cell}` : 'Unknown Zone';
   };
 
   return (
@@ -39,7 +40,7 @@ export function HouseholdTable({ households, zones, onView, onEdit, onDelete }: 
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
-            placeholder="Search by household code or head of household..."
+            placeholder="Search by code or address..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -57,24 +58,34 @@ export function HouseholdTable({ households, zones, onView, onEdit, onDelete }: 
         <table className="w-full">
           <thead>
             <tr className="border-b">
-              <th className="text-left py-3 px-4 font-medium">Household Code</th>
-              <th className="text-left py-3 px-4 font-medium">Head of Household</th>
-              <th className="text-left py-3 px-4 font-medium">Phone</th>
+              <th className="text-left py-3 px-4 font-medium">Code</th>
+              <th className="text-left py-3 px-4 font-medium">Address</th>
               <th className="text-left py-3 px-4 font-medium">Zone</th>
               <th className="text-left py-3 px-4 font-medium">House Type</th>
-              <th className="text-left py-3 px-4 font-medium">People</th>
+              <th className="text-left py-3 px-4 font-medium">Status</th>
               <th className="text-left py-3 px-4 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredHouseholds.map((household) => (
               <tr key={household.id} className="border-b hover:bg-gray-50">
-                <td className="py-3 px-4 font-medium">{household.household_code}</td>
-                <td className="py-3 px-4">{household.head_of_household}</td>
-                <td className="py-3 px-4">{household.phone}</td>
+                <td className="py-3 px-4 font-medium">{household.code}</td>
+                <td className="py-3 px-4 max-w-xs truncate">{household.address}</td>
                 <td className="py-3 px-4">{getZoneDisplay(household.zone_id)}</td>
-                <td className="py-3 px-4">{household.house_type}</td>
-                <td className="py-3 px-4">{household.number_of_people}</td>
+                <td className="py-3 px-4 capitalize">
+                  {household.houseType === 'other' && household.otherHouseType 
+                    ? household.otherHouseType 
+                    : household.houseType}
+                </td>
+                <td className="py-3 px-4">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    household.status === 'active' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {household.status}
+                  </span>
+                </td>
                 <td className="py-3 px-4">
                   <div className="flex gap-2">
                     <Button
