@@ -42,6 +42,20 @@ export default function HouseholdsPage() {
     setDeleteHouseholdId(id);
   };
 
+  const handleToggleStatus = (id: string) => {
+    const updatedHouseholds = households.map(household => 
+      household.id === id 
+        ? { ...household, status: household.status === 'active' ? 'inactive' : 'active' }
+        : household
+    );
+    setHouseholds(updatedHouseholds);
+    localStorage.setItem('households', JSON.stringify(updatedHouseholds));
+    
+    const household = households.find(h => h.id === id);
+    const newStatus = household?.status === 'active' ? 'inactive' : 'active';
+    toast.success(`Household ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`);
+  };
+
   const confirmDelete = () => {
     if (deleteHouseholdId) {
       const updatedHouseholds = households.filter(household => household.id !== deleteHouseholdId);
@@ -69,6 +83,7 @@ export default function HouseholdsPage() {
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onToggleStatus={handleToggleStatus}
         />
 
         <HouseholdDetailsModal

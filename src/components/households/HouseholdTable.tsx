@@ -5,7 +5,7 @@ import { Zone } from '@/data/zones';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ZoneSelect } from './ZoneSelect';
-import { Eye, Edit, Trash2, Search } from 'lucide-react';
+import { Eye, Edit, Trash2, Search, Power } from 'lucide-react';
 
 interface HouseholdTableProps {
   households: Household[];
@@ -13,9 +13,10 @@ interface HouseholdTableProps {
   onView: (household: Household) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onToggleStatus: (id: string) => void;
 }
 
-export function HouseholdTable({ households, zones, onView, onEdit, onDelete }: HouseholdTableProps) {
+export function HouseholdTable({ households, zones, onView, onEdit, onDelete, onToggleStatus }: HouseholdTableProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedZone, setSelectedZone] = useState('');
 
@@ -101,6 +102,15 @@ export function HouseholdTable({ households, zones, onView, onEdit, onDelete }: 
                       onClick={() => onEdit(household.id)}
                     >
                       <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onToggleStatus(household.id)}
+                      className={household.status === 'active' ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
+                      title={household.status === 'active' ? 'Deactivate' : 'Activate'}
+                    >
+                      <Power className="w-4 h-4" />
                     </Button>
                     <Button
                       size="sm"
