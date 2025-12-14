@@ -1,149 +1,171 @@
 "use client";
 
 import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
   CategoryScale,
   LinearScale,
   BarElement,
+  ArcElement,
+  Tooltip,
+  Legend as ChartLegend,
+  type ChartOptions,
 } from "chart.js";
-import { Doughnut, Bar } from "react-chartjs-2";
+import { LayoutDashboard, Home, MessageSquare, Menu, Bell } from "lucide-react";
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, ChartLegend);
 
-export default function GreenExDashboard() {
-  const donutData = {
-    labels: ["Organic", "Recyclable", "General Waste"],
-    datasets: [
-      {
-        data: [40, 35, 25],
-        backgroundColor: ["#68D391", "#38A169", "#22543D"],
-        borderWidth: 0,
-      },
-    ],
-  };
-  const donutOptions = {
-    plugins: {
-      legend: { display: false },
-    },
-    cutout: "70%",
-  };
+export default function SupperDashboard() {
   const barData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: ["Kicukiro", "Gasabo", "Nyarugenge", "Remera", "Kimisagara", "Gisozi"],
     datasets: [
       {
-        label: "Compliance %",
-        data: [95, 92, 90, 93, 96, 94],
-        backgroundColor: "#38A169",
-        borderRadius: 6,
+        label: "Complaints per District",
+        data: [45, 32, 58, 28, 67, 41],
+        backgroundColor: ["#2E7D32", "#00E676", "#2E7D32", "#00E676", "#2E7D32", "#00E676"],
+        borderRadius: 8,
       },
     ],
   };
-
-  const barOptions = {
+  const barOptions: ChartOptions<"bar"> = {
     responsive: true,
-    plugins: { legend: { display: false } },
-    scales: {
-      y: { beginAtZero: true, max: 100, ticks: { color: "#4A5568" } },
-      x: { ticks: { color: "#4A5568" } },
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom", 
+      },
     },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  const donutData = {
+    labels: ["Nyarugenge", "Gasabo", "Kicukiro"],
+    datasets: [
+      {
+        data: [100000, 80000, 60000],
+        backgroundColor: ["#2E7D32", "#1B5E20", "#4CAF50"],
+        borderWidth: 0,
+        cutout: "75%",
+      },
+    ],
+  };
+  const donutOptions: ChartOptions<"doughnut"> = {
+    plugins: { legend: { display: false } },
+    maintainAspectRatio: false,
   };
 
   return (
-    <div className="w-full min-h-screen bg-light-bg dark:bg-dark-bg">
+    <div className="flex min-h-screen bg-gray-50">
     
-      <header className="w-full bg-primary-green text-white p-4 flex gap-15 shadow-md">
-        <h1 className="text-2xl font-bold">GreenEx</h1>
-        <span className="text-lg font-semibold">Super Admin Portal</span>
-      </header>
+      <aside className="hidden md:flex w-64 bg-[#0B5D2E] text-white flex-col justify-between py-6">
+        <div className="space-y-6 px-4">
+          <div className="flex items-center gap-3 bg-[#0F7A3B] px-4 py-3 rounded-xl text-sm font-medium">
+            <LayoutDashboard size={18} />
+            Overview
+          </div>
 
-      <div className="flex w-full">
-        
-        <aside className="w-64 bg-primary-green text-white p-6 space-y-6 min-h-screen border-r border-gray-700">
-          <nav className="space-y-4 mt-10">
-            <a className="block bg-secondary-green py-2 px-4 rounded-lg font-semibold text-white">
-              Overview
-            </a>
-            <a className="block hover:text-secondary-green">User review</a>
-            <a className="block hover:text-secondary-green">Companies</a>
-        
+          <nav className="space-y-5 text-sm">
+            <SidebarItem icon={<LayoutDashboard size={18} />} label="Overview" />
+            <SidebarItem icon={<MessageSquare size={18} />} label="User Review" />
+            <SidebarItem icon={<Home size={18} />} label="Companies" />
           </nav>
-        </aside>
-        <main className="ml-64 w-full p-8 space-y-8">
-        
-          <section className="grid grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md">
-              <p className="text-gray-500">Total Households</p>
-              <h2 className="text-3xl font-bold mt-2">30,500</h2>
-            </div>
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md">
-              <p className="text-gray-500">Registered Companies</p>
-              <h2 className="text-3xl font-bold mt-2">45</h2>
-            </div>
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md">
-              <p className="text-gray-500">Active Routes</p>
-              <h2 className="text-3xl font-bold mt-2">310/325</h2>
-            </div>
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md">
-              <p className="text-gray-500">Monthly Revenue</p>
-              <h2 className="text-3xl font-bold mt-2">120M RWF</h2>
-            </div>
-          </section>
-          <section className="grid grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md flex flex-col items-center">
-              <h3 className="font-semibold mb-4">Householder (Last 6 Months)</h3>
-              <div className="w-56 h-56">
-                <Doughnut data={donutData} options={donutOptions} />
-              </div>
-              <div className="mt-4 flex flex-col space-y-1 w-full max-w-xs">
-                <p className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-green-400 rounded-full"></span> Organic
-                </p>
-                <p className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-green-600 rounded-full"></span> Recyclable
-                </p>
-                <p className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-green-800 rounded-full"></span> General Waste
-                </p>
-              </div>
-            </div>
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md">
-              <h3 className="font-semibold mb-4">Registed Company</h3>
-              <div className="w-full h-48">
-                <Bar data={barData} options={barOptions} />
-              </div>
-            </div>
-          </section>
-          <section className="grid grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md">
-              <h3 className="font-semibold mb-4">Real-Time Activity</h3>
-              <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                <li>New Company Registered: EcoClean Waste ltd</li>
-                <li>Route Optimization Scheduled Database Bech</li>
-                <li>High-Value Payment: Kigali Corp</li>
-              </ul>
-            </div>
+        </div>
 
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md">
-              <h3 className="font-semibold mb-4">Monitoring Summary</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-light-bg dark:bg-dark-bg p-4 rounded-xl text-center">
-                  <p>Non-Subscribed Household (2,500)</p>
-                </div>
-                <div className="bg-light-bg dark:bg-dark-bg p-4 rounded-xl text-center">
-                  <p>Unsolved Complaints (15/120)</p>
-                  <div className="w-full h-2 bg-gray-300 rounded-full mt-2">
-                    <div className="h-2 bg-primary-green rounded-full w-1/3"></div>
-                  </div>
-                </div>
+        <div className="px-6">
+          <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white text-sm">
+            N
+          </div>
+        </div>
+      </aside>
+      <main className="flex-1 p-4 md:p-6">
+        <header className="bg-white rounded-xl shadow px-4 md:px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Menu className="md:hidden" />
+            <div>
+              <h1 className="text-lg md:text-xl font-bold">Green Ex Manager</h1>
+              <p className="text-xs md:text-sm text-gray-500">Waste Collection Company</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Bell size={22} />
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
+                12
+              </span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
+              CM
+            </div>
+          </div>
+        </header>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          <StatCard title="Total Households" value="2,847" note="+12% this month" color="text-green-600" />
+          <StatCard title="Registered Campanies" value="156/160" note="98%" color="text-green-600" />
+          <StatCard title="Active Routes" value="85K RWF" />
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+          <Card className="p-4 rounded-2xl shadow h-[420px]">
+            <h2 className="font-semibold mb-4">District Complaints Overview</h2>
+            <div className="h-[330px]">
+              <Bar data={barData} options={barOptions} />
+            </div>
+          </Card>
+
+          <Card className="p-4 rounded-2xl shadow h-[420px]">
+            <h2 className="font-semibold mb-4">Monthly Revenue Distribution</h2>
+            <div className="relative h-[260px] flex items-center justify-center">
+              <Doughnut data={donutData} options={donutOptions} />
+              <div className="absolute text-center">
+                <p className="text-xl font-bold">85K</p>
+                <p className="text-sm text-gray-500">RWF</p>
               </div>
             </div>
-          </section>
-        </main>
+            <div className="mt-4 space-y-2 text-sm">
+              <RevenueLegend color="#2E7D32" label="Nyarugenge" value="100000 rwf" />
+              <RevenueLegend color="#1B5E20" label="Gasabo" value="80000 rwf" />
+              <RevenueLegend color="#4CAF50" label="Kicukiro" value="60000 rwf" />
+            </div>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
+}
+function SidebarItem({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <div className="flex items-center gap-3 hover:text-green-300 cursor-pointer">
+      {icon}
+      <span>{label}</span>
+    </div>
+  );
+}
+function StatCard({ title, value, note, color }: { title: string; value: string; note?: string; color?: string }) {
+  return (
+    <Card className="rounded-2xl shadow">
+      <CardContent className="p-4">
+        <p className="text-sm text-gray-500">{title}</p>
+        <h2 className="text-2xl font-bold">{value}</h2>
+        {note && <p className={`text-sm ${color}`}>{note}</p>}
+      </CardContent>
+    </Card>
+  );
+}
+function RevenueLegend({ color, label, value }: { color: string; label: string; value: string }) {
+  return (
+    <div className="flex justify-between items-center">
+      <div className="flex items-center gap-2">
+        <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: color }} />
+        <span>{label}</span>
       </div>
+      <span>{value}</span>
     </div>
   );
 }
