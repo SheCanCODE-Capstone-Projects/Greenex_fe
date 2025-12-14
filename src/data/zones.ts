@@ -1,8 +1,13 @@
 export interface Zone {
   id: string;
+  district: string;
+  districtName?: string;
   sector: string;
+  sectorName?: string;
   cell: string;
+  cellName?: string;
   village: string;
+  villageName?: string;
   code: string;
   description: string;
 }
@@ -10,42 +15,51 @@ export interface Zone {
 export const dummyZones: Zone[] = [
   {
     id: "1",
-    sector: "Kicukiro",
-    cell: "Gahanga",
-    village: "Kabuga",
-    code: "KIC-GAH-001",
+    district: "kicukiro",
+    districtName: "Kicukiro",
+    sector: "kicukiro",
+    sectorName: "Kicukiro",
+    cell: "kicukiro",
+    cellName: "Kicukiro",
+    village: "gasharu",
+    villageName: "Gasharu",
+    code: "KIC-KIC-001",
     description: "Residential area with mixed commercial activities"
   },
   {
     id: "2",
-    sector: "Gasabo",
-    cell: "Remera",
-    village: "Kisimenti",
+    district: "gasabo",
+    districtName: "Gasabo",
+    sector: "remera",
+    sectorName: "Remera",
+    cell: "nyabisindu",
+    cellName: "Nyabisindu",
+    village: "nyabisindu",
+    villageName: "Nyabisindu",
     code: "GAS-REM-002",
     description: "Urban commercial district with high-rise buildings"
   },
   {
     id: "3",
-    sector: "Nyarugenge",
-    cell: "Nyamirambo",
-    village: "Biryogo",
+    district: "nyarugenge",
+    districtName: "Nyarugenge",
+    sector: "nyamirambo",
+    sectorName: "Nyamirambo",
+    cell: "cyivugiza",
+    cellName: "Cyivugiza",
+    village: "cyivugiza",
+    villageName: "Cyivugiza",
     code: "NYA-NYA-003",
     description: "Dense residential area with local markets"
-  },
-  {
-    id: "4",
-    sector: "Kicukiro",
-    cell: "Niboye",
-    village: "Gatenga",
-    code: "KIC-NIB-004",
-    description: "Suburban residential zone with schools"
-  },
-  {
-    id: "5",
-    sector: "Gasabo",
-    cell: "Kinyinya",
-    village: "Kagugu",
-    code: "GAS-KIN-005",
-    description: "Mixed residential and commercial development"
   }
 ];
+
+// Helper function to get display names
+export const getZoneDisplayInfo = (zone: Zone) => {
+  return {
+    district: zone.districtName || zone.district || '',
+    sector: zone.sectorName || zone.sector || '',
+    cell: zone.cellName || zone.cell || '',
+    village: zone.villageName || zone.village || ''
+  };
+};

@@ -138,6 +138,7 @@ export default function Dashboard() {
             { label: 'Routes', icon: Route },
             { label: 'Households', icon: Home, route: '/dashboard/households' },
             { label: 'Zones', icon: MapPin, route: '/dashboard/zones' },
+            { label: 'Tariffs', icon: CreditCard, route: '/dashboard/tariffs' },
             { label: 'Payments', icon: CreditCard },
             { label: 'Complaints', icon: MessageSquare },
             { label: 'Pickup Session', icon: Truck }
