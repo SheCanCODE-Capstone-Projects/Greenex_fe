@@ -60,7 +60,7 @@ export default function PaymentsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Payment Management</h1>
-          <Button onClick={() => router.push('/dashboard/payments/create')}>
+          <Button onClick={() => router.push('/wasteCompanyDashboard/payments/create')}>
             <Plus className="w-4 h-4 mr-2" />
             Create New Payment
           </Button>

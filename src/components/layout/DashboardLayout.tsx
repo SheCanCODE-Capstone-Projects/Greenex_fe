@@ -21,13 +21,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [dropdownOpen]);
 
   const getActiveTab = () => {
-    if (pathname.includes('/dashboard/zones')) return 'Zones';
-    if (pathname.includes('/dashboard/routes')) return 'Routes';
-    if (pathname.includes('/dashboard/households')) return 'Households';
-    if (pathname.includes('/dashboard/tariffs')) return 'Tariffs';
-    if (pathname.includes('/dashboard/payments')) return 'Payments';
-    if (pathname.includes('/dashboard/complaints')) return 'Complaints';
-    if (pathname.includes('/dashboard/pickup-session')) return 'Pickup Session';
+    if (pathname.includes('/wasteCompanyDashboard/zones')) return 'Zones';
+    if (pathname.includes('/wasteCompanyDashboard/routes')) return 'Routes';
+    if (pathname.includes('/wasteCompanyDashboard/households')) return 'Households';
+    if (pathname.includes('/wasteCompanyDashboard/tariffs')) return 'Tariffs';
+    if (pathname.includes('/wasteCompanyDashboard/payments')) return 'Payments';
+    if (pathname.includes('/wasteCompanyDashboard/complaints')) return 'Complaints';
+    if (pathname.includes('/wasteCompanyDashboard/pickup-session')) return 'Pickup Session';
     return 'Dashboard';
   };
 
@@ -38,10 +38,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {[
             { label: 'Dashboard', icon: LayoutDashboard, route: '/wasteCompanyDashboard' },
             { label: 'Routes', icon: Route },
-            { label: 'Households', icon: Home, route: '/dashboard/households' },
-            { label: 'Zones', icon: MapPin, route: '/dashboard/zones' },
-            { label: 'Tariffs', icon: CreditCard, route: '/dashboard/tariffs' },
-            { label: 'Payments', icon: CreditCard },
+            { label: 'Households', icon: Home, route: '/wasteCompanyDashboard/households' },
+            { label: 'Zones', icon: MapPin, route: '/wasteCompanyDashboard/zones' },
+            { label: 'Tariffs', icon: CreditCard, route: '/wasteCompanyDashboard/tariffs' },
+            { label: 'Payments', icon: CreditCard, route: '/wasteCompanyDashboard/payments' },
             { label: 'Complaints', icon: MessageSquare },
             { label: 'Pickup Session', icon: Truck }
           ].map(item => (

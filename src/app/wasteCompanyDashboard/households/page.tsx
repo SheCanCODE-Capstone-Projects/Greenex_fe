@@ -35,7 +35,7 @@ export default function HouseholdsPage() {
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/dashboard/households/${id}/edit`);
+    router.push(`/wasteCompanyDashboard/households/${id}/edit`);
   };
 
   const handleDelete = (id: string) => {
@@ -71,7 +71,7 @@ export default function HouseholdsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Household Management</h1>
-          <Button onClick={() => router.push('/dashboard/households/create')}>
+          <Button onClick={() => router.push('/wasteCompanyDashboard/households/create')}>
             <Plus className="w-4 h-4 mr-2" />
             Register New Household
           </Button>

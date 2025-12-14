@@ -23,14 +23,14 @@ export default function CreatePaymentPage() {
       localStorage.setItem('payments', JSON.stringify(updatedPayments));
       
       toast.success('Payment created successfully!');
-      router.push('/dashboard/payments');
+      router.push('/wasteCompanyDashboard/payments');
     } catch (error) {
       toast.error('Failed to create payment. Please try again.');
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/payments');
+    router.push('/wasteCompanyDashboard/payments');
   };
 
   return (

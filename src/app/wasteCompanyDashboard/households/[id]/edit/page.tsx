@@ -29,7 +29,7 @@ export default function EditHouseholdPage() {
             <h1 className="text-2xl font-bold mb-4">Household Not Found</h1>
             <p className="text-gray-600 mb-4">The household you're looking for doesn't exist.</p>
             <button
-              onClick={() => router.push('/dashboard/households')}
+              onClick={() => router.push('/wasteCompanyDashboard/households')
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
               Back to Households
@@ -50,14 +50,14 @@ export default function EditHouseholdPage() {
       localStorage.setItem('households', JSON.stringify(updatedHouseholds));
       
       toast.success('Household updated successfully!');
-      router.push('/dashboard/households');
+      router.push('/wasteCompanyDashboard/households');
     } catch (error) {
       toast.error('Failed to update household. Please try again.');
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/households');
+    router.push('/wasteCompanyDashboard/households');
   };
 
   return (

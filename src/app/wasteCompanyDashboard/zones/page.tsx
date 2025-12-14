@@ -33,7 +33,7 @@ export default function ZonesPage() {
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/dashboard/zones/${id}/edit`);
+    router.push(`/wasteCompanyDashboard/zones/${id}/edit`);
   };
 
   const handleDelete = (id: string) => {
@@ -55,7 +55,7 @@ export default function ZonesPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Zone Management</h1>
-          <Button onClick={() => router.push('/dashboard/zones/create')}>
+          <Button onClick={() => router.push('/wasteCompanyDashboard/zones/create')}>
             <Plus className="w-4 h-4 mr-2" />
             Add New Zone
           </Button>

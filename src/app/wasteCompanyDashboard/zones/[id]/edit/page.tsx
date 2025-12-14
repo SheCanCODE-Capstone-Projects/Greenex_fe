@@ -28,7 +28,7 @@ export default function EditZonePage() {
             <h1 className="text-2xl font-bold mb-4">Zone Not Found</h1>
             <p className="text-gray-600 mb-4">The zone you're looking for doesn't exist.</p>
             <button
-              onClick={() => router.push('/dashboard/zones')}
+              onClick={() => router.push('/wasteCompanyDashboard/zones')
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
               Back to Zones
@@ -49,14 +49,14 @@ export default function EditZonePage() {
       localStorage.setItem('zones', JSON.stringify(updatedZones));
       
       toast.success('Zone updated successfully!');
-      router.push('/dashboard/zones');
+      router.push('/wasteCompanyDashboard/zones');
     } catch (error) {
       toast.error('Failed to update zone. Please try again.');
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/zones');
+    router.push('/wasteCompanyDashboard/zones');
   };
 
   return (

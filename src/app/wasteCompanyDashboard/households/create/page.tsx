@@ -23,14 +23,14 @@ export default function CreateHouseholdPage() {
       localStorage.setItem('households', JSON.stringify(updatedHouseholds));
       
       toast.success('Household registered successfully!');
-      router.push('/dashboard/households');
+      router.push('/wasteCompanyDashboard/households');
     } catch (error) {
       toast.error('Failed to register household. Please try again.');
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/households');
+    router.push('/wasteCompanyDashboard/households');
   };
 
   return (

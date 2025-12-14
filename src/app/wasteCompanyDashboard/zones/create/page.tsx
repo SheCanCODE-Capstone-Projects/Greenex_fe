@@ -20,14 +20,14 @@ export default function CreateZonePage() {
       localStorage.setItem('zones', JSON.stringify(updatedZones));
       
       toast.success('Zone created successfully!');
-      router.push('/dashboard/zones');
+      router.push('/wasteCompanyDashboard/zones');
     } catch (error) {
       toast.error('Failed to create zone. Please try again.');
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/zones');
+    router.push('/wasteCompanyDashboard/zones');
   };
 
   return (

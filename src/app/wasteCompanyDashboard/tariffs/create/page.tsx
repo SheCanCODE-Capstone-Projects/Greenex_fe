@@ -31,14 +31,14 @@ export default function CreateTariffPage() {
       });
 
       toast.success('Tariff plan created successfully!');
-      router.push('/dashboard/tariffs');
+      router.push('/wasteCompanyDashboard/tariffs');
     } catch (error) {
       toast.error('Failed to create tariff plan. Please try again.');
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/tariffs');
+    router.push('/wasteCompanyDashboard/tariffs');
   };
 
   const handleAddRule = (ruleData: any) => {

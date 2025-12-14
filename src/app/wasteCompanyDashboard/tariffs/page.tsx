@@ -30,7 +30,7 @@ export default function TariffsPage() {
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/dashboard/tariffs/${id}/edit`);
+    router.push(`/wasteCompanyDashboard/tariffs/${id}/edit`);
   };
 
   const handleDelete = (id: string) => {
@@ -59,7 +59,7 @@ export default function TariffsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Tariff Plans</h1>
-          <Button onClick={() => router.push('/dashboard/tariffs/create')}>
+          <Button onClick={() => router.push('/wasteCompanyDashboard/tariffs/create')}>
             <Plus className="w-4 h-4 mr-2" />
             Create Tariff Plan
           </Button>

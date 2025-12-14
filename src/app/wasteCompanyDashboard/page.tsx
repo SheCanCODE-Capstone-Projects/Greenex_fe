@@ -136,10 +136,10 @@ export default function Dashboard() {
           {[
             { label: 'Dashboard', icon: LayoutDashboard },
             { label: 'Routes', icon: Route },
-            { label: 'Households', icon: Home, route: '/dashboard/households' },
-            { label: 'Zones', icon: MapPin, route: '/dashboard/zones' },
-            { label: 'Tariffs', icon: CreditCard, route: '/dashboard/tariffs' },
-            { label: 'Payments', icon: CreditCard, route: '/dashboard/payments' },
+            { label: 'Households', icon: Home, route: '/wasteCompanyDashboard/households' },
+            { label: 'Zones', icon: MapPin, route: '/wasteCompanyDashboard/zones' },
+            { label: 'Tariffs', icon: CreditCard, route: '/wasteCompanyDashboard/tariffs' },
+            { label: 'Payments', icon: CreditCard, route: '/wasteCompanyDashboard/payments' },
             { label: 'Complaints', icon: MessageSquare },
             { label: 'Pickup Session', icon: Truck }
           ].map(item => (

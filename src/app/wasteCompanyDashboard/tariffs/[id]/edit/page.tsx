@@ -50,7 +50,7 @@ export default function EditTariffPage() {
             <h1 className="text-2xl font-bold mb-4">Tariff Plan Not Found</h1>
             <p className="text-gray-600 mb-4">The tariff plan you're looking for doesn't exist.</p>
             <button
-              onClick={() => router.push('/dashboard/tariffs')}
+              onClick={() => router.push('/wasteCompanyDashboard/tariffs')
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
               Back to Tariff Plans
@@ -81,7 +81,7 @@ export default function EditTariffPage() {
       const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?');
       if (!confirmed) return;
     }
-    router.push('/dashboard/tariffs');
+    router.push('/wasteCompanyDashboard/tariffs');
   };
 
   const handleAddRule = () => {
