@@ -16,8 +16,6 @@ export function SuccessStep({ companyData, onGoHome }: SuccessStepProps) {
         <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary to-secondary-green flex items-center justify-center shadow-xl animate-pulse">
           <CheckCircle2 className="w-10 h-10 text-white" />
         </div>
-        <PartyPopper className="absolute top-0 right-1/4 w-5 h-5 text-primary animate-bounce" style={{ animationDelay: '0.5s' }} />
-        <Sparkles className="absolute bottom-1 left-1/4 w-4 h-4 text-primary animate-bounce" style={{ animationDelay: '1s' }} />
       </div>
 
       {/* Success Card */}
@@ -27,7 +25,7 @@ export function SuccessStep({ companyData, onGoHome }: SuccessStepProps) {
         </h2>
         
         <p className="text-base text-muted-foreground mb-4">
-          You are one step closer to powering Rwanda's green future.
+          You are one step closer to powering Rwanda&apos;s green future.
         </p>
 
         {/* Review Timeline */}

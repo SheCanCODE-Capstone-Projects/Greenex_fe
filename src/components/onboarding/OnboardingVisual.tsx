@@ -59,13 +59,6 @@ export function OnboardingVisual({ step }: OnboardingVisualProps) {
             ))}
           </div>
 
-          {/* Floating elements */}
-          <div className="absolute top-4 right-4">
-            <Sparkles className="w-4 h-4 text-primary/40 animate-pulse" />
-          </div>
-          <div className="absolute bottom-4 left-4">
-            <div className="w-3 h-3 bg-secondary-green/30 rounded-full animate-bounce" style={{ animationDelay: '1s' }} />
-          </div>
         </div>
       </div>
     </div>
