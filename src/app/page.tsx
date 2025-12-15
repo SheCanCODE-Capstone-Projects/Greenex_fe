@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import HomeSection from "@/components/HomeSection";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
+import Servicepage from "@/components/Servicepage";
 
 
 export default function Home() {
@@ -50,10 +51,10 @@ export default function Home() {
         onThemeToggle={toggleTheme}
         isDarkMode={isDarkMode}
       />
-      
       <main>
         <HomeSection />
         <AboutSection />
+        <Servicepage />
         <ContactSection />
       </main>
     </div>
