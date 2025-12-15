@@ -1,6 +1,7 @@
 'use client'
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignupPage() {
@@ -11,7 +12,7 @@ export default function SignupPage() {
   const [userType, setUserType] = useState("citizen");
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState("");
-
+ const router = useRouter()
   const strongPassword =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -30,7 +31,16 @@ export default function SignupPage() {
       return;
     }
     setError("");
-    alert("Signup successful!");
+    // alert("Signup successful!");
+    // router.push("/pages/otp")
+
+
+// save signup state
+localStorage.setItem("signup_email", email);
+localStorage.setItem("signup_completed", "true");
+
+router.push("/pages/otp");
+
   };
 
   return (
