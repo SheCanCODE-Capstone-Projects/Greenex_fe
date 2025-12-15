@@ -87,7 +87,7 @@ export default function SupperDashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* SIDEBAR */}
+    
       <aside
         className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0B5D2E] text-white flex flex-col justify-between py-6
         transform transition-transform duration-300
@@ -167,7 +167,7 @@ export default function SupperDashboard() {
             note="98%"
             color="text-green-600"
           />
-          <StatCard title="Active Routes" value="85K RWF" />
+          <StatCard title="Active Routes" value="24" />
         </div>
 
       
