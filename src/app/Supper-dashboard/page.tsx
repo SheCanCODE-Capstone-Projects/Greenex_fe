@@ -78,11 +78,11 @@ export default function SupperDashboard() {
           </nav>
         </div>
 
-        <div className="px-6">
-          <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white text-sm">
+        
+          <div className=" px-6 w-10 h-10 rounded-full bg-black flex items-center justify-center text-white text-sm">
             N
           </div>
-        </div>
+        
       </aside>
       <main className="flex-1 p-4 md:p-6">
         <header className="bg-white rounded-xl shadow px-4 md:px-6 py-4 flex justify-between items-center">
