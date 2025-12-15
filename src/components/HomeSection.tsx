@@ -48,8 +48,8 @@ const HomeSection: React.FC = () => {
           )}
         </h1>
 
-        <p className="text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-light opacity-90 mb-8 sm:mb-10 lg:mb-12 animate-fade-in-up delay-300 max-w-4xl leading-relaxed">
-         Smarter, Cleaner waste management for a sustainable future <br className="hidden sm:block" />
+        <p className="text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-light opacity-90 mb-8 sm:mb-10 lg:mb-12 animate-fade-in-up delay-300 max-w-4xl leading-relaxed">
+         Smarter waste management for a sustainable future <br className="hidden sm:block" />
          <span className="sm:hidden"> </span>Building eco-friendly communities across Rwanda
         </p>
 

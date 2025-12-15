@@ -188,7 +188,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push('/wasteCompanyDashboard')}>
                   Waste Company Dashboard
-                </DropdownMenuItem>
+                </DropdownMenuItem> 
                 {/* any other page made meanwhile should be added here   */}
               </DropdownMenuContent>
             </DropdownMenu>
