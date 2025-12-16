@@ -140,7 +140,7 @@ export default function Dashboard() {
             { label: 'Zones', icon: MapPin, route: '/wasteCompanyDashboard/zones' },
             { label: 'Tariffs', icon: CreditCard, route: '/wasteCompanyDashboard/tariffs' },
             { label: 'Payments', icon: CreditCard, route: '/wasteCompanyDashboard/payments' },
-            { label: 'Complaints', icon: MessageSquare },
+            { label: 'Complaints', icon: MessageSquare, route: '/wasteCompanyDashboard/complaints' },
             { label: 'Pickup Session', icon: Truck }
           ].map(item => (
             <SidebarItem 
