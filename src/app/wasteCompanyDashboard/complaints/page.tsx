@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { MessageSquare, Clock, CheckCircle, AlertTriangle, Plus, MapPin, Calendar } from "lucide-react";
+import { ComplaintTable } from '@/components/complaints/ComplaintTable';
 
 interface Complaint {
   id: string;
@@ -146,58 +147,11 @@ export default function ComplaintsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow border overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Complaint ID</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Household ID</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Type</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Description</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Status</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Created At</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Resolved At</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {complaints.map((complaint) => (
-                <tr key={complaint.id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4 font-mono text-sm">{complaint.id}</td>
-                  <td className="py-3 px-4 font-mono text-sm">{complaint.householdId}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(complaint.type)}`}>
-                      {complaint.type}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 max-w-xs truncate">{complaint.description}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(complaint.status)}`}>
-                      {complaint.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-sm">{new Date(complaint.createdAt).toLocaleString()}</td>
-                  <td className="py-3 px-4 text-sm">
-                    {complaint.resolvedAt ? new Date(complaint.resolvedAt).toLocaleString() : '-'}
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => window.location.href = `/wasteCompanyDashboard/complaints/${complaint.id}/edit`}
-                        className="text-blue-600 hover:text-blue-800 text-sm"
-                      >
-                        Edit
-                      </button>
-                      <button className="text-green-600 hover:text-green-800 text-sm">
-                        View Details
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ComplaintTable 
+          complaints={complaints}
+          onEdit={(id) => window.location.href = `/wasteCompanyDashboard/complaints/${id}/edit`}
+          onView={(id) => console.log('View complaint:', id)}
+        />
       </div>
     </DashboardLayout>
   );

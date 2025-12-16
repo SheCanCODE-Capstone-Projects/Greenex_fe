@@ -37,13 +37,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <ul className="space-y-3 text-sm">
           {[
             { label: 'Dashboard', icon: LayoutDashboard, route: '/wasteCompanyDashboard' },
-            { label: 'Routes', icon: Route },
+            { label: 'Routes', icon: Route, route: '/wasteCompanyDashboard/routes' },
             { label: 'Households', icon: Home, route: '/wasteCompanyDashboard/households' },
             { label: 'Zones', icon: MapPin, route: '/wasteCompanyDashboard/zones' },
             { label: 'Tariffs', icon: CreditCard, route: '/wasteCompanyDashboard/tariffs' },
             { label: 'Payments', icon: CreditCard, route: '/wasteCompanyDashboard/payments' },
-            { label: 'Complaints', icon: MessageSquare },
-            { label: 'Pickup Session', icon: Truck }
+            { label: 'Complaints', icon: MessageSquare, route: '/wasteCompanyDashboard/complaints' },
+            { label: 'Pickup Session', icon: Truck, route: '/wasteCompanyDashboard/pickup-sessions' }
           ].map(item => (
             <SidebarItem 
               key={item.label}
