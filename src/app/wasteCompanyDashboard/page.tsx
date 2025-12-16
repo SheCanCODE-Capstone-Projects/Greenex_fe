@@ -134,14 +134,14 @@ export default function Dashboard() {
       <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block h-screen fixed left-0 top-0 overflow-y-auto z-30">
         <ul className="space-y-3 text-sm">
           {[
-            { label: 'Dashboard', icon: LayoutDashboard },
-            { label: 'Routes', icon: Route },
+            { label: 'Dashboard', icon: LayoutDashboard, route: '/wasteCompanyDashboard' },
+            { label: 'Routes', icon: Route, route: '/wasteCompanyDashboard/routes' },
             { label: 'Households', icon: Home, route: '/wasteCompanyDashboard/households' },
             { label: 'Zones', icon: MapPin, route: '/wasteCompanyDashboard/zones' },
             { label: 'Tariffs', icon: CreditCard, route: '/wasteCompanyDashboard/tariffs' },
             { label: 'Payments', icon: CreditCard, route: '/wasteCompanyDashboard/payments' },
-            { label: 'Complaints', icon: MessageSquare },
-            { label: 'Pickup Session', icon: Truck }
+            { label: 'Complaints', icon: MessageSquare, route: '/wasteCompanyDashboard/complaints' },
+            { label: 'Pickup Session', icon: Truck, route: '/wasteCompanyDashboard/pickup-sessions' }
           ].map(item => (
             <SidebarItem 
               key={item.label}
@@ -149,11 +149,8 @@ export default function Dashboard() {
               icon={item.icon}
               active={activeTab === item.label}
               onClick={() => {
-                if (item.route) {
-                  router.push(item.route);
-                } else {
-                  setActiveTab(item.label);
-                }
+                router.push(item.route);
+                setActiveTab(item.label);
               }}
             />
           ))}
