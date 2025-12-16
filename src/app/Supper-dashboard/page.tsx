@@ -207,7 +207,15 @@ function SidebarItem({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-3 hover:text-green-300 cursor-pointer">
+    <button 
+      className={`w-full flex items-center gap-3 cursor-pointer px-4 py-3 rounded-xl transition-colors text-left ${
+        isActive 
+          ? "bg-[#0F7A3B] text-white" 
+          : "hover:text-green-300 hover:bg-[#0F7A3B]/20"
+      }`}
+      onClick={onClick}
+      type="button"
+    >
       {icon}
       <span>{label}</span>
     </div>
