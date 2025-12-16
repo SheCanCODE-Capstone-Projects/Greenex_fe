@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Search, CheckCircle, Clock, AlertTriangle } from "lucide-react";
+import { Plus, Search, CheckCircle, Clock, AlertTriangle, Bell, User, Settings, LogOut, LayoutDashboard, Route, Home, MapPin, CreditCard, MessageSquare, Truck } from "lucide-react";
+import { dummyHouseholds } from '../../../data/households';
 
 interface Complaint {
   id: string;
   household_id: string;
-  company_user_id: string;
   type: 'Missed Pickup' | 'Late Pickup' | 'Irregular Schedule' | 'Partial Pickup' | 'Overfilled Bins Not Emptied' | 'No Pickup for Several Weeks' | 'Other';
   description: string;
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
@@ -29,11 +29,12 @@ const STATUS_OPTIONS = ['Open', 'In Progress', 'Resolved', 'Closed'] as const;
 
 export default function ComplaintsPage() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState('Complaints');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [complaints, setComplaints] = useState<Complaint[]>([
     {
       id: "C001",
-      household_id: "H123",
-      company_user_id: "U456",
+      household_id: "1",
       type: "Missed Pickup",
       description: "Garbage was not collected on scheduled day. Bins were left full.",
       status: "Open",
@@ -42,8 +43,7 @@ export default function ComplaintsPage() {
     },
     {
       id: "C002", 
-      household_id: "H124",
-      company_user_id: "U457",
+      household_id: "2",
       type: "Late Pickup",
       description: "Pickup was 3 hours late from scheduled time.",
       status: "In Progress",
@@ -52,8 +52,7 @@ export default function ComplaintsPage() {
     },
     {
       id: "C003",
-      household_id: "H125", 
-      company_user_id: "U458",
+      household_id: "3", 
       type: "Overfilled Bins Not Emptied",
       description: "Bins were overfilled and crew left them without emptying.",
       status: "Resolved",
@@ -69,7 +68,6 @@ export default function ComplaintsPage() {
 
   const [newComplaint, setNewComplaint] = useState({
     household_id: "",
-    company_user_id: "",
     type: "" as Complaint['type'] | "",
     description: "",
     status: "Open" as Complaint['status']
@@ -85,7 +83,7 @@ export default function ComplaintsPage() {
   });
 
   const handleAddComplaint = () => {
-    if (!newComplaint.household_id || !newComplaint.company_user_id || !newComplaint.type || !newComplaint.description) {
+    if (!newComplaint.household_id || !newComplaint.type || !newComplaint.description) {
       alert("Please fill in all required fields");
       return;
     }
@@ -93,7 +91,6 @@ export default function ComplaintsPage() {
     const complaint: Complaint = {
       id: `C${String(complaints.length + 1).padStart(3, '0')}`,
       household_id: newComplaint.household_id,
-      company_user_id: newComplaint.company_user_id,
       type: newComplaint.type as Complaint['type'],
       description: newComplaint.description,
       status: newComplaint.status,
@@ -104,7 +101,6 @@ export default function ComplaintsPage() {
     setComplaints([complaint, ...complaints]);
     setNewComplaint({
       household_id: "",
-      company_user_id: "",
       type: "",
       description: "",
       status: "Open"
@@ -145,29 +141,91 @@ export default function ComplaintsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => router.back()}
-              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
+    <div className="min-h-screen bg-gray-50 flex">
+      <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block h-screen fixed left-0 top-0 overflow-y-auto z-30">
+        <ul className="space-y-3 text-sm">
+          {[
+            { label: 'Dashboard', icon: LayoutDashboard, route: '/wasteCompanyDashboard' },
+            { label: 'Routes', icon: Route },
+            { label: 'Households', icon: Home, route: '/wasteCompanyDashboard/households' },
+            { label: 'Zones', icon: MapPin, route: '/wasteCompanyDashboard/zones' },
+            { label: 'Tariffs', icon: CreditCard, route: '/wasteCompanyDashboard/tariffs' },
+            { label: 'Payments', icon: CreditCard, route: '/wasteCompanyDashboard/payments' },
+            { label: 'Complaints', icon: MessageSquare },
+            { label: 'Pickup Session', icon: Truck }
+          ].map(item => (
+            <SidebarItem 
+              key={item.label}
+              label={item.label}
+              icon={item.icon}
+              active={activeTab === item.label}
+              onClick={() => {
+                if (item.route) {
+                  router.push(item.route);
+                } else {
+                  setActiveTab(item.label);
+                }
+              }}
+            />
+          ))}
+        </ul>
+      </aside>
+
+      <div className="flex-1 ml-64">
+        <nav className="sticky top-0 z-40 bg-white shadow-sm border-b px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Green Ex Manager</h1>
+              <p className="text-sm text-gray-600">Waste Collection Company</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <button className="text-gray-600 hover:text-gray-800 p-2">
+                  <Bell size={20} />
+                </button>
+              </div>
+              <div className="relative">
+                <button 
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="w-10 h-10 rounded-full bg-green-400 flex items-center justify-center font-semibold hover:bg-green-500 transition-colors"
+                >
+                  CM
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
+                    <div className="py-1">
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                        <User size={16} /> Profile
+                      </button>
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                        <Settings size={16} /> Settings
+                      </button>
+                      <hr className="my-1" />
+                      <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                        <LogOut size={16} /> Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <section className="p-6 space-y-8 overflow-y-auto">
+          <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Complaints Management</h1>
               <p className="text-gray-600">Manage and track customer complaints</p>
             </div>
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Add Complaint
+            </button>
           </div>
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Complaint
-          </button>
-        </div>
 
         <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
           <div className="flex flex-wrap gap-4">
@@ -227,7 +285,7 @@ export default function ComplaintsPage() {
                       {complaint.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {complaint.household_id}
+                      {dummyHouseholds.find(h => h.id === complaint.household_id)?.code || complaint.household_id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {complaint.type}
@@ -270,24 +328,19 @@ export default function ComplaintsPage() {
               <h2 className="text-lg font-semibold mb-4">Add New Complaint</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Household ID *</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Household *</label>
+                  <select
                     value={newComplaint.household_id}
                     onChange={(e) => setNewComplaint({...newComplaint, household_id: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Enter household ID"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company User ID *</label>
-                  <input
-                    type="text"
-                    value={newComplaint.company_user_id}
-                    onChange={(e) => setNewComplaint({...newComplaint, company_user_id: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Enter company user ID"
-                  />
+                  >
+                    <option value="">Select household</option>
+                    {dummyHouseholds.filter(h => h.status === 'active').map(household => (
+                      <option key={household.id} value={household.id}>
+                        {household.code} - {household.address}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
@@ -342,7 +395,27 @@ export default function ComplaintsPage() {
             </div>
           </div>
         )}
+        </section>
       </div>
     </div>
+  );
+}
+
+function SidebarItem({ label, icon: Icon, active, onClick }: { 
+  label: string;
+  icon: React.ComponentType<{ size?: number }>;
+  active?: boolean; 
+  onClick: () => void;
+}) {
+  return (
+    <li
+      onClick={onClick}
+      className={`px-3 py-2 rounded flex items-center gap-3 cursor-pointer transition-colors ${
+        active ? "bg-green-700" : "hover:bg-green-800"
+      }`}
+    >
+      <Icon size={18} />
+      {label}
+    </li>
   );
 }
