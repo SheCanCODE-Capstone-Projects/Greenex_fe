@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import { Home, Calendar, Route, CreditCard, History, Users, FileText } from 'lucide-react';
 
@@ -250,6 +251,67 @@ export default function GreenEXDashboard() {
           </div>
         </div>
       </div>
+=======
+"use client";
+import React, { useState, useEffect } from "react";
+import Header from "@/components/Header";
+import HomeSection from "@/components/HomeSection";
+import AboutSection from "@/components/AboutSection";
+import ContactSection from "@/components/ContactSection";
+import Servicepage from "@/components/Servicepage";
+
+
+export default function Home() {
+  const [activeSection, setActiveSection] = useState<string>("home");
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["home", "about", "services", "contact"];
+      const currentSection = sections.find(section => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 100 && rect.bottom >= 100;
+        }
+        return false;
+      });
+      
+      if (currentSection && currentSection !== activeSection) {
+        setActiveSection(currentSection);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [activeSection]);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Header 
+        activeSection={activeSection} 
+        onThemeToggle={toggleTheme}
+        isDarkMode={isDarkMode}
+      />
+      <main>
+        <HomeSection />
+        <AboutSection />
+        <Servicepage />
+        <ContactSection />
+      </main>
+>>>>>>> 14eece6c60c9bd010be8249a4c9794e4d8c4e6c7
     </div>
   );
 }

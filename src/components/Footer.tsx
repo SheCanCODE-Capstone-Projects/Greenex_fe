@@ -39,9 +39,12 @@ const Footer: React.FC = () => {
     "Contact": "contact"
   };
   const services = [
-    "Real-Time Alerts & Schedule",
-    "Effortless Digital Payments",
-    "Instant Reporting & Resolution for Missed Pickups",
+    "Waste Collection",
+    "Recycling",
+    "Composting",
+    "E-Waste Management",
+    "Industrial Waste",
+    "Consulting"
   ];
   const socialLinks = [
     { icon: <Facebook className="w-5 h-5" />, label: "Facebook" },
@@ -52,19 +55,19 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-900 text-white">
       {/* Main Footer Content */}
-      <div className="py-16 px-4">
+      <div className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-4 gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
             {/* Company Info */}
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <Truck size={40} className="text-secondary-green" />
-                <h2 className="text-3xl font-bold">GreenEx</h2>
+            <div className="sm:col-span-2 lg:col-span-1">
+              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <Truck size={32} className="sm:w-10 sm:h-10 text-secondary-green" />
+                <h2 className="text-2xl sm:text-3xl font-bold">GreenEx</h2>
               </div>
-              <p className="text-gray-400 mb-6 leading-relaxed">
+              <p className="text-gray-400 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
                 Transforming waste management in Rwanda through innovative technology and sustainable practices.
               </p>
-              <div className="flex gap-4">
+              <div className="flex gap-3 sm:gap-4">
                 {socialLinks.map((social, index) => (
                   <a
                     key={index}
