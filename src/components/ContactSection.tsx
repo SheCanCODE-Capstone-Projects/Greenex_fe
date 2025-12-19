@@ -1,28 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
-
+import React, { useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare } from "lucide-react";
 
-// Note: The contactInfo array uses the data defined in the original component, 
-// but I will override it here to better match the content of the uploaded image
 const contactInfo = [
   {
     icon: <Phone className="w-6 h-6" />,
     title: "Phone",
-    details: "+250 789 5396", // Modified to match image data
-    description: "" // Removed description to match image's simplicity
+    details: "+250 788 800 777",
+    description: ""
   },
   {
     icon: <Mail className="w-6 h-6" />,
     title: "Email",
-    details: "greenex@wastecollection.com", // Modified to match image data
+    details: "greenex@wastecollection.com",
     description: ""
   },
   {
     icon: <MapPin className="w-6 h-6" />,
     title: "Office",
-    details: "KG,str Kigali, Rwanda", // Modified to match image data
+    details: "KG,str Kigali, Rwanda",
     description: ""
   },
   {
@@ -33,9 +31,9 @@ const contactInfo = [
   }
 ];
 
-
 const ContactSection: React.FC = () => {
-
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -45,14 +43,18 @@ const ContactSection: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+
     console.log(formData);
-    // Reset form
+
     setFormData({ name: "", email: "", message: "", service: "" });
     alert("Message sent successfully!");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -64,33 +66,65 @@ const ContactSection: React.FC = () => {
     if (element) {
       window.scrollTo({
         top: element.offsetTop - 80,
-        behavior: 'smooth'
+        behavior: "smooth"
       });
     }
   };
 
   return (
-    <section id="contact" className="py-24 px-4 bg-light-bg dark:bg-gray-900">
+    <section id="contact" className="py-12 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-light-bg dark:bg-dark-bg/95" ref={ref}>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 animate-fade-in-up">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 lg:mb-16"
+        >
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6">
             Contact Us
           </h2>
-          <div className="w-24 h-1 bg-primary-green dark:bg-secondary-green mx-auto mb-8"></div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto animate-fade-in-up delay-200">
-            Get in touch with us for efficient waste management solutions. We&apos;re here to help!
+          <motion.div 
+            className="w-16 sm:w-20 lg:w-24 h-1 bg-foreground dark:bg-white mx-auto mb-6 sm:mb-8"
+            initial={{ width: 0, scaleX: 0 }}
+            animate={isInView ? { width: 96, scaleX: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          ></motion.div>
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
+            Get in touch with us for efficient waste management solutions.
+            We&apos;re here to help!
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          <div className="animate-fade-in-left">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* LEFT SIDE: CONTACT FORM */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <motion.div 
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 sm:p-8 shadow-lg"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <motion.h3 
+                className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
                 <MessageSquare className="w-6 h-6" />
                 Send us a message
-              </h3>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
+              </motion.h3>
+              <motion.form 
+                onSubmit={handleSubmit} 
+                className="space-y-4 sm:space-y-6"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Your Name
@@ -101,7 +135,7 @@ const ContactSection: React.FC = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
                       placeholder="John Doe"
                     />
                   </div>
@@ -115,7 +149,7 @@ const ContactSection: React.FC = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
                       placeholder="john@example.com"
                     />
                   </div>
@@ -128,7 +162,7 @@ const ContactSection: React.FC = () => {
                     name="service"
                     value={formData.service}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
                   >
                     <option value="">Select a service</option>
                     <option value="collection">Waste Collection</option>
@@ -147,71 +181,145 @@ const ContactSection: React.FC = () => {
                     onChange={handleChange}
                     required
                     rows={4}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent resize-none"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent resize-none"
                     placeholder="Your message here..."
                   />
                 </div>
-                <button
+                <motion.button
                   type="submit"
-                  className="group relative w-full bg-primary-green dark:bg-secondary-green text-white px-8 py-4 rounded-xl font-semibold hover:shadow-2xl hover:shadow-primary-green/30 dark:hover:shadow-secondary-green/30 transition-all duration-300 overflow-hidden"
+                  className="group relative w-full bg-primary-green dark:bg-secondary-green text-white px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-xl font-semibold hover:shadow-2xl hover:shadow-primary-green/30 dark:hover:shadow-secondary-green/30 transition-all duration-300 overflow-hidden"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     <Send className="w-5 h-5" />
                     Send Message
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                </button>
-              </form>
-            </div>
-          </div>
+                </motion.button>
+              </motion.form>
+            </motion.div>
+          </motion.div>
 
-          <div className="animate-fade-in-right">
-  
-            <div className="space-y-6">
-              {contactInfo.filter(info => info.title !== "Working Hours").map((info, index) => (
-                <div 
-                  key={index}
-                  // The parent div is now a simple container, not a card with padding/shadow
-                  className="flex items-center gap-4 py-2" // Reduced padding and removed background/shadow
-                >
-                  {/* Icon container styled to match the image: full green circle/square with white icon */}
-                  <div className="w-10 h-10 rounded-full bg-primary-green flex items-center justify-center flex-shrink-0">
-                    <div className="text-white">
-                      {/* Using Tailwind's ring-1 for a subtle border like the image's icons */}
-                      {info.icon} 
-                    </div>
-                  </div>
-                  {/* Details section */}
-                  <div>
-                    {/* The text style is simpler and matches the image's font/color */}
-                    <p className="text-lg text-gray-700 dark:text-gray-300 font-medium">
-                      {info.details}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {/* End of the section styled to look like the image */}
+          {/* RIGHT SIDE: MAP + CONTACT INFO + PICKUP */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
             
-            <div className="mt-8 bg-gradient-to-br from-primary-green to-secondary-green rounded-2xl p-8 text-white shadow-xl">
-              <h3 className="text-2xl font-bold mb-4">Request a Pickup</h3>
-              <p className="mb-6">
-                Need immediate waste collection? Schedule a pickup now and we&apos;ll be there promptly.
-              </p>
-              <button 
+            {/* MAP ON TOP */}
+            <motion.div 
+              className="w-full h-48 sm:h-56 lg:h-64 rounded-2xl overflow-hidden shadow-lg mb-6 sm:mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.83968367862!2d30.0811967749659!3d-1.944652398043902!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca7225d22be61%3A0x4d386327669c9d34!2sKacyiru%2C%20Kigali!5e0!3m2!1sen!2srw!4v1700000000000!5m2!1sen!2srw"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </motion.div>
+
+            {/* CONTACT INFO LIST */}
+            <motion.div 
+              className="space-y-4 sm:space-y-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              {contactInfo
+                .filter((info) => info.title !== "Working Hours")
+                .map((info, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex items-center gap-3 sm:gap-4 py-2"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      x: 10,
+                      transition: { type: "spring", stiffness: 400, damping: 10 }
+                    }}
+                  >
+                    <motion.div 
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-green flex items-center justify-center flex-shrink-0"
+                      whileHover={{ 
+                        scale: 1.1,
+                        rotate: 360,
+                        transition: { duration: 0.3 }
+                      }}
+                    >
+                      <div className="text-white text-sm sm:text-base">{info.icon}</div>
+                    </motion.div>
+                    <div>
+                      <p className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-300 font-medium">
+                        {info.details}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+            </motion.div>
+
+            {/* PICKUP CARD */}
+            <motion.div 
+              className="mt-6 sm:mt-8 bg-gradient-to-br from-primary-green to-secondary-green rounded-2xl p-6 sm:p-8 text-white shadow-xl"
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ 
+                type: "spring",
+                stiffness: 100,
+                damping: 10,
+                delay: 0.8
+              }}
+              whileHover={{ 
+                scale: 1.02,
+                y: -5,
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
+            >
+              <motion.h3 
+                className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.9 }}
+              >
+                Request a Pickup
+              </motion.h3>
+              <motion.p 
+                className="mb-4 sm:mb-6 text-sm sm:text-base"
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 1.0 }}
+              >
+                Need immediate waste collection? Schedule a pickup now and
+                we&apos;ll be there promptly.
+              </motion.p>
+              <motion.button
                 onClick={() => scrollToSection("contact")}
-                className="group relative w-full bg-white text-primary-green dark:text-secondary-green px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                className="group relative w-full bg-white text-primary-green text-secondary-green px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.5, delay: 1.1 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <span className="relative z-10">Schedule Pickup</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-green/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              </button>
-            </div>
-          </div>
+              </motion.button>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 };
-
 
 export default ContactSection;
