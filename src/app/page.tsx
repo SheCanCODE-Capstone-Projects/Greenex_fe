@@ -5,6 +5,7 @@ import HomeSection from "@/components/HomeSection";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
 import Servicepage from "@/components/Servicepage";
+import Footer from "@/components/Footer";
 
 
 export default function Home() {
@@ -57,6 +58,7 @@ export default function Home() {
         <Servicepage />
         <ContactSection />
       </main>
+      <Footer />
     </div>
   );
 }

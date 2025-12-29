@@ -1,18 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
-
 :root {
   --primary-green: #388E3C;
   --secondary-green: #25B86A;
   --light-bg: #D6E7D7;
-  --dark-bg: #0e1627;
+  --dark-bg: #0C351F;
   --dark-overlay: rgba(8, 8, 8, 0.8);
-  --text-light: #ffffff;
-  --text-dark: #0c351f;
+  --text-light: #FFFFFF;
+  --text-dark: #0C351F;
   --text-primary-muted:#BDBDBD;
-  
-
   --radius: 0.625rem;
   --background: var(--light-bg);
   --foreground: var(--text-dark);
@@ -117,7 +114,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
   /* Custom colors */
   --color-primary-green: var(--primary-green);
   --color-secondary-green: var(--secondary-green);
@@ -133,20 +129,16 @@
     @apply bg-background text-foreground;
     scroll-behavior: smooth;
   }
-  
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 10px;
   }
-  
   ::-webkit-scrollbar-track {
     @apply bg-gray-100 dark:bg-gray-800;
   }
-  
   ::-webkit-scrollbar-thumb {
     @apply bg-primary-green rounded-full;
   }
-  
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-secondary-green;
   }
@@ -155,27 +147,21 @@
   .animate-fade-in-up {
     animation: fadeInUp 0.6s ease-out forwards;
   }
-  
   .animate-fade-in-left {
     animation: fadeInLeft 0.6s ease-out forwards;
   }
-  
   .animate-fade-in-right {
     animation: fadeInRight 0.6s ease-out forwards;
   }
-  
   .animate-scale-in {
     animation: scaleIn 0.5s ease-out forwards;
   }
-  
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
-  
   .text-gradient {
     @apply bg-gradient-to-r from-white via-white to-secondary-green text-transparent bg-clip-text;
   }
-  
   @keyframes fadeInUp {
     from {
       opacity: 0;
@@ -186,7 +172,6 @@
       transform: translateY(0);
     }
   }
-  
   @keyframes fadeInLeft {
     from {
       opacity: 0;
@@ -197,7 +182,6 @@
       transform: translateX(0);
     }
   }
-  
   @keyframes fadeInRight {
     from {
       opacity: 0;
@@ -208,7 +192,6 @@
       transform: translateX(0);
     }
   }
-  
   @keyframes scaleIn {
     from {
       opacity: 0;
@@ -219,7 +202,6 @@
       transform: scale(1);
     }
   }
-  
   @keyframes float {
     0%, 100% {
       transform: translateY(0);
