@@ -41,6 +41,7 @@ export default function RootLayout({
           pauseOnHover
         />
       </body>
+     
     </html>
   );
 }
