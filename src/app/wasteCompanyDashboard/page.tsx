@@ -188,7 +188,10 @@ export default function Dashboard() {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
                     <div className="py-1">
-                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                      <button 
+                        onClick={() => router.push('/wasteCompanyDashboard/profile')}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                      >
                         <User size={16} /> Profile
                       </button>
                       <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
