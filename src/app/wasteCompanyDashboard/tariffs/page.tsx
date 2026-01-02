@@ -12,15 +12,11 @@ import { toast } from 'react-toastify';
 
 export default function TariffsPage() {
   const router = useRouter();
-  const [plans, setPlans] = useState<TariffPlan[]>([]);
+  const [plans, setPlans] = useState<TariffPlan[]>(tariffStore.getPlans());
   const [selectedPlan, setSelectedPlan] = useState<TariffPlan | null>(null);
   const [selectedPlanRules, setSelectedPlanRules] = useState<TariffRule[]>([]);
   const [showDetails, setShowDetails] = useState(false);
   const [deletePlanId, setDeletePlanId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setPlans(tariffStore.getPlans());
-  }, []);
 
   const handleView = (plan: TariffPlan) => {
     setSelectedPlan(plan);

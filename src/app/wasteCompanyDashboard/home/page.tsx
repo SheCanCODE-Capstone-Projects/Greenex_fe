@@ -39,9 +39,12 @@ export default function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className="min-h-[60vh] w-full bg-cover bg-center relative overflow-hidden flex items-center justify-center rounded-2xl mb-8" style={{ backgroundImage: "url('/landingImage.png')" }}>
+      <section className="min-h-[60vh] w-full bg-cover bg-center relative overflow-hidden flex items-center justify-center rounded-2xl mb-8" style={{ backgroundImage: companyInfo.coverImage ? `url(${companyInfo.coverImage})` : "url('/landingImage.png')" }}>
         <div className="absolute inset-0 bg-dark-overlay rounded-2xl"></div>
         <div className="relative z-10 flex flex-col items-center justify-center text-center px-8">
+          {companyInfo.logo && (
+            <img src={companyInfo.logo} alt="Company Logo" className="w-24 h-24 rounded-full object-cover mb-4 border-4 border-white shadow-lg" />
+          )}
           <h1 className="text-6xl font-extrabold mb-4 drop-shadow-lg text-white">
             {companyInfo.name}
           </h1>

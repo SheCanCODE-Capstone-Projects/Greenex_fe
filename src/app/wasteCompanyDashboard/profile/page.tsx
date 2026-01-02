@@ -22,6 +22,8 @@ interface CompanyInfo {
   linkedin: string;
   twitter: string;
   facebook: string;
+  logo?: string;
+  coverImage?: string;
 }
 
 interface Service {
@@ -90,6 +92,28 @@ export default function ProfilePage() {
     }
   };
 
+  const handleCompanyLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCompanyInfo({...companyInfo, logo: reader.result as string});
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCompanyInfo({...companyInfo, coverImage: reader.result as string});
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const getLogoPlaceholder = (name: string) => {
     return name.substring(0, 2).toUpperCase();
   };
@@ -97,6 +121,53 @@ export default function ProfilePage() {
   return (
     <div className="p-6">
       <div className="space-y-6">
+        
+        {/* Cover Image & Logo Section */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          {/* Cover Image */}
+          <div className="relative h-48 bg-gradient-to-r from-primary-green to-secondary-green group">
+            {companyInfo.coverImage && (
+              <img src={companyInfo.coverImage} alt="Cover" className="w-full h-full object-cover" />
+            )}
+            <label className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+              <div className="text-white text-center">
+                <Upload className="w-8 h-8 mx-auto mb-2" />
+                <p className="text-sm font-medium">Upload Cover Image</p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleCoverImageUpload}
+                className="hidden"
+              />
+            </label>
+          </div>
+          <div className="px-6 pb-6">
+            <div className="relative -mt-16 mb-4">
+              <div className="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg overflow-hidden relative group">
+                {companyInfo.logo ? (
+                  <img src={companyInfo.logo} alt="Logo" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-primary-green/10 flex items-center justify-center">
+                    <span className="text-primary-green font-bold text-3xl">
+                      {companyInfo.name.substring(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                  <Upload className="w-6 h-6 text-white" />
+                  <p className="text-xs text-white mt-1">Upload</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCompanyLogoUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
         
         {/* Company Snapshot */}
         <div className="bg-white rounded-lg shadow-md p-6">

@@ -8,7 +8,9 @@ export const initialCompanyInfo = {
   address: "KN 5 Ave, Kigali, Rwanda",
   linkedin: "linkedin.com/company/ecocycle",
   twitter: "@ecocycle",
-  facebook: "facebook.com/ecocycle"
+  facebook: "facebook.com/ecocycle",
+  logo: "",
+  coverImage: ""
 };
 
 export const initialAboutUs = "EcoCycle Solutions is a leading waste management company committed to creating a sustainable future. We provide comprehensive recycling and waste collection services to residential and industrial clients across Rwanda.";
