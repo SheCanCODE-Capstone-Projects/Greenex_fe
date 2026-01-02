@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Edit2, Save, X, Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Plus, Trash2, Upload } from "lucide-react";
 import { 
   initialCompanyInfo, 
@@ -56,6 +57,7 @@ interface Subscription {
 }
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [editingSection, setEditingSection] = useState<string | null>(null);
   
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(initialCompanyInfo);
@@ -463,7 +465,7 @@ export default function ProfilePage() {
                 )}
                 <div className="w-16 h-16 bg-primary-green/10 rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden relative group">
                   {cert.logoImage ? (
-                    <img src={cert.logoImage} alt={cert.name} className="w-full h-full object-cover" />
+                    <img src={cert.logoImage} alt={cert.name} className="w-full h-full object-contain" />
                   ) : (
                     <span className="text-2xl font-bold text-primary-green">{getLogoPlaceholder(cert.name)}</span>
                   )}
@@ -587,13 +589,22 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-3">
-              <button className="w-full bg-primary-green text-white px-4 py-3 rounded-lg hover:bg-secondary-green">
+              <button 
+                onClick={() => router.push('/wasteCompanyDashboard/payments')}
+                className="w-full bg-primary-green text-white px-4 py-3 rounded-lg hover:bg-secondary-green"
+              >
                 Update Payment Info
               </button>
-              <button className="w-full bg-gray-200 text-dark-bg px-4 py-3 rounded-lg hover:bg-gray-300">
+              <button 
+                onClick={() => router.push('/wasteCompanyDashboard/invoices')}
+                className="w-full bg-gray-200 text-dark-bg px-4 py-3 rounded-lg hover:bg-gray-300"
+              >
                 View Invoices
               </button>
-              <button className="w-full bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600">
+              <button 
+                onClick={() => router.push('/wasteCompanyDashboard/payments')}
+                className="w-full bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600"
+              >
                 Remove Payment Method
               </button>
             </div>
