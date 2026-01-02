@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export default function HouseholdsPage() {
   const router = useRouter();
@@ -67,49 +66,47 @@ export default function HouseholdsPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Household Management</h1>
-          <Button onClick={() => router.push('/wasteCompanyDashboard/households/create')}>
-            <Plus className="w-4 h-4 mr-2" />
-            Register New Household
-          </Button>
-        </div>
-
-        <HouseholdTable
-          households={households}
-          zones={zones}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onToggleStatus={handleToggleStatus}
-        />
-
-        <HouseholdDetailsModal
-          household={selectedHousehold}
-          zones={zones}
-          open={showDetails}
-          onOpenChange={setShowDetails}
-        />
-
-        <Dialog open={!!deleteHouseholdId} onOpenChange={() => setDeleteHouseholdId(null)}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Delete</DialogTitle>
-            </DialogHeader>
-            <p>Are you sure you want to delete this household? This action cannot be undone.</p>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="outline" onClick={() => setDeleteHouseholdId(null)}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={confirmDelete}>
-                Delete
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Household Management</h1>
+        <Button onClick={() => router.push('/wasteCompanyDashboard/households/create')}>
+          <Plus className="w-4 h-4 mr-2" />
+          Register New Household
+        </Button>
       </div>
-    </DashboardLayout>
+
+      <HouseholdTable
+        households={households}
+        zones={zones}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onToggleStatus={handleToggleStatus}
+      />
+
+      <HouseholdDetailsModal
+        household={selectedHousehold}
+        zones={zones}
+        open={showDetails}
+        onOpenChange={setShowDetails}
+      />
+
+      <Dialog open={!!deleteHouseholdId} onOpenChange={() => setDeleteHouseholdId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+          </DialogHeader>
+          <p>Are you sure you want to delete this household? This action cannot be undone.</p>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={() => setDeleteHouseholdId(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

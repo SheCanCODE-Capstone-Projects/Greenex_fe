@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export default function ZonesPage() {
   const router = useRouter();
@@ -51,9 +50,8 @@ export default function ZonesPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Zone Management</h1>
           <Button onClick={() => router.push('/wasteCompanyDashboard/zones/create')}>
             <Plus className="w-4 h-4 mr-2" />
@@ -90,7 +88,6 @@ export default function ZonesPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

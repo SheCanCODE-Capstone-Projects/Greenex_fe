@@ -1,50 +1,74 @@
 "use client";
 
-import { ReactNode, useState } from "react";
-import { useRouter } from 'next/navigation';
-import { Bell, User, Settings, LogOut, LayoutDashboard, Route, Home, MapPin, CreditCard, MessageSquare, Truck } from "lucide-react";
+import { ReactNode, useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Bell,
+  User,
+  Settings,
+  LogOut,
+  LayoutDashboard,
+  Route,
+  Home,
+  MapPin,
+  CreditCard,
+  MessageSquare,
+  Truck,
+  FileText,
+} from "lucide-react";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
-export default function ProfileLayout({ children }: LayoutProps) {
+export default function WasteCompanyLayout({ children }: LayoutProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('Profile');
+  const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = () => setDropdownOpen(false);
+    if (dropdownOpen) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [dropdownOpen]);
+
+  const menuItems = [
+    { label: "Dashboard", icon: LayoutDashboard, route: "/wasteCompanyDashboard" },
+    { label: "Home", icon: Home, route: "/wasteCompanyDashboard/home" },
+    { label: "Routes", icon: Route },
+    { label: "Households", icon: Home, route: "/wasteCompanyDashboard/households" },
+    { label: "Zones", icon: MapPin, route: "/wasteCompanyDashboard/zones" },
+    { label: "Tariffs", icon: CreditCard, route: "/wasteCompanyDashboard/tariffs" },
+    { label: "Payments", icon: CreditCard, route: "/wasteCompanyDashboard/payments" },
+    { label: "Invoices", icon: FileText, route: "/wasteCompanyDashboard/invoices" },
+    { label: "Complaints", icon: MessageSquare, route: "/wasteCompanyDashboard/complaints" },
+    { label: "Pickup Session", icon: Truck },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
       <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block h-screen fixed left-0 top-0 overflow-y-auto z-30">
         <ul className="space-y-3 text-sm">
-          {[
-            { label: 'Dashboard', icon: LayoutDashboard, route: '/wasteCompanyDashboard' },
-            { label: 'Routes', icon: Route },
-            { label: 'Households', icon: Home, route: '/wasteCompanyDashboard/households' },
-            { label: 'Zones', icon: MapPin, route: '/wasteCompanyDashboard/zones' },
-            { label: 'Tariffs', icon: CreditCard, route: '/wasteCompanyDashboard/tariffs' },
-            { label: 'Payments', icon: CreditCard, route: '/wasteCompanyDashboard/payments' },
-            { label: 'Complaints', icon: MessageSquare, route: '/wasteCompanyDashboard/complaints' },
-            { label: 'Pickup Session', icon: Truck }
-          ].map(item => (
-            <SidebarItem 
+          {menuItems.map((item) => (
+            <li
               key={item.label}
-              label={item.label}
-              icon={item.icon}
-              active={activeTab === item.label}
-              onClick={() => {
-                if (item.route) {
-                  router.push(item.route);
-                } else {
-                  setActiveTab(item.label);
-                }
-              }}
-            />
+              onClick={() => item.route && router.push(item.route)}
+              className={`px-3 py-2 rounded flex items-center gap-3 cursor-pointer transition-colors ${
+                pathname === item.route ? "bg-green-700" : "hover:bg-green-800"
+              }`}
+            >
+              <item.icon size={18} />
+              {item.label}
+            </li>
           ))}
         </ul>
       </aside>
 
       <div className="flex-1 ml-64">
+        {/* Header */}
         <nav className="sticky top-0 z-40 bg-white shadow-sm border-b px-8 py-4">
           <div className="flex justify-between items-center">
             <div>
@@ -58,8 +82,11 @@ export default function ProfileLayout({ children }: LayoutProps) {
                 </button>
               </div>
               <div className="relative">
-                <button 
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDropdownOpen(!dropdownOpen);
+                  }}
                   className="w-10 h-10 rounded-full bg-green-400 flex items-center justify-center font-semibold hover:bg-green-500 transition-colors"
                 >
                   CM
@@ -67,8 +94,8 @@ export default function ProfileLayout({ children }: LayoutProps) {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
                     <div className="py-1">
-                      <button 
-                        onClick={() => router.push('/wasteCompanyDashboard/profile')}
+                      <button
+                        onClick={() => router.push("/wasteCompanyDashboard/profile")}
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                       >
                         <User size={16} /> Profile
@@ -88,29 +115,11 @@ export default function ProfileLayout({ children }: LayoutProps) {
           </div>
         </nav>
 
+        {/* Main Content */}
         <section className="overflow-y-auto">
           {children}
         </section>
       </div>
     </div>
-  );
-}
-
-function SidebarItem({ label, icon: Icon, active, onClick }: { 
-  label: string;
-  icon: React.ComponentType<{ size?: number }>;
-  active?: boolean; 
-  onClick: () => void;
-}) {
-  return (
-    <li
-      onClick={onClick}
-      className={`px-3 py-2 rounded flex items-center gap-3 cursor-pointer transition-colors ${
-        active ? "bg-green-700" : "hover:bg-green-800"
-      }`}
-    >
-      <Icon size={18} />
-      {label}
-    </li>
   );
 }

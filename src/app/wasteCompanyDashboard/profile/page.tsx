@@ -95,8 +95,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-light-bg p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="p-6">
+      <div className="space-y-6">
         
         {/* Company Snapshot */}
         <div className="bg-white rounded-lg shadow-md p-6">

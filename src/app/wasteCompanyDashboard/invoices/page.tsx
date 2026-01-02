@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Eye } from "lucide-react";
+import { Download, Eye, FileText } from "lucide-react";
 
 interface Invoice {
   id: string;
@@ -19,6 +19,8 @@ export default function InvoicesPage() {
     { id: "INV-004", date: "2023-10-15", amount: 99, status: "Paid", description: "Premium Plan - October 2023" },
   ]);
 
+  const [viewingInvoice, setViewingInvoice] = useState<Invoice | null>(null);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Paid": return "bg-green-100 text-green-700";
@@ -28,10 +30,38 @@ export default function InvoicesPage() {
     }
   };
 
+  const handleViewInvoice = (invoice: Invoice) => {
+    setViewingInvoice(invoice);
+  };
+
+  const handleDownloadInvoice = (invoice: Invoice) => {
+    const invoiceContent = `
+INVOICE
+
+Invoice ID: ${invoice.id}
+Date: ${invoice.date}
+Description: ${invoice.description}
+Amount: $${invoice.amount}
+Status: ${invoice.status}
+
+Thank you for your business!
+EcoCycle Solutions
+    `;
+    
+    const blob = new Blob([invoiceContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${invoice.id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="min-h-screen bg-light-bg p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-dark-bg mb-6">Invoices</h2>
           
           <div className="overflow-x-auto">
@@ -60,10 +90,18 @@ export default function InvoicesPage() {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
-                        <button className="p-2 text-primary-green hover:bg-primary-green/10 rounded">
+                        <button 
+                          onClick={() => handleViewInvoice(invoice)}
+                          className="p-2 text-primary-green hover:bg-primary-green/10 rounded"
+                          title="View Invoice"
+                        >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button className="p-2 text-primary-green hover:bg-primary-green/10 rounded">
+                        <button 
+                          onClick={() => handleDownloadInvoice(invoice)}
+                          className="p-2 text-primary-green hover:bg-primary-green/10 rounded"
+                          title="Download Invoice"
+                        >
                           <Download className="w-4 h-4" />
                         </button>
                       </div>
@@ -74,7 +112,66 @@ export default function InvoicesPage() {
             </table>
           </div>
         </div>
-      </div>
+
+      {viewingInvoice && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setViewingInvoice(null)}>
+            <div className="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-8 h-8 text-primary-green" />
+                  <h3 className="text-2xl font-bold text-dark-bg">Invoice Details</h3>
+                </div>
+                <button 
+                  onClick={() => setViewingInvoice(null)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="space-y-4 border-t border-b border-gray-200 py-6">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Invoice ID:</span>
+                  <span className="font-semibold text-dark-bg">{viewingInvoice.id}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Date:</span>
+                  <span className="font-semibold text-dark-bg">{viewingInvoice.date}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Description:</span>
+                  <span className="font-semibold text-dark-bg">{viewingInvoice.description}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Amount:</span>
+                  <span className="font-semibold text-dark-bg text-xl">${viewingInvoice.amount}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Status:</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(viewingInvoice.status)}`}>
+                    {viewingInvoice.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-6 flex gap-3">
+                <button 
+                  onClick={() => handleDownloadInvoice(viewingInvoice)}
+                  className="flex-1 bg-primary-green text-white px-4 py-3 rounded-lg hover:bg-secondary-green flex items-center justify-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Invoice
+                </button>
+                <button 
+                  onClick={() => setViewingInvoice(null)}
+                  className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

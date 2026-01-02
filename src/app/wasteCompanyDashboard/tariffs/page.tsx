@@ -9,7 +9,6 @@ import { ConfirmDialog } from '@/components/tariffs/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export default function TariffsPage() {
   const router = useRouter();
@@ -55,9 +54,8 @@ export default function TariffsPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Tariff Plans</h1>
           <Button onClick={() => router.push('/wasteCompanyDashboard/tariffs/create')}>
             <Plus className="w-4 h-4 mr-2" />
@@ -90,7 +88,6 @@ export default function TariffsPage() {
           confirmText="Delete"
           variant="destructive"
         />
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
