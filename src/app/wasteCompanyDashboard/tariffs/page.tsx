@@ -9,19 +9,14 @@ import { ConfirmDialog } from '@/components/tariffs/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export default function TariffsPage() {
   const router = useRouter();
-  const [plans, setPlans] = useState<TariffPlan[]>([]);
+  const [plans, setPlans] = useState<TariffPlan[]>(tariffStore.getPlans());
   const [selectedPlan, setSelectedPlan] = useState<TariffPlan | null>(null);
   const [selectedPlanRules, setSelectedPlanRules] = useState<TariffRule[]>([]);
   const [showDetails, setShowDetails] = useState(false);
   const [deletePlanId, setDeletePlanId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setPlans(tariffStore.getPlans());
-  }, []);
 
   const handleView = (plan: TariffPlan) => {
     setSelectedPlan(plan);
@@ -55,9 +50,8 @@ export default function TariffsPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Tariff Plans</h1>
           <Button onClick={() => router.push('/wasteCompanyDashboard/tariffs/create')}>
             <Plus className="w-4 h-4 mr-2" />
@@ -90,7 +84,6 @@ export default function TariffsPage() {
           confirmText="Delete"
           variant="destructive"
         />
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
