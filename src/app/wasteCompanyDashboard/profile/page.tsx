@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Edit2, Save, X, Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Plus, Trash2 } from "lucide-react";
+import { Edit2, Save, X, Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Plus, Trash2, Upload } from "lucide-react";
 import { 
   initialCompanyInfo, 
   initialAboutUs, 
@@ -39,6 +39,7 @@ interface Certification {
   id: string;
   name: string;
   logo: string;
+  logoImage?: string;
 }
 
 interface TeamMember {
@@ -73,6 +74,23 @@ export default function ProfilePage() {
 
   const [newMemberEmail, setNewMemberEmail] = useState("");
   const [newAreaCity, setNewAreaCity] = useState("");
+
+  const handleLogoUpload = (certId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCertifications(certifications.map(c => 
+          c.id === certId ? {...c, logoImage: reader.result as string} : c
+        ));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const getLogoPlaceholder = (name: string) => {
+    return name.substring(0, 2).toUpperCase();
+  };
 
   return (
     <div className="min-h-screen bg-light-bg p-6">
@@ -323,7 +341,35 @@ export default function ProfilePage() {
 
         {/* Service Areas Section */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-dark-bg mb-6">Service Areas</h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-dark-bg">Service Areas</h2>
+            {editingSection !== "areas" ? (
+              <button 
+                onClick={() => setEditingSection("areas")}
+                className="flex items-center gap-2 text-primary-green hover:text-secondary-green"
+              >
+                <Edit2 className="w-4 h-4" />
+                Edit
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setEditingSection(null)}
+                  className="flex items-center gap-2 bg-primary-green text-white px-4 py-2 rounded-lg hover:bg-secondary-green"
+                >
+                  <Save className="w-4 h-4" />
+                  Save
+                </button>
+                <button 
+                  onClick={() => setEditingSection(null)}
+                  className="flex items-center gap-2 bg-gray-300 text-dark-bg px-4 py-2 rounded-lg hover:bg-gray-400"
+                >
+                  <X className="w-4 h-4" />
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
           
           <div className="mb-6 bg-gray-100 rounded-lg p-8 flex items-center justify-center">
             <div className="text-center">
@@ -332,38 +378,42 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="flex gap-2 mb-4">
-            <input
-              type="text"
-              value={newAreaCity}
-              onChange={(e) => setNewAreaCity(e.target.value)}
-              placeholder="Enter city name"
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
-            />
-            <button 
-              onClick={() => {
-                if (newAreaCity.trim()) {
-                  setServiceAreas([...serviceAreas, { id: Date.now().toString(), city: newAreaCity }]);
-                  setNewAreaCity("");
-                }
-              }}
-              className="flex items-center gap-2 bg-primary-green text-white px-4 py-2 rounded-lg hover:bg-secondary-green"
-            >
-              <Plus className="w-4 h-4" />
-              Add Area
-            </button>
-          </div>
+          {editingSection === "areas" && (
+            <div className="flex gap-2 mb-4">
+              <input
+                type="text"
+                value={newAreaCity}
+                onChange={(e) => setNewAreaCity(e.target.value)}
+                placeholder="Enter city name"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
+              />
+              <button 
+                onClick={() => {
+                  if (newAreaCity.trim()) {
+                    setServiceAreas([...serviceAreas, { id: Date.now().toString(), city: newAreaCity }]);
+                    setNewAreaCity("");
+                  }
+                }}
+                className="flex items-center gap-2 bg-primary-green text-white px-4 py-2 rounded-lg hover:bg-secondary-green"
+              >
+                <Plus className="w-4 h-4" />
+                Add Area
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {serviceAreas.map(area => (
               <div key={area.id} className="flex items-center justify-between bg-light-bg rounded-lg px-4 py-2">
                 <span className="text-dark-bg">{area.city}</span>
-                <button 
-                  onClick={() => setServiceAreas(serviceAreas.filter(a => a.id !== area.id))}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                {editingSection === "areas" && (
+                  <button 
+                    onClick={() => setServiceAreas(serviceAreas.filter(a => a.id !== area.id))}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -371,17 +421,92 @@ export default function ProfilePage() {
 
         {/* Certifications & Partnerships */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-dark-bg mb-6">Certifications & Partnerships</h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-dark-bg">Certifications & Partnerships</h2>
+            {editingSection !== "certifications" ? (
+              <button 
+                onClick={() => setEditingSection("certifications")}
+                className="flex items-center gap-2 text-primary-green hover:text-secondary-green"
+              >
+                <Edit2 className="w-4 h-4" />
+                Edit
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setEditingSection(null)}
+                  className="flex items-center gap-2 bg-primary-green text-white px-4 py-2 rounded-lg hover:bg-secondary-green"
+                >
+                  <Save className="w-4 h-4" />
+                  Save
+                </button>
+                <button 
+                  onClick={() => setEditingSection(null)}
+                  className="flex items-center gap-2 bg-gray-300 text-dark-bg px-4 py-2 rounded-lg hover:bg-gray-400"
+                >
+                  <X className="w-4 h-4" />
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {certifications.map(cert => (
-              <div key={cert.id} className="border border-gray-200 rounded-lg p-4 text-center hover:shadow-lg transition-shadow">
-                <div className="w-16 h-16 bg-primary-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl font-bold text-primary-green">{cert.logo}</span>
+              <div key={cert.id} className="border border-gray-200 rounded-lg p-4 text-center hover:shadow-lg transition-shadow relative">
+                {editingSection === "certifications" && (
+                  <button 
+                    onClick={() => setCertifications(certifications.filter(c => c.id !== cert.id))}
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+                <div className="w-16 h-16 bg-primary-green/10 rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden relative group">
+                  {cert.logoImage ? (
+                    <img src={cert.logoImage} alt={cert.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl font-bold text-primary-green">{getLogoPlaceholder(cert.name)}</span>
+                  )}
+                  {editingSection === "certifications" && (
+                    <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                      <Upload className="w-6 h-6 text-white" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleLogoUpload(cert.id, e)}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
                 </div>
-                <p className="font-semibold text-dark-bg">{cert.name}</p>
+                {editingSection === "certifications" ? (
+                  <input
+                    type="text"
+                    value={cert.name}
+                    onChange={(e) => setCertifications(certifications.map(c => 
+                      c.id === cert.id ? {...c, name: e.target.value} : c
+                    ))}
+                    className="w-full text-center font-semibold text-dark-bg border border-gray-300 rounded px-2 py-1"
+                  />
+                ) : (
+                  <p className="font-semibold text-dark-bg">{cert.name}</p>
+                )}
               </div>
             ))}
           </div>
+          {editingSection === "certifications" && (
+            <button 
+              onClick={() => setCertifications([...certifications, {
+                id: Date.now().toString(),
+                name: "New Certification",
+                logo: "NEW"
+              }])}
+              className="mt-4 flex items-center gap-2 text-primary-green hover:text-secondary-green"
+            >
+              <Plus className="w-4 h-4" />
+              Add Certification
+            </button>
+          )}
         </div>
 
         {/* Team & Access */}
