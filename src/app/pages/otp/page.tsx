@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { authService } from "@/lib/auth-service";
+import { toast } from "react-toastify";
 
 export default function OTPPage() {
   const router = useRouter();
@@ -57,18 +59,29 @@ export default function OTPPage() {
 
     setLoading(true);
 
-    // 🔌 TODO: call backend verify OTP API
-    setTimeout(() => {
-      setLoading(false);
+    setLoading(true);
+
+    try {
+      await authService.verifyOtp(otpString);
+
       setStep(2);
+      toast.success("Account verified successfully!");
 
       // 🧹 clear signup state
       localStorage.removeItem("signup_completed");
       localStorage.removeItem("signup_email");
 
-      // ✅ redirect to Sign In page
-      router.push("/signin");
-    }, 800);
+      // Redirect after a short delay to show success state
+      setTimeout(() => {
+        router.push("/signin");
+      }, 1500);
+
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,11 +93,10 @@ export default function OTPPage() {
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                  step >= 1
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-200 text-gray-500"
-                }`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${step >= 1
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-200 text-gray-500"
+                  }`}
               >
                 {step > 1 ? "✓" : "1"}
               </div>
@@ -95,11 +107,10 @@ export default function OTPPage() {
 
             <div className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                  step >= 2
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-200 text-gray-500"
-                }`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${step >= 2
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-200 text-gray-500"
+                  }`}
               >
                 ✓
               </div>
