@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/ui/notification";
 import { useCompanyNotifications } from "@/lib/useCompanyNotifications";
+import { contactService, type Contact } from "@/lib/contact-service";
 
 ChartJS.register(
   CategoryScale,
@@ -45,6 +46,26 @@ export default function SupperDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
   const { notifications, dismissNotification } = useCompanyNotifications();
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
+
+  // Fetch contacts when user-review section is active
+  useEffect(() => {
+    if (activeSection === 'user-review') {
+      const fetchContacts = async () => {
+        setLoadingContacts(true);
+        try {
+          const data = await contactService.getAllContacts();
+          setContacts(data);
+        } catch (error) {
+          console.error('Failed to fetch contacts:', error);
+        } finally {
+          setLoadingContacts(false);
+        }
+      };
+      fetchContacts();
+    }
+  }, [activeSection]);
 
   const barData = {
     labels: ["Kicukiro", "Gasabo", "Nyarugenge", "Remera", "Kimisagara", "Gisozi"],
@@ -296,7 +317,7 @@ export default function SupperDashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            <NotificationDropdown 
+            <NotificationDropdown
               notifications={notifications}
               onDismiss={dismissNotification}
             />
