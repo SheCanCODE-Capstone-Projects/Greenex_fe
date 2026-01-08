@@ -13,13 +13,13 @@ export interface RegisterResponse {
     message: string;
     user?: any;
     token?: string;
-    // Add other fields based on actual response
+  
 }
 
 export const authService = {
     register: async (data: RegisterData): Promise<RegisterResponse> => {
         try {
-            // Ensure userType is uppercase as per Swagger hint (often enums are uppercase)
+          
             const payload = {
                 ...data,
                 userType: data.userType.toUpperCase()
@@ -43,7 +43,7 @@ export const authService = {
             if (responseData) {
                 if (responseData.errors) {
                     if (typeof responseData.errors === 'object' && !Array.isArray(responseData.errors)) {
-                        // Extract values from the errors object (e.g. {email: "bad format"} -> "bad format")
+    
                         message = Object.values(responseData.errors).join(', ');
                     } else if (Array.isArray(responseData.errors)) {
                         message = responseData.errors.join(', ');

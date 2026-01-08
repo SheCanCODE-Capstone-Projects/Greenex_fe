@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import Link from "next/link";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bar, Doughnut } from "react-chartjs-2";
 import {
@@ -24,7 +25,12 @@ import {
   Check,
   X,
   Clock,
+  User,
+  Calendar,
+  Building2,
 } from "lucide-react";
+import { contactService, Contact } from "@/lib/contact-service";
+import { toast } from "react-toastify";
 
 ChartJS.register(
   CategoryScale,
@@ -38,6 +44,27 @@ ChartJS.register(
 export default function SupperDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
+
+  // Fetch contacts when user review section is active
+  useEffect(() => {
+    if (activeSection === 'user-review') {
+      const fetchContacts = async () => {
+        try {
+          setLoadingContacts(true);
+          const data = await contactService.getAllContacts();
+          setContacts(data);
+        } catch (err: any) {
+          console.error('Error fetching contacts:', err);
+          toast.error(err.message || 'Failed to load contacts');
+        } finally {
+          setLoadingContacts(false);
+        }
+      };
+      fetchContacts();
+    }
+  }, [activeSection]);
 
   const barData = {
     labels: ["Kicukiro", "Gasabo", "Nyarugenge", "Remera", "Kimisagara", "Gisozi"],
@@ -92,161 +119,164 @@ export default function SupperDashboard() {
   };
 
   function renderContent() {
-    switch (activeSection) {
-      case 'overview':
+    if (activeSection === 'user-review') {
+      if (loadingContacts) {
         return (
-          <div className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <StatCard title="Total Households" value="2,847" note="+12% this month" color="text-green-600" />
-              <StatCard title="Registered Companies" value="156/160" note="98%" color="text-green-600" />
-              <StatCard title="Active Routes" value="24" />
+          <div className="flex items-center justify-center h-64 mt-6">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading contact submissions...</p>
             </div>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-              <Card className="p-4 rounded-2xl shadow h-[420px]">
-                <h2 className="font-semibold mb-4">District Complaints Overview</h2>
-                <div className="h-[330px]">
-                  <Bar data={barData} options={barOptions} />
-                </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold mb-6">Contact Submissions</h2>
+
+          <div className="grid gap-4">
+            {contacts.length === 0 ? (
+              <Card className="p-12 rounded-2xl shadow text-center">
+                <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No contact submissions found</p>
               </Card>
-              <Card className="p-4 rounded-2xl shadow h-[420px]">
-                <h2 className="font-semibold mb-4">Monthly Revenue Distribution</h2>
-                <div className="relative h-[260px] flex items-center justify-center">
-                  <Doughnut data={donutData} options={donutOptions} />
-                  <div className="absolute text-center">
-                    <p className="text-xl font-bold">85K</p>
-                    <p className="text-sm text-gray-500">RWF</p>
+            ) : (
+              contacts.map((contact) => (
+                <Card key={contact.id} className="p-6 rounded-2xl shadow hover:shadow-lg transition-shadow">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <User className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg">{contact.fullName}</h3>
+                        <p className="text-gray-500 text-sm">{contact.email}</p>
+                      </div>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${contact.processed
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                      {contact.processed ? 'Processed' : 'Pending'}
+                    </span>
                   </div>
-                </div>
-              </Card>
-            </div>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-medium text-gray-700">Service Interest:</span>
+                      <span className="text-gray-600 capitalize">{contact.serviceInterest}</span>
+                    </div>
+                    {contact.phone && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="font-medium text-gray-700">Phone:</span>
+                        <span className="text-gray-600">{contact.phone}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                    <p className="text-gray-700 text-sm leading-relaxed italic">
+                      &quot;{contact.message}&quot;
+                    </p>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-4 border-t">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Calendar className="w-4 h-4" />
+                      {new Date(contact.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </div>
+                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                      Reply
+                    </button>
+                  </div>
+                </Card>
+              ))
+            )}
           </div>
-        );
-      case 'user-review':
-        return (
-          <div className="mt-6">
-            <Card className="p-6 rounded-2xl shadow">
-              <h2 className="text-xl font-semibold mb-4">User Reviews & Feedback</h2>
-              <div className="space-y-4">
-                <ReviewItem user="John Doe" rating={5} comment="Excellent waste collection service!" date="2024-01-15" />
-                <ReviewItem user="Jane Smith" rating={4} comment="Good service, but could be more frequent." date="2024-01-14" />
-                <ReviewItem user="Mike Johnson" rating={5} comment="Very reliable and professional team." date="2024-01-13" />
-              </div>
-            </Card>
-          </div>
-        );
-      case 'companies':
-        return (
-          <div className="mt-6 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-              <StatCard title="Total Companies" value="23" color="text-blue-600" />
-              <StatCard title="Approved" value="15" note="65%" color="text-green-600" />
-              <StatCard title="In Process" value="5" note="22%" color="text-yellow-600" />
-              <StatCard title="Rejected" value="3" note="13%" color="text-red-600" />
-            </div>
-            
-            <Card className="p-6 rounded-2xl shadow">
-              <h2 className="text-xl font-semibold mb-6">Company Registration Management</h2>
-              <div className="space-y-6">
-                <CompanyDetailCard 
-                  name="Green Waste Ltd" 
-                  status="Approved" 
-                  registrationDate="2024-01-10"
-                  documents={{
-                    kigaliContract: { status: "Verified", filename: "kigali_contract_greenwaste.pdf" },
-                    remaDocument: { status: "Verified", filename: "rema_certificate_greenwaste.pdf" },
-                    rdbDocument: { status: "Verified", filename: "rdb_license_greenwaste.pdf" },
-                    insurancePolicy: { status: "Verified", filename: "insurance_greenwaste.pdf" },
-                    vehicleRegistration: { status: "Verified", filename: "vehicle_reg_greenwaste.pdf" }
-                  }}
-                  routes={8} 
-                  households={450}
-                  contact="info@greenwaste.rw"
-                />
-                <CompanyDetailCard 
-                  name="Eco Clean Services" 
-                  status="Approved" 
-                  registrationDate="2024-01-08"
-                  documents={{
-                    kigaliContract: { status: "Verified", filename: "kigali_contract_ecoclean.pdf" },
-                    remaDocument: { status: "Verified", filename: "rema_certificate_ecoclean.pdf" },
-                    rdbDocument: { status: "Verified", filename: "rdb_license_ecoclean.pdf" },
-                    insurancePolicy: { status: "Verified", filename: "insurance_ecoclean.pdf" },
-                    vehicleRegistration: { status: "Verified", filename: "vehicle_reg_ecoclean.pdf" }
-                  }}
-                  routes={6} 
-                  households={320}
-                  contact="contact@ecoclean.rw"
-                />
-                <CompanyDetailCard 
-                  name="City Waste Management" 
-                  status="In Process" 
-                  registrationDate="2024-01-12"
-                  documents={{
-                    kigaliContract: { status: "Verified", filename: "kigali_contract_citywaste.pdf" },
-                    remaDocument: { status: "Under Review", filename: "rema_certificate_citywaste.pdf" },
-                    rdbDocument: { status: "Pending", filename: "rdb_license_citywaste.pdf" },
-                    insurancePolicy: { status: "Verified", filename: "insurance_citywaste.pdf" },
-                    vehicleRegistration: { status: "Under Review", filename: "vehicle_reg_citywaste.pdf" }
-                  }}
-                  routes={0} 
-                  households={0}
-                  contact="admin@citywaste.rw"
-                />
-                <CompanyDetailCard 
-                  name="Quick Clean Co" 
-                  status="Rejected" 
-                  registrationDate="2024-01-05"
-                  documents={{
-                    kigaliContract: { status: "Rejected", filename: "kigali_contract_quickclean.pdf" },
-                    remaDocument: { status: "Missing", filename: "" },
-                    rdbDocument: { status: "Expired", filename: "rdb_license_quickclean_old.pdf" },
-                    insurancePolicy: { status: "Invalid", filename: "insurance_quickclean.pdf" },
-                    vehicleRegistration: { status: "Incomplete", filename: "" }
-                  }}
-                  routes={0} 
-                  households={0}
-                  contact="info@quickclean.rw"
-                />
-              </div>
-            </Card>
-          </div>
-        );
-      default:
-        return null;
+        </div>
+      );
     }
+
+    // Companies section
+    if (activeSection === 'companies') {
+      return (
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold mb-6">Companies Registration</h2>
+          <Card className="p-12 rounded-2xl shadow text-center">
+            <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">Companies management content will be displayed here</p>
+            <p className="text-sm text-gray-500 mt-2">This section is under development</p>
+          </Card>
+        </div>
+      );
+    }
+
+    // Overview section
+    return (
+      <div className="mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <StatCard title="Total Households" value="2,847" note="+12% this month" color="text-green-600" />
+          <StatCard title="Registered Companies" value="156/160" note="98%" color="text-green-600" />
+          <StatCard title="Active Routes" value="24" />
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+          <Card className="p-4 rounded-2xl shadow h-[420px]">
+            <h2 className="font-semibold mb-4">District Complaints Overview</h2>
+            <div className="h-[330px]">
+              <Bar data={barData} options={barOptions} />
+            </div>
+          </Card>
+          <Card className="p-4 rounded-2xl shadow h-[420px]">
+            <h2 className="font-semibold mb-4">Monthly Revenue Distribution</h2>
+            <div className="relative h-[260px] flex items-center justify-center">
+              <Doughnut data={donutData} options={donutOptions} />
+              <div className="absolute text-center">
+                <p className="text-xl font-bold">85K</p>
+                <p className="text-sm text-gray-500">RWF</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-    
+
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0B5D2E] text-white flex flex-col justify-between py-6
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0B5D2E] text-white flex flex-col py-6
         transform transition-transform duration-300
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 md:static`}
+        md:translate-x-0 md:static overflow-y-auto`}
       >
         <div className="space-y-6 px-4">
-          <div className="flex items-center gap-3 bg-[#0F7A3B] px-4 py-3 rounded-xl text-sm font-medium">
-            <LayoutDashboard size={18} />
+          <div className="flex items-center gap-3 px-4 py-3 text-lg font-bold">
+            <LayoutDashboard size={20} />
             Dashboard
           </div>
 
           <nav className="space-y-5 text-sm">
-            <SidebarItem 
-              label="Overview" 
-              icon={<LayoutDashboard size={18} />} 
+            <SidebarItem
+              label="Overview"
+              icon={<LayoutDashboard size={18} />}
               isActive={activeSection === 'overview'}
               onClick={() => setActiveSection('overview')}
             />
-            <SidebarItem 
-              label="User Review" 
-              icon={<MessageSquare size={18} />} 
+            <SidebarItem
+              label="User Review"
+              icon={<MessageSquare size={18} />}
               isActive={activeSection === 'user-review'}
               onClick={() => setActiveSection('user-review')}
             />
-            <SidebarItem 
-              label="Companies" 
-              icon={<Home size={18} />} 
+            <SidebarItem
+              label="Companies"
+              icon={<Home size={18} />}
               isActive={activeSection === 'companies'}
               onClick={() => setActiveSection('companies')}
             />
@@ -254,7 +284,7 @@ export default function SupperDashboard() {
         </div>
       </aside>
 
-      
+
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-30 md:hidden"
@@ -262,12 +292,12 @@ export default function SupperDashboard() {
         />
       )}
 
-    
-      <main className="flex-1 p-4 md:p-6">
-      
-        <header className="bg-white rounded-xl shadow px-4 md:px-6 py-4 flex justify-between items-center relative z-20">
+
+      <main className="flex-1">
+
+        <header className="bg-white shadow px-4 md:px-6 py-4 flex justify-between items-center sticky top-0 z-20">
           <div className="flex items-center gap-3">
-          
+
             <button
               onClick={() => setIsSidebarOpen(true)}
               className="md:hidden p-2 rounded-md z-50"
@@ -299,8 +329,10 @@ export default function SupperDashboard() {
           </div>
         </header>
 
-      
-        {renderContent()}
+
+        <div className="p-4 md:p-6">
+          {renderContent()}
+        </div>
       </main>
     </div>
   );
@@ -318,12 +350,11 @@ function SidebarItem({
   onClick: () => void;
 }) {
   return (
-    <button 
-      className={`w-full flex items-center gap-3 cursor-pointer px-4 py-3 rounded-xl transition-colors text-left ${
-        isActive 
-          ? "bg-[#0F7A3B] text-white" 
-          : "hover:text-green-300 hover:bg-[#0F7A3B]/20"
-      }`}
+    <button
+      className={`w-full flex items-center gap-3 cursor-pointer px-4 py-3 rounded-xl transition-colors text-left ${isActive
+        ? "bg-[#0F7A3B] text-white"
+        : "hover:text-green-300 hover:bg-[#0F7A3B]/20"
+        }`}
       onClick={onClick}
       type="button"
     >
@@ -350,17 +381,17 @@ function ReviewItem({ user, rating, comment, date }: { user: string; rating: num
   );
 }
 
-function CompanyDetailCard({ 
-  name, 
-  status, 
-  registrationDate, 
-  documents, 
-  routes, 
-  households, 
-  contact 
-}: { 
-  name: string; 
-  status: string; 
+function CompanyDetailCard({
+  name,
+  status,
+  registrationDate,
+  documents,
+  routes,
+  households,
+  contact
+}: {
+  name: string;
+  status: string;
   registrationDate: string;
   documents: {
     kigaliContract: { status: string; filename: string };
@@ -369,7 +400,7 @@ function CompanyDetailCard({
     insurancePolicy: { status: string; filename: string };
     vehicleRegistration: { status: string; filename: string };
   };
-  routes: number; 
+  routes: number;
   households: number;
   contact: string;
 }) {
@@ -453,41 +484,41 @@ function CompanyDetailCard({
             )}
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
           <div>
             <h4 className="font-medium mb-3">Required Documents</h4>
             <div className="space-y-3">
-              <DocumentRow 
-                label="Kigali Contract" 
+              <DocumentRow
+                label="Kigali Contract"
                 document={documents.kigaliContract}
                 getStatusColor={getDocumentStatus}
                 onView={handleViewDocument}
                 onDownload={handleDownloadDocument}
               />
-              <DocumentRow 
-                label="REMA Certificate" 
+              <DocumentRow
+                label="REMA Certificate"
                 document={documents.remaDocument}
                 getStatusColor={getDocumentStatus}
                 onView={handleViewDocument}
                 onDownload={handleDownloadDocument}
               />
-              <DocumentRow 
-                label="RDB License" 
+              <DocumentRow
+                label="RDB License"
                 document={documents.rdbDocument}
                 getStatusColor={getDocumentStatus}
                 onView={handleViewDocument}
                 onDownload={handleDownloadDocument}
               />
-              <DocumentRow 
-                label="Insurance Policy" 
+              <DocumentRow
+                label="Insurance Policy"
                 document={documents.insurancePolicy}
                 getStatusColor={getDocumentStatus}
                 onView={handleViewDocument}
                 onDownload={handleDownloadDocument}
               />
-              <DocumentRow 
-                label="Vehicle Registration" 
+              <DocumentRow
+                label="Vehicle Registration"
                 document={documents.vehicleRegistration}
                 getStatusColor={getDocumentStatus}
                 onView={handleViewDocument}
@@ -495,7 +526,7 @@ function CompanyDetailCard({
               />
             </div>
           </div>
-          
+
           <div>
             <h4 className="font-medium mb-3">Operations Summary</h4>
             <div className="space-y-2 text-sm text-gray-600">
@@ -504,10 +535,9 @@ function CompanyDetailCard({
               <p>Document Progress: <span className="font-medium text-gray-900">
                 {Object.values(documents).filter(doc => doc.status === 'Verified').length}/5 Verified
               </span></p>
-              <p>Registration Status: <span className={`font-medium ${
-                status === 'Approved' ? 'text-green-600' : 
+              <p>Registration Status: <span className={`font-medium ${status === 'Approved' ? 'text-green-600' :
                 status === 'In Process' ? 'text-yellow-600' : 'text-red-600'
-              }`}>{status}</span></p>
+                }`}>{status}</span></p>
             </div>
           </div>
         </div>
@@ -516,14 +546,14 @@ function CompanyDetailCard({
   );
 }
 
-function DocumentRow({ 
-  label, 
-  document, 
-  getStatusColor, 
-  onView, 
-  onDownload 
-}: { 
-  label: string; 
+function DocumentRow({
+  label,
+  document,
+  getStatusColor,
+  onView,
+  onDownload
+}: {
+  label: string;
   document: { status: string; filename: string };
   getStatusColor: (status: string) => string;
   onView: (filename: string) => void;
