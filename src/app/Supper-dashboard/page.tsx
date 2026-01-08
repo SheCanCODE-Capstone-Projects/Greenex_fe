@@ -29,8 +29,8 @@ import {
   Calendar,
   Building2,
 } from "lucide-react";
-import { contactService, Contact } from "@/lib/contact-service";
-import { toast } from "react-toastify";
+import { NotificationDropdown } from "@/components/ui/notification";
+import { useCompanyNotifications } from "@/lib/useCompanyNotifications";
 
 ChartJS.register(
   CategoryScale,
@@ -44,27 +44,7 @@ ChartJS.register(
 export default function SupperDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [loadingContacts, setLoadingContacts] = useState(false);
-
-  // Fetch contacts when user review section is active
-  useEffect(() => {
-    if (activeSection === 'user-review') {
-      const fetchContacts = async () => {
-        try {
-          setLoadingContacts(true);
-          const data = await contactService.getAllContacts();
-          setContacts(data);
-        } catch (err: any) {
-          console.error('Error fetching contacts:', err);
-          toast.error(err.message || 'Failed to load contacts');
-        } finally {
-          setLoadingContacts(false);
-        }
-      };
-      fetchContacts();
-    }
-  }, [activeSection]);
+  const { notifications, dismissNotification } = useCompanyNotifications();
 
   const barData = {
     labels: ["Kicukiro", "Gasabo", "Nyarugenge", "Remera", "Kimisagara", "Gisozi"],
@@ -316,12 +296,10 @@ export default function SupperDashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <Bell size={22} />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
-                12
-              </span>
-            </div>
+            <NotificationDropdown 
+              notifications={notifications}
+              onDismiss={dismissNotification}
+            />
 
             <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
               CM

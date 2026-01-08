@@ -170,7 +170,7 @@ export default function Login() {
           </button>
 
           {/* Sign Up Link */}
-          <p className="text-sm text-center mt-6 text-gray-600">
+          <p className="text-sm text-center mt-6 text-gray-600">S
             Do not have an account?
             <a
               href="/signup"
