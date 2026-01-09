@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare } from "lucide-react";
+import { contactService } from "@/lib/contact-service";
+import { toast } from "react-toastify";
 
 const contactInfo = [
   {
@@ -37,17 +40,39 @@ const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     message: "",
     service: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    console.log(formData);
+    try {
+      const payload = {
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        serviceInterest: formData.service,
+        message: formData.message
+      };
 
-    setFormData({ name: "", email: "", message: "", service: "" });
-    alert("Message sent successfully!");
+      console.log('Submitting contact form:', payload);
+      // @ts-ignore
+      const response = await contactService.submitContactForm(payload);
+      console.log('Contact form response:', response);
+
+      toast.success('Message sent successfully! We\'ll get back to you soon.');
+      setFormData({ name: "", email: "", phone: "", message: "", service: "" });
+    } catch (error: any) {
+      console.error('Contact form error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to send message. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -83,7 +108,7 @@ const ContactSection: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6">
             Contact Us
           </h2>
-          <motion.div 
+          <motion.div
             className="w-16 sm:w-20 lg:w-24 h-1 bg-foreground dark:bg-white mx-auto mb-6 sm:mb-8"
             initial={{ width: 0, scaleX: 0 }}
             animate={isInView ? { width: 96, scaleX: 1 } : {}}
@@ -102,13 +127,13 @@ const ContactSection: React.FC = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <motion.div 
+            <motion.div
               className="bg-white dark:bg-gray-800 rounded-2xl p-6 sm:p-8 shadow-lg"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <motion.h3 
+              <motion.h3
                 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -117,8 +142,8 @@ const ContactSection: React.FC = () => {
                 <MessageSquare className="w-6 h-6" />
                 Send us a message
               </motion.h3>
-              <motion.form 
-                onSubmit={handleSubmit} 
+              <motion.form
+                onSubmit={handleSubmit}
                 className="space-y-4 sm:space-y-6"
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -135,7 +160,8 @@ const ContactSection: React.FC = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
+                      disabled={isSubmitting}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                       placeholder="John Doe"
                     />
                   </div>
@@ -149,10 +175,26 @@ const ContactSection: React.FC = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
+                      disabled={isSubmitting}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                       placeholder="john@example.com"
                     />
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="+250 788 800 777"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -162,7 +204,9 @@ const ContactSection: React.FC = () => {
                     name="service"
                     value={formData.service}
                     onChange={handleChange}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent"
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <option value="">Select a service</option>
                     <option value="collection">Waste Collection</option>
@@ -181,20 +225,22 @@ const ContactSection: React.FC = () => {
                     onChange={handleChange}
                     required
                     rows={4}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent resize-none"
+                    disabled={isSubmitting}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Your message here..."
                   />
                 </div>
                 <motion.button
                   type="submit"
-                  className="group relative w-full bg-primary-green dark:bg-secondary-green text-white px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-xl font-semibold hover:shadow-2xl hover:shadow-primary-green/30 dark:hover:shadow-secondary-green/30 transition-all duration-300 overflow-hidden"
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                  disabled={isSubmitting}
+                  className="group relative w-full bg-primary-green dark:bg-secondary-green text-white px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-xl font-semibold hover:shadow-2xl hover:shadow-primary-green/30 dark:hover:shadow-secondary-green/30 transition-all duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={!isSubmitting ? { scale: 1.02, y: -2 } : {}}
+                  whileTap={!isSubmitting ? { scale: 0.98 } : {}}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     <Send className="w-5 h-5" />
-                    Send Message
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </motion.button>
@@ -208,9 +254,9 @@ const ContactSection: React.FC = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            
+
             {/* MAP ON TOP */}
-            <motion.div 
+            <motion.div
               className="w-full h-48 sm:h-56 lg:h-64 rounded-2xl overflow-hidden shadow-lg mb-6 sm:mb-8"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
@@ -228,7 +274,7 @@ const ContactSection: React.FC = () => {
             </motion.div>
 
             {/* CONTACT INFO LIST */}
-            <motion.div 
+            <motion.div
               className="space-y-4 sm:space-y-6"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -243,15 +289,15 @@ const ContactSection: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
-                    whileHover={{ 
+                    whileHover={{
                       scale: 1.05,
                       x: 10,
                       transition: { type: "spring", stiffness: 400, damping: 10 }
                     }}
                   >
-                    <motion.div 
+                    <motion.div
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-green flex items-center justify-center flex-shrink-0"
-                      whileHover={{ 
+                      whileHover={{
                         scale: 1.1,
                         rotate: 360,
                         transition: { duration: 0.3 }
@@ -269,23 +315,23 @@ const ContactSection: React.FC = () => {
             </motion.div>
 
             {/* PICKUP CARD */}
-            <motion.div 
+            <motion.div
               className="mt-6 sm:mt-8 bg-gradient-to-br from-primary-green to-secondary-green rounded-2xl p-6 sm:p-8 text-white shadow-xl"
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ 
+              transition={{
                 type: "spring",
                 stiffness: 100,
                 damping: 10,
                 delay: 0.8
               }}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.02,
                 y: -5,
                 transition: { type: "spring", stiffness: 400, damping: 10 }
               }}
             >
-              <motion.h3 
+              <motion.h3
                 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -293,7 +339,7 @@ const ContactSection: React.FC = () => {
               >
                 Request a Pickup
               </motion.h3>
-              <motion.p 
+              <motion.p
                 className="mb-4 sm:mb-6 text-sm sm:text-base"
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}

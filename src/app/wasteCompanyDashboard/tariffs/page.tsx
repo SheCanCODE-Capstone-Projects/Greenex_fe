@@ -27,11 +27,10 @@ export default function TariffsPage() {
   const handleEdit = (id: string) => {
     router.push(`/wasteCompanyDashboard/tariffs/${id}/edit`);
   };
-
   const handleDelete = (id: string) => {
     setDeletePlanId(id);
   };
-
+  
   const confirmDelete = () => {
     if (deletePlanId) {
       const success = tariffStore.deletePlan(deletePlanId);
