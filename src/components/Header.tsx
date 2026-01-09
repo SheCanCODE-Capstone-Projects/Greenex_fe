@@ -192,6 +192,9 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
                  <DropdownMenuItem onClick={() => router.push('/Supper-dashboard')}>
                   Super Admin Dashboard
                 </DropdownMenuItem> 
+                <DropdownMenuItem onClick={() => router.push('/User-Dashboard')}>
+                  User Dashboard
+                </DropdownMenuItem> 
                 {/* any other page made meanwhile should be added here   */}
               </DropdownMenuContent>
             </DropdownMenu>
