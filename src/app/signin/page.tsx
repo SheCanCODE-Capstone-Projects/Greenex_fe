@@ -65,9 +65,12 @@ export default function Login() {
       if (userRole === "ADMIN") {
         console.log("Routing to Supper-dashboard");
         router.push("/Supper-dashboard");
-      } else if (userRole === "MANAGER") {
+      } else if (userRole === "COMPANY_MANAGER") {
         console.log("Routing to wasteCompanyDashboard");
         router.push("/wasteCompanyDashboard");
+      } else if (userRole === "CITIZEN") {
+        console.log("Routing to User-Dashboard");
+        router.push("/User-Dashboard");
       } else {
         // Default fallback
         console.log("No matching role, routing to home");
