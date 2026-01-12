@@ -44,6 +44,7 @@ ChartJS.register(
 
 export default function SupperDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
   const { notifications, dismissNotification } = useCompanyNotifications();
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -322,8 +323,45 @@ export default function SupperDashboard() {
               onDismiss={dismissNotification}
             />
 
-            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-              CM
+            <div className="relative">
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                CM
+              </button>
+
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("auth_token");
+                        localStorage.removeItem("user_info");
+                        window.location.href = "/signin";
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" x2="9" y1="12" y2="12" />
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>

@@ -23,7 +23,7 @@ export default function Home() {
         }
         return false;
       });
-      
+
       if (currentSection && currentSection !== activeSection) {
         setActiveSection(currentSection);
       }
@@ -46,9 +46,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Header 
-        activeSection={activeSection} 
+    <div className="min-h-screen bg-background dark:bg-gray-900 text-foreground transition-colors duration-300">
+      <Header
+        activeSection={activeSection}
         onThemeToggle={toggleTheme}
         isDarkMode={isDarkMode}
       />

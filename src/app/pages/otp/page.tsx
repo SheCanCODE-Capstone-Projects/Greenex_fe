@@ -73,7 +73,14 @@ export default function OTPPage() {
 
       // Redirect after a short delay to show success state
       setTimeout(() => {
-        router.push("/signin");
+        const userType = localStorage.getItem("signup_user_type");
+        localStorage.removeItem("signup_user_type"); // Clean up
+
+        if (userType === "company") {
+          router.push("/onboarding");
+        } else {
+          router.push("/signin");
+        }
       }, 1500);
 
     } catch (error: any) {
