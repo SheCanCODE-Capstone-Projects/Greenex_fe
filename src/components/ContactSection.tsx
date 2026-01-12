@@ -97,7 +97,7 @@ const ContactSection: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-12 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-light-bg dark:bg-dark-bg/95" ref={ref}>
+    <section id="contact" className="py-12 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-light-bg dark:bg-gray-900" ref={ref}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 50 }}

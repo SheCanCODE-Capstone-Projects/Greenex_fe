@@ -53,10 +53,10 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
     activeSection === section ? "underline underline-offset-8 decoration-2 text-primary-green dark:text-secondary-green" : "";
 
   const headerBgClass = scrolled
-    ? "bg-white/95 dark:bg-dark-bg/95 backdrop-blur-md shadow-lg"
+    ? "bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg"
     : activeSection === "home"
       ? "bg-transparent"
-      : "bg-white/95 dark:bg-dark-bg/95 backdrop-blur-md shadow-lg";
+      : "bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg";
 
   const navVariants = {
     hidden: { opacity: 0, y: -20 },

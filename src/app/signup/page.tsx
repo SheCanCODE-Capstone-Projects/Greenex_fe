@@ -6,7 +6,7 @@ import { useState } from "react";
 import { authService } from "@/lib/auth-service";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { User, Mail, Phone, Lock, Building2, Eye, EyeOff, ArrowRight, CheckCircle2 } from "lucide-react";
+import { User, Mail, Phone, Lock, Building2, Eye, EyeOff, ArrowRight, CheckCircle2, Truck, House } from "lucide-react";
 
 export default function SignupPage() {
   const [fullname, setFullname] = useState("");
@@ -150,14 +150,18 @@ export default function SignupPage() {
             <div className="space-y-1">
               <label className="text-sm font-medium ml-1">Account Type</label>
               <div className="relative group">
-                <Building2 className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-primary-green transition-colors" />
+                {userType === 'company' ? (
+                  <Truck className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-primary-green transition-colors" />
+                ) : (
+                  <House className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-primary-green transition-colors" />
+                )}
                 <select
                   value={userType}
                   onChange={(e) => setUserType(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-white/50 dark:bg-white/5 focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green transition-all outline-none appearance-none cursor-pointer"
                 >
                   <option value="citizen">Household</option>
-                  <option value="company">Company</option>
+                  <option value="company">Waste Company</option>
                 </select>
               </div>
             </div>
