@@ -106,7 +106,14 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
                           <Settings size={16} /> Settings
                         </button>
                         <hr className="my-1" />
-                        <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            localStorage.removeItem("auth_token");
+                            localStorage.removeItem("user_info");
+                            router.push("/signin");
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                        >
                           <LogOut size={16} /> Logout
                         </button>
                       </div>
