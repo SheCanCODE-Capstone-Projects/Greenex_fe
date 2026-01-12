@@ -181,6 +181,8 @@ export default function Login() {
           </div>
 
           <button
+            type="button"
+            onClick={() => window.location.href = "https://greenex-be.onrender.com/oauth2/authorization/google"}
             className="w-full py-3 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors flex items-center justify-center gap-3 group"
           >
             <Image
@@ -190,7 +192,7 @@ export default function Login() {
               height={20}
               className="group-hover:scale-110 transition-transform"
             />
-            <span className="font-medium text-foreground">Sign in with Google</span>
+            <span className="font-medium text-foreground">Sign In with Google</span>
           </button>
 
           <p className="text-center text-sm text-muted-foreground">

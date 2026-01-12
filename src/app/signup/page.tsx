@@ -256,7 +256,11 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <button className="w-full py-3 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => window.location.href = "https://greenex-be.onrender.com/oauth2/authorization/google"}
+                className="w-full py-3 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors flex items-center justify-center gap-3 group"
+              >
                 <Image
                   src="/image.png"
                   width={20}
