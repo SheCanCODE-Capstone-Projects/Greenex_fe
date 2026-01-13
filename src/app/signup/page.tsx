@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authService } from "@/lib/auth-service";
@@ -223,9 +224,9 @@ export default function SignupPage() {
               />
               <div className="text-sm">
                 <span className="text-foreground">I agree to the </span>
-                <a href="#" className="font-medium text-primary-green hover:underline">Terms of Service</a>
+                <Link href="/terms" className="font-medium text-primary-green hover:underline">Terms of Service</Link>
                 <span className="text-foreground"> and </span>
-                <a href="#" className="font-medium text-primary-green hover:underline">Privacy Policy</a>
+                <Link href="/privacy" className="font-medium text-primary-green hover:underline">Privacy Policy</Link>
                 {!canAgree && (
                   <p className="text-xs text-red-500 mt-1">Please fill all fields to continue</p>
                 )}
