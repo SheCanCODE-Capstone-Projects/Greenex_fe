@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Link from "next/link";
@@ -53,25 +54,87 @@ export default function SupperDashboard() {
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [pendingCompanies, setPendingCompanies] = useState<AdminCompany[]>([]);
   const [loadingCompanies, setLoadingCompanies] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [loadingContactDetail, setLoadingContactDetail] = useState(false);
 
   // Fetch contacts when user-review section is active
+  const fetchContacts = async () => {
+    setLoadingContacts(true);
+    try {
+      const data = await contactService.getAllContacts();
+      setContacts(data);
+    } catch (error) {
+      console.error('Failed to fetch contacts:', error);
+      toast.error("Failed to fetch contacts");
+    } finally {
+      setLoadingContacts(false);
+    }
+  };
+
   useEffect(() => {
     if (activeSection === 'user-review') {
-      const fetchContacts = async () => {
-        setLoadingContacts(true);
-        try {
-          const data = await contactService.getAllContacts();
-          setContacts(data);
-        } catch (error) {
-          console.error('Failed to fetch contacts:', error);
-          toast.error("Failed to fetch contacts");
-        } finally {
-          setLoadingContacts(false);
-        }
-      };
       fetchContacts();
     }
   }, [activeSection]);
+
+  const executeDeleteContact = async (id: string) => {
+    try {
+      await contactService.deleteContact(id);
+      toast.success("Contact deleted successfully");
+      fetchContacts(); // Refresh list
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete contact");
+    }
+  };
+
+  const handleDeleteContact = (id: string) => {
+    const ConfirmToast = ({ closeToast }: { closeToast: () => void }) => (
+      <div className="flex flex-col gap-3 p-1">
+        <p className="font-semibold text-gray-900">Confirm Deletion</p>
+        <p className="text-sm text-gray-600">Are you sure you want to delete this submission? This action cannot be undone.</p>
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={() => {
+              executeDeleteContact(id);
+              closeToast();
+            }}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-colors"
+          >
+            Delete
+          </button>
+          <button
+            onClick={closeToast}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+
+    toast(<ConfirmToast closeToast={() => { }} />, {
+      position: "top-center",
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      closeButton: false,
+    });
+  };
+
+  const handleViewContact = async (id: string) => {
+    setLoadingContactDetail(true);
+    setIsViewModalOpen(true);
+    try {
+      const data = await contactService.getContactById(id);
+      setSelectedContact(data);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to fetch contact details");
+      setIsViewModalOpen(false);
+    } finally {
+      setLoadingContactDetail(false);
+    }
+  };
 
   // Fetch pending companies
   const fetchPendingCompanies = async () => {
@@ -237,14 +300,124 @@ export default function SupperDashboard() {
                         day: 'numeric'
                       })}
                     </div>
-                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                      Reply
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleViewContact(contact.id)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteContact(contact.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Contact"
+                      >
+                        <X size={18} />
+                      </button>
+                      <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                        Reply
+                      </button>
+                    </div>
                   </div>
                 </Card>
               ))
             )}
           </div>
+
+          {/* Contact Detail Modal */}
+          {isViewModalOpen && (
+            <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+              <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative animate-in fade-in zoom-in duration-300">
+                <button
+                  onClick={() => setIsViewModalOpen(false)}
+                  className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
+                >
+                  <X size={20} />
+                </button>
+
+                <CardContent className="p-8">
+                  {loadingContactDetail ? (
+                    <div className="py-12 text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                      <p className="text-gray-600">Loading details...</p>
+                    </div>
+                  ) : selectedContact ? (
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-4 border-b pb-6">
+                        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                          <User className="w-8 h-8 text-green-600" />
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold text-gray-900">{selectedContact.fullName}</h2>
+                          <p className="text-gray-500">{selectedContact.email}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                        <div className="space-y-1">
+                          <p className="text-gray-500 font-medium">Service Interest</p>
+                          <p className="text-gray-900 capitalize">{selectedContact.serviceInterest}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-gray-500 font-medium">Phone Number</p>
+                          <p className="text-gray-900">{selectedContact.phone || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-gray-500 font-medium">Submitted On</p>
+                          <p className="text-gray-900">
+                            {new Date(selectedContact.createdAt).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-gray-500 font-medium">Status</p>
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${selectedContact.processed
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                            {selectedContact.processed ? 'Processed' : 'Pending'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-gray-500 font-medium text-sm">Full Message</p>
+                        <div className="bg-gray-50 p-6 rounded-xl border italic text-gray-800 leading-relaxed">
+                          &quot;{selectedContact.message}&quot;
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4 pt-4">
+                        <button className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-semibold shadow-lg shadow-green-200">
+                          Reply to Email
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleDeleteContact(selectedContact.id);
+                            setIsViewModalOpen(false);
+                          }}
+                          className="px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors font-semibold border border-red-100"
+                        >
+                          Delete Submission
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="py-12 text-center text-gray-500">
+                      Failed to load contact information.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       );
     }
