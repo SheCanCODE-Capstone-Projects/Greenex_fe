@@ -32,6 +32,8 @@ import {
 import { NotificationDropdown } from "@/components/ui/notification";
 import { useCompanyNotifications } from "@/lib/useCompanyNotifications";
 import { contactService, type Contact } from "@/lib/contact-service";
+import { adminService, type AdminCompany } from "@/lib/admin-service";
+import { toast } from "react-toastify";
 
 ChartJS.register(
   CategoryScale,
@@ -49,6 +51,8 @@ export default function SupperDashboard() {
   const { notifications, dismissNotification } = useCompanyNotifications();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
+  const [pendingCompanies, setPendingCompanies] = useState<AdminCompany[]>([]);
+  const [loadingCompanies, setLoadingCompanies] = useState(false);
 
   // Fetch contacts when user-review section is active
   useEffect(() => {
@@ -60,6 +64,7 @@ export default function SupperDashboard() {
           setContacts(data);
         } catch (error) {
           console.error('Failed to fetch contacts:', error);
+          toast.error("Failed to fetch contacts");
         } finally {
           setLoadingContacts(false);
         }
@@ -67,6 +72,46 @@ export default function SupperDashboard() {
       fetchContacts();
     }
   }, [activeSection]);
+
+  // Fetch pending companies
+  const fetchPendingCompanies = async () => {
+    setLoadingCompanies(true);
+    try {
+      const data = await adminService.getPendingCompanies();
+      setPendingCompanies(data);
+    } catch (error: any) {
+      console.error('Failed to fetch pending companies:', error);
+      toast.error(error.message || "Failed to fetch pending companies");
+    } finally {
+      setLoadingCompanies(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeSection === 'companies') {
+      fetchPendingCompanies();
+    }
+  }, [activeSection]);
+
+  const handleApprove = async (companyId: string) => {
+    try {
+      await adminService.approveCompany(companyId);
+      toast.success("Company approved successfully");
+      fetchPendingCompanies(); // Refresh list
+    } catch (error: any) {
+      toast.error(error.message || "Failed to approve company");
+    }
+  };
+
+  const handleReject = async (companyId: string) => {
+    try {
+      await adminService.rejectCompany(companyId);
+      toast.success("Company rejected");
+      fetchPendingCompanies(); // Refresh list
+    } catch (error: any) {
+      toast.error(error.message || "Failed to reject company");
+    }
+  };
 
   const barData = {
     labels: ["Kicukiro", "Gasabo", "Nyarugenge", "Remera", "Kimisagara", "Gisozi"],
@@ -206,14 +251,60 @@ export default function SupperDashboard() {
 
     // Companies section
     if (activeSection === 'companies') {
+      if (loadingCompanies) {
+        return (
+          <div className="flex items-center justify-center h-64 mt-6">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading pending companies...</p>
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className="mt-6">
-          <h2 className="text-2xl font-bold mb-6">Companies Registration</h2>
-          <Card className="p-12 rounded-2xl shadow text-center">
-            <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Companies management content will be displayed here</p>
-            <p className="text-sm text-gray-500 mt-2">This section is under development</p>
-          </Card>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Companies Registration</h2>
+            <button
+              onClick={fetchPendingCompanies}
+              className="text-sm text-green-600 hover:text-green-700 font-medium"
+            >
+              Refresh
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {pendingCompanies.length === 0 ? (
+              <Card className="p-12 rounded-2xl shadow text-center">
+                <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No pending companies found</p>
+                <p className="text-sm text-gray-500 mt-2">All registration requests have been processed</p>
+              </Card>
+            ) : (
+              pendingCompanies.map((company) => (
+                <CompanyDetailCard
+                  key={company._id}
+                  id={company._id}
+                  name={company.name}
+                  status={company.status === 'PENDING' ? 'In Process' : company.status === 'APPROVED' ? 'Approved' : 'Rejected'}
+                  registrationDate={new Date(company.createdAt).toLocaleDateString()}
+                  documents={{
+                    kigaliContract: { status: company.documents?.kigaliContract ? 'Verified' : 'Missing', filename: company.documents?.kigaliContract || '' },
+                    remaDocument: { status: company.documents?.remaCertificate ? 'Verified' : 'Missing', filename: company.documents?.remaCertificate || '' },
+                    rdbDocument: { status: company.documents?.rdbCertificate ? 'Verified' : 'Missing', filename: company.documents?.rdbCertificate || '' },
+                    insurancePolicy: { status: company.documents?.insurancePolicy ? 'Verified' : 'Missing', filename: company.documents?.insurancePolicy || '' },
+                    vehicleRegistration: { status: company.documents?.vehicleRegistration ? 'Verified' : 'Missing', filename: company.documents?.vehicleRegistration || '' },
+                  }}
+                  routes={0} // Placeholder if not in API
+                  households={0} // Placeholder if not in API
+                  contact={company.sectorCoverage} // Using sector coverage as info for now
+                  onApprove={() => handleApprove(company._id)}
+                  onReject={() => handleReject(company._id)}
+                />
+              ))
+            )}
+          </div>
         </div>
       );
     }
@@ -419,14 +510,18 @@ function ReviewItem({ user, rating, comment, date }: { user: string; rating: num
 }
 
 function CompanyDetailCard({
+  id,
   name,
   status,
   registrationDate,
   documents,
   routes,
   households,
-  contact
+  contact,
+  onApprove,
+  onReject
 }: {
+  id: string;
   name: string;
   status: string;
   registrationDate: string;
@@ -440,7 +535,11 @@ function CompanyDetailCard({
   routes: number;
   households: number;
   contact: string;
+  onApprove: () => Promise<void>;
+  onReject: () => Promise<void>;
 }) {
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Approved': return 'bg-green-100 text-green-800';
@@ -463,29 +562,29 @@ function CompanyDetailCard({
 
   const handleViewDocument = (filename: string) => {
     if (filename) {
-      // Simulate viewing document
-      window.open(`/documents/${filename}`, '_blank');
+      window.open(filename, '_blank');
     }
   };
 
   const handleDownloadDocument = (filename: string) => {
     if (filename) {
-      // Simulate downloading document
       const link = document.createElement('a');
-      link.href = `/documents/${filename}`;
-      link.download = filename;
+      link.href = filename;
+      link.download = filename.split('/').pop() || 'document';
       link.click();
     }
   };
 
-  const handleApproveCompany = () => {
-    // Simulate company approval
-    alert(`${name} has been approved!`);
+  const handleApproveAction = async () => {
+    setIsProcessing(true);
+    await onApprove();
+    setIsProcessing(false);
   };
 
-  const handleRejectCompany = () => {
-    // Simulate company rejection
-    alert(`${name} has been rejected!`);
+  const handleRejectAction = async () => {
+    setIsProcessing(true);
+    await onReject();
+    setIsProcessing(false);
   };
 
   return (
@@ -504,15 +603,17 @@ function CompanyDetailCard({
             {status === 'In Process' && (
               <div className="flex gap-1">
                 <button
-                  onClick={handleApproveCompany}
-                  className="p-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors"
+                  onClick={handleApproveAction}
+                  disabled={isProcessing}
+                  className="p-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors disabled:opacity-50"
                   title="Approve Company"
                 >
-                  <Check size={16} />
+                  {isProcessing ? <Clock size={16} className="animate-spin" /> : <Check size={16} />}
                 </button>
                 <button
-                  onClick={handleRejectCompany}
-                  className="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors"
+                  onClick={handleRejectAction}
+                  disabled={isProcessing}
+                  className="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors disabled:opacity-50"
                   title="Reject Company"
                 >
                   <X size={16} />
