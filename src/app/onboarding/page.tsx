@@ -47,7 +47,7 @@ export default function OnboardingPage() {
     try {
       const formData = new FormData();
       formData.append('companyName', companyData.companyName);
-      formData.append('phoneNumber', companyData.phoneNumber);
+      formData.append('contractNumber', companyData.contractNumber);
       formData.append('sectors', JSON.stringify(companyData.sectors));
       formData.append('kigaliContract', kigaliContract);
       if (remaDocument) formData.append('remaCertificate', remaDocument);
@@ -129,11 +129,11 @@ export default function OnboardingPage() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Side - Visual Content */}
               <OnboardingVisual step={step} />
-              
+
               {/* Right Side - Form Content */}
               <div className="w-full">
                 {step === 1 && (
-                  <CompanyInfoStep 
+                  <CompanyInfoStep
                     onNext={handleCompanySubmit}
                     onBack={() => router.push('/')}
                   />
