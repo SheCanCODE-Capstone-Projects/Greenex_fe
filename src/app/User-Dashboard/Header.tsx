@@ -1,6 +1,7 @@
+"use client";
 import React, { useState } from 'react';
 import { Truck } from "lucide-react";
-"use client";
+
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
