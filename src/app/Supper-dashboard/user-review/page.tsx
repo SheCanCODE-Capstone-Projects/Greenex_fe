@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, MessageSquare, User, Calendar, Filter } from "lucide-react";
+import { contactService, Contact } from "@/lib/contact-service";
+import { toast } from "react-toastify";
 
 interface Review {
-  id: number;
+  id: string;
   userName: string;
   userEmail: string;
   companyName: string;
@@ -16,45 +19,51 @@ interface Review {
   status: "pending" | "approved" | "rejected";
 }
 
-const mockReviews: Review[] = [
-  {
-    id: 1,
-    userName: "John Uwimana",
-    userEmail: "john@email.com",
-    companyName: "EcoWaste Solutions",
-    rating: 5,
-    comment: "Excellent service! They always come on time and handle waste professionally.",
-    date: "2024-01-20",
-    status: "approved",
-  },
-  {
-    id: 2,
-    userName: "Marie Mukamana",
-    userEmail: "marie@email.com",
-    companyName: "Green Clean Ltd",
-    rating: 4,
-    comment: "Good service overall, but sometimes they miss the scheduled pickup time.",
-    date: "2024-01-18",
-    status: "pending",
-  },
-  {
-    id: 3,
-    userName: "David Nkurunziza",
-    userEmail: "david@email.com",
-    companyName: "Waste Masters",
-    rating: 2,
-    comment: "Poor service. They often skip our area and don't respond to complaints.",
-    date: "2024-01-15",
-    status: "approved",
-  },
-];
-
 export default function UserReviewPage() {
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching contacts from API...');
+        const data = await contactService.getAllContacts();
+        console.log('Contacts received:', data);
+        setContacts(data);
+        
+        const mappedReviews: Review[] = data.map(contact => ({
+          id: contact.id,
+          userName: contact.fullName,
+          userEmail: contact.email,
+          companyName: contact.serviceInterest,
+          rating: 0,
+          comment: contact.message,
+          date: contact.createdAt,
+          status: contact.processed ? "approved" : "pending",
+        }));
+        
+        setReviews(mappedReviews);
+        setError(null);
+      } catch (err: any) {
+        console.error('Error fetching contacts:', err);
+        const errorMessage = err.response?.data?.message || err.message || 'Failed to load contact submissions';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContacts();
+  }, []);
 
   const filteredReviews = filter === "all" 
-    ? mockReviews 
-    : mockReviews.filter(review => review.status === filter);
+    ? reviews 
+    : reviews.filter(review => review.status === filter);
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -77,9 +86,37 @@ export default function UserReviewPage() {
   };
 
   const getAverageRating = () => {
-    const total = mockReviews.reduce((sum, review) => sum + review.rating, 0);
-    return (total / mockReviews.length).toFixed(1);
+    if (reviews.length === 0) return "0.0";
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return (total / reviews.length).toFixed(1);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading contact submissions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -104,29 +141,35 @@ export default function UserReviewPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
-          title="Total Reviews" 
-          value={mockReviews.length.toString()} 
+          title="Total Submissions" 
+          value={reviews.length.toString()} 
           icon={<MessageSquare className="w-6 h-6 text-blue-600" />}
         />
         <StatCard 
-          title="Average Rating" 
-          value={getAverageRating()} 
+          title="Phone Contacts" 
+          value={contacts.filter(c => c.phone).length.toString()} 
           icon={<Star className="w-6 h-6 text-yellow-600" />}
         />
         <StatCard 
-          title="Pending Reviews" 
-          value={mockReviews.filter(r => r.status === "pending").length.toString()} 
+          title="Pending" 
+          value={reviews.filter(r => r.status === "pending").length.toString()} 
           icon={<Filter className="w-6 h-6 text-yellow-600" />}
         />
         <StatCard 
-          title="Approved Reviews" 
-          value={mockReviews.filter(r => r.status === "approved").length.toString()} 
+          title="Processed" 
+          value={reviews.filter(r => r.status === "approved").length.toString()} 
           icon={<User className="w-6 h-6 text-green-600" />}
         />
       </div>
 
       <div className="grid gap-4">
-        {filteredReviews.map((review) => (
+        {filteredReviews.length === 0 ? (
+          <Card className="p-12 rounded-2xl shadow text-center">
+            <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">No contact submissions found</p>
+          </Card>
+        ) : (
+          filteredReviews.map((review) => (
           <Card key={review.id} className="p-6 rounded-2xl shadow">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
@@ -145,21 +188,18 @@ export default function UserReviewPage() {
 
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-medium">Company:</span>
-                <span className="text-sm text-gray-600">{review.companyName}</span>
+                <span className="text-sm font-medium">Service Interest:</span>
+                <span className="text-sm text-gray-600 capitalize">{review.companyName}</span>
               </div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm font-medium">Rating:</span>
-                <div className="flex items-center gap-1">
-                  {renderStars(review.rating)}
-                  <span className="text-sm text-gray-600 ml-1">({review.rating}/5)</span>
-                </div>
+                <span className="text-sm font-medium">Phone:</span>
+                <span className="text-sm text-gray-600">{contacts.find(c => c.id === review.id)?.phone || 'N/A'}</span>
               </div>
             </div>
 
             <div className="mb-4">
               <p className="text-gray-700 text-sm leading-relaxed">
-                "{review.comment}"
+                &quot;{review.comment}&quot;
               </p>
             </div>
 
@@ -181,7 +221,7 @@ export default function UserReviewPage() {
               )}
             </div>
           </Card>
-        ))}
+        )))}
       </div>
     </div>
   );
