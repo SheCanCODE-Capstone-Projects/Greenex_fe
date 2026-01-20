@@ -1,12 +1,12 @@
 import React from 'react';
-import { Home, Calendar, Route, CreditCard, History, Users, FileText } from 'lucide-react';
+import { Home, Calendar, Route, CreditCard, History, Users, Truck, FileText } from 'lucide-react';
 
 export default function Sidebar() {
   return (
     <div className="w-64 bg-gradient-to-b from-green-800 to-green-900 text-white">
       <div className="p-6 flex items-center gap-3 border-b border-green-700">
-        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-          <div className="w-6 h-6 bg-green-800 rounded-full"></div>
+        <div className="flex items-center gap-3 mb-6">
+          <Truck size={40} className="text-secondary-green" />
         </div>
         <span className="text-xl font-bold">GreenEX</span>
       </div>

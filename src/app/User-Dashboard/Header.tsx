@@ -1,21 +1,23 @@
-"use client";
-
 import React, { useState } from 'react';
+import { Truck } from "lucide-react";
+"use client";
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   return (
     <div className="bg-gradient-to-r from-green-900 to-green-700 text-white p-6 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-          <div className="w-8 h-8 bg-green-800 rounded-full"></div>
-        </div>
-        <div>
+      <div className="flex flex-col">
+        {/* Row 1: Logo + Title */}
+        <div className="flex items-center gap-3">
+          <Truck size={40} className="text-secondary-green" />
           <h1 className="text-xl font-bold">GreenEX</h1>
-          <p className="text-sm text-teal-100">Smart Waste Collection</p>
         </div>
+
+        {/* Row 2: Subtitle */}
+        <p className="text-sm text-teal-100 ml-13">Smart Waste Collection</p>
       </div>
+
       <div className="flex items-center gap-4">
         <div className="text-right hidden sm:block">
           <p className="font-semibold">John Doe</p>
