@@ -23,7 +23,6 @@ export const adminService = {
     getPendingCompanies: async (): Promise<AdminCompany[]> => {
         try {
             const response = await axiosInstance.get('/api/admin/companies/pending');
-            // Backend might return { companies: [...] } or just an array
             return Array.isArray(response.data) ? response.data : response.data.companies || [];
         } catch (error: any) {
             console.error('Failed to fetch pending companies:', error);
@@ -45,8 +44,6 @@ export const adminService = {
 
     rejectCompany: async (companyId: string): Promise<any> => {
         try {
-            // Assuming the pattern might be /reject since user didn't specify
-            // If it fails, we'll know the endpoint is wrong
             const response = await axiosInstance.post(`/api/admin/companies/${companyId}/reject`);
             return response.data;
         } catch (error: any) {

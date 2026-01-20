@@ -70,6 +70,7 @@ export default function Login() {
       } else {
         router.push("/");
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || "Login failed");
@@ -196,7 +197,7 @@ export default function Login() {
           </button>
 
           <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <a href="/signup" className="text-primary-green font-semibold hover:text-secondary-green hover:underline transition-colors">
               Sign up now
             </a>

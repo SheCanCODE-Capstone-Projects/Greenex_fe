@@ -350,7 +350,7 @@ const ContactSection: React.FC = () => {
               </motion.p>
               <motion.button
                 onClick={() => scrollToSection("contact")}
-                className="group relative w-full bg-white text-primary-green text-secondary-green px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                className="group relative w-full bg-white text-primary-green px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 overflow-hidden"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={isInView ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.5, delay: 1.1 }}
