@@ -13,13 +13,24 @@ export interface RegisterResponse {
     message: string;
     user?: any;
     token?: string;
-  
+
+}
+
+export interface CompanyRegisterData {
+    name: string;
+    contractNumber: string;
+    sectorCoverage: string;
+}
+
+export interface CompanyRegisterResponse {
+    message: string;
+    // Add other fields if returned by backend
 }
 
 export const authService = {
     register: async (data: RegisterData): Promise<RegisterResponse> => {
         try {
-          
+
             const payload = {
                 ...data,
                 userType: data.userType.toUpperCase()
@@ -43,7 +54,7 @@ export const authService = {
             if (responseData) {
                 if (responseData.errors) {
                     if (typeof responseData.errors === 'object' && !Array.isArray(responseData.errors)) {
-    
+
                         message = Object.values(responseData.errors).join(', ');
                     } else if (Array.isArray(responseData.errors)) {
                         message = responseData.errors.join(', ');
@@ -86,6 +97,20 @@ export const authService = {
         } catch (error: any) {
             console.error('OTP Verification error:', error);
             const message = error.response?.data?.message || error.message || 'OTP Verification failed';
+            throw new Error(message);
+        }
+    },
+
+    registerCompany: async (data: CompanyRegisterData): Promise<CompanyRegisterResponse> => {
+        try {
+            const response = await axiosInstance.post<CompanyRegisterResponse>('/api/auth/company/register', data);
+            return response.data;
+        } catch (error: any) {
+            console.error('Company Registration error:', error);
+            if (error.code === 'ECONNABORTED') {
+                throw new Error('Request timeout - backend server is waking up, please try again.');
+            }
+            const message = error.response?.data?.message || error.message || 'Company Registration failed';
             throw new Error(message);
         }
     }

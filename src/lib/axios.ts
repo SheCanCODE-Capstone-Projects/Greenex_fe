@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
   timeout: 300000,
 });
 
-// Add request interceptor to include auth token
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token');

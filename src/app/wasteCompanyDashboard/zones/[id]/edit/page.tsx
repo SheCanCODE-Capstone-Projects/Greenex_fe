@@ -12,7 +12,7 @@ export default function EditZonePage() {
   const zoneId = params.id as string;
 
   const [zone, setZone] = useState(null);
-  
+
   useEffect(() => {
     const savedZones = localStorage.getItem('zones');
     const zones = savedZones ? JSON.parse(savedZones) : dummyZones;
@@ -28,7 +28,7 @@ export default function EditZonePage() {
             <h1 className="text-2xl font-bold mb-4">Zone Not Found</h1>
             <p className="text-gray-600 mb-4">The zone you're looking for doesn't exist.</p>
             <button
-              onClick={() => router.push('/wasteCompanyDashboard/zones')
+              onClick={() => router.push('/wasteCompanyDashboard/zones')}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
               Back to Zones
@@ -43,11 +43,11 @@ export default function EditZonePage() {
     try {
       const savedZones = localStorage.getItem('zones');
       const zones = savedZones ? JSON.parse(savedZones) : dummyZones;
-      const updatedZones = zones.map(z => 
+      const updatedZones = zones.map(z =>
         z.id === zoneId ? { ...z, ...data } : z
       );
       localStorage.setItem('zones', JSON.stringify(updatedZones));
-      
+
       toast.success('Zone updated successfully!');
       router.push('/wasteCompanyDashboard/zones');
     } catch (error) {

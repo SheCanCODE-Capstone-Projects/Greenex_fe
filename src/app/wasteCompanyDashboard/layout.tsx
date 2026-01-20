@@ -39,7 +39,7 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
   const menuItems = [
     { label: "Dashboard", icon: LayoutDashboard, route: "/wasteCompanyDashboard" },
     { label: "Home", icon: Home, route: "/wasteCompanyDashboard/home" },
-    { label: "Routes", icon: Route },
+    { label: "Routes", icon: Route, route: "/wasteCompanyDashboard/routes" },
     { label: "Households", icon: Home, route: "/wasteCompanyDashboard/households" },
     { label: "Zones", icon: MapPin, route: "/wasteCompanyDashboard/zones" },
     { label: "Tariffs", icon: CreditCard, route: "/wasteCompanyDashboard/tariffs" },

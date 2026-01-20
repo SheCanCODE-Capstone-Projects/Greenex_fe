@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import { Truck, Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
+import Link from "next/link";
 const Footer: React.FC = () => {
   const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
   useEffect(() => {
@@ -185,9 +186,11 @@ const Footer: React.FC = () => {
               <p className="text-lg">
                 © 2025 GreenEx - Creating a cleaner Rwanda through technology
               </p>
-
             </div>
-
+            <div className="flex gap-8 text-sm font-semibold opacity-70">
+              <Link href="/privacy" className="hover:text-primary-green transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-primary-green transition-colors">Terms & Conditions</Link>
+            </div>
           </div>
         </div>
       </div>
