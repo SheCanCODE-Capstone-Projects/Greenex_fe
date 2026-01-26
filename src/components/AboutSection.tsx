@@ -32,14 +32,13 @@ const AnimatedCounter = ({ value, duration = 2 }: { value: number; duration?: nu
 
 const AboutSection: React.FC = () => {
   const logos = [
-    "/rema.png",
-    "/mtnmomo.png",
-    "/wastecollector1.png",
-    "/wastecollector2.png",
-    "/wastecollector3.png",
-    "/wastecollector4.png",
-    "/rdb.png",
-    "/rra.png",
+    "Rema.png",
+    "/RSB.png",
+    "/moe_logo.svg",
+    "/RGF-Approved-logo-01.png",
+    "/RDBMaster.png",
+    "/MTN-Logo.png",
+    "/kigali_logo.png",
   ];
 
   return (
@@ -123,7 +122,7 @@ const AboutSection: React.FC = () => {
           </p>
         </div>
 
-        <motion.div 
+        <motion.div
           className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-16"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -147,7 +146,7 @@ const AboutSection: React.FC = () => {
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-10"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -155,28 +154,28 @@ const AboutSection: React.FC = () => {
               viewport={{ once: true }}
             >
 
-              <motion.div 
+              <motion.div
                 className="text-center"
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 100,
                   damping: 10,
                   delay: 0.6
                 }}
                 viewport={{ once: true }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.1,
                   transition: { type: "spring", stiffness: 400, damping: 10 }
                 }}
               >
                 <motion.div
-                  animate={{ 
+                  animate={{
                     rotate: [0, 10, -10, 0],
                     scale: [1, 1.1, 1]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2,
                     repeat: Infinity,
                     repeatDelay: 3
@@ -188,28 +187,28 @@ const AboutSection: React.FC = () => {
                 <p className="text-gray-600 text-xs sm:text-sm lg:text-base dark:text-gray-400">Members</p>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="text-center"
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 100,
                   damping: 10,
                   delay: 0.8
                 }}
                 viewport={{ once: true }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.1,
                   transition: { type: "spring", stiffness: 400, damping: 10 }
                 }}
               >
                 <motion.div
-                  animate={{ 
+                  animate={{
                     y: [0, -5, 0],
                     rotate: [0, 5, -5, 0]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2.5,
                     repeat: Infinity,
                     repeatDelay: 2
@@ -221,28 +220,28 @@ const AboutSection: React.FC = () => {
                 <p className="text-gray-600 text-xs sm:text-sm lg:text-base dark:text-gray-400">Partnerships</p>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="text-center"
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 100,
                   damping: 10,
                   delay: 1.0
                 }}
                 viewport={{ once: true }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.1,
                   transition: { type: "spring", stiffness: 400, damping: 10 }
                 }}
               >
                 <motion.div
-                  animate={{ 
+                  animate={{
                     scale: [1, 1.2, 1],
                     rotate: [0, 15, -15, 0]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 3,
                     repeat: Infinity,
                     repeatDelay: 4
@@ -254,28 +253,28 @@ const AboutSection: React.FC = () => {
                 <p className="text-gray-600 text-xs sm:text-sm lg:text-base dark:text-gray-400">Waste collectors companies</p>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="text-center"
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 100,
                   damping: 10,
                   delay: 1.2
                 }}
                 viewport={{ once: true }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.1,
                   transition: { type: "spring", stiffness: 400, damping: 10 }
                 }}
               >
                 <motion.div
-                  animate={{ 
+                  animate={{
                     rotate: [0, -10, 10, 0],
                     y: [0, -3, 0]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2.2,
                     repeat: Infinity,
                     repeatDelay: 3.5
