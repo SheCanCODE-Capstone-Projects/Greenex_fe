@@ -1,7 +1,23 @@
+"use client";
 import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Home, Calendar, Route, CreditCard, History, Users, Truck, FileText } from 'lucide-react';
 
 export default function Sidebar() {
+  const pathname = usePathname();
+  
+  const navItems = [
+    { href: '/User-Dashboard', icon: Home, label: 'Home' },
+    { href: '/User-Dashboard/Schedule', icon: Calendar, label: 'Schedule' },
+    { href: '/User-Dashboard/Route', icon: Route, label: 'Route' },
+    { href: '/User-Dashboard/Household', icon: FileText, label: 'Household' },
+    { href: '/User-Dashboard/Payments', icon: CreditCard, label: 'Payments' },
+    { href: '/User-Dashboard/History', icon: History, label: 'History' },
+    { href: '/User-Dashboard/Customer', icon: Users, label: 'Customer' },
+    { href: '/User-Dashboard/Complaints', icon: FileText, label: 'Complaints' },
+  ];
+
   return (
     <div className="w-64 bg-gradient-to-b from-green-800 to-green-900 text-white">
       <div className="p-6 flex items-center gap-3 border-b border-green-700">
@@ -12,38 +28,23 @@ export default function Sidebar() {
       </div>
 
       <nav className="p-4">
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 bg-green-700 rounded-lg">
-          <Home size={20} />
-          <span>Home</span>
-        </a>
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 hover:bg-green-700 rounded-lg">
-          <Calendar size={20} />
-          <span>Schedule</span>
-        </a>
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 hover:bg-green-700 rounded-lg">
-          <Route size={20} />
-          <span>Route</span>
-        </a>
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 hover:bg-green-700 rounded-lg">
-          <FileText size={20} />
-          <span>Household</span>
-        </a>
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 hover:bg-green-700 rounded-lg">
-          <CreditCard size={20} />
-          <span>Payments</span>
-        </a>
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 hover:bg-green-700 rounded-lg">
-          <History size={20} />
-          <span>History</span>
-        </a>
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 hover:bg-green-700 rounded-lg">
-          <Users size={20} />
-          <span>Customer</span>
-        </a>
-        <a href="#" className="flex items-center gap-3 px-4 py-3 mb-2 hover:bg-green-700 rounded-lg">
-          <FileText size={20} />
-          <span>Complaints</span>
-        </a>
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
+          
+          return (
+            <Link 
+              key={item.href}
+              href={item.href} 
+              className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition-colors ${
+                isActive ? 'bg-green-700' : 'hover:bg-green-700'
+              }`}
+            >
+              <Icon size={20} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
     </div>
   );
