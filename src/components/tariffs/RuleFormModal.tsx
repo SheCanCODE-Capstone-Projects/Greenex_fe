@@ -11,7 +11,7 @@ import { ZoneSelect } from './ZoneSelect';
 const ruleSchema = z.object({
   zone_id: z.string().min(1, 'Zone is required'),
   house_type: z.enum(['Apartment', 'Bungalow', 'Duplex', 'Other'], {
-    required_error: 'House type is required'
+    message: 'House type is required'
   }),
   pickup_frequency_per_week: z.number().min(0, 'Frequency must be 0 or greater'),
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -67,7 +67,7 @@ export function RuleFormModal({ open, onOpenChange, rule, zones, onSubmit }: Rul
         <DialogHeader>
           <DialogTitle>{rule ? 'Edit Rule' : 'Add New Rule'}</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">Zone *</label>

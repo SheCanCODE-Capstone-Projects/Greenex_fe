@@ -93,7 +93,7 @@ const AboutSection: React.FC = () => {
             </p>
 
             <Link
-              href="/login"
+              href="/signin"
               className="inline-block bg-[#2E7D32] text-white px-6 sm:px-8 py-2 sm:py-3 font-semibold text-xs sm:text-sm uppercase tracking-wide transition-all transform hover:scale-105 rounded-lg shadow-[0_6px_12px_rgba(0,0,0,0.15)] [clip-path:polygon(0%_0%,100%_0%,90%_100%,0%_100%)]"
             >
               Explore More
