@@ -1,14 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Building2, FileText, CheckCircle2, Truck, Sun, Moon } from 'lucide-react';
+import { Building2, FileText, CheckCircle2, Truck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
 import { StepIndicator } from '@/components/onboarding/StepIndicator';
 import { CompanyInfoStep, CompanyFormData } from '@/components/onboarding/CompanyInfoStep';
 import { DocumentStep } from '@/components/onboarding/DocumentStep';
 import { SuccessStep } from '@/components/onboarding/SuccessStep';
-import { OnboardingVisual } from '@/components/onboarding/OnboardingVisual';
 
 const steps = [
   { number: 1, label: 'Company Info', icon: Building2 },
@@ -23,17 +22,8 @@ export default function OnboardingPage() {
   const [remaDocument, setRemaDocument] = useState<File | null>(null);
   const [rdbDocument, setRdbDocument] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const router = useRouter();
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
 
   const handleCompanySubmit = (data: CompanyFormData) => {
     setCompanyData(data);
@@ -81,87 +71,121 @@ export default function OnboardingPage() {
     }
   }, [step, router]);
 
+  const getStepTitle = () => {
+    switch (step) {
+      case 1: return 'Company Information';
+      case 2: return 'Upload Documents';
+      default: return 'Complete';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300">
-      {/* Theme Toggle */}
-      <div className="fixed top-6 right-6 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          className="rounded-full w-10 h-10 p-0 bg-card/80 backdrop-blur-sm border-border"
-        >
-          {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-        </Button>
-      </div>
+    <div className="min-h-screen bg-light-bg dark:bg-gray-900 transition-colors duration-300 py-12 px-4">
+      {/* Success Step - Full Screen */}
+      {step === 3 ? (
+        <SuccessStep
+          companyData={companyData}
+          onGoHome={() => router.push('/')}
+        />
+      ) : (
+        /* Centered Modal Card */
+        <div className="max-w-3xl mx-auto">
+          {/* Modal Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            {/* Header */}
+            <div className="relative px-8 pt-8 pb-6 border-b border-gray-100 dark:border-gray-700">
+              {/* Close Button */}
+              <button
+                onClick={() => router.push('/')}
+                className="absolute top-6 right-6 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </button>
 
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-primary/4 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
-      </div>
+              {/* Title and Progress */}
+              <div className="flex items-start justify-between pr-12">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                    {getStepTitle()}
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Step {step} of 3
+                  </p>
+                </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-4">
-        <div className="w-full max-w-[90rem]">
-          {/* Logo Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary-green flex items-center justify-center shadow-lg">
-                <Truck className="w-8 h-8 text-white" />
+                {/* Circular Progress */}
+                <div className="relative w-16 h-16 shrink-0">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="28"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                      className="text-gray-200 dark:text-gray-700"
+                    />
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="28"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                      strokeDasharray={`${(step / 3) * 175.93} 175.93`}
+                      className="text-primary-green transition-all duration-500"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-base font-bold text-gray-900 dark:text-white">
+                      {step}/3
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary-green bg-clip-text text-transparent">
-                  Greenex
-                </h1>
-                <p className="text-base text-muted-foreground">Powering Rwanda&apos;s Green Future</p>
+
+              {/* Step Indicator */}
+              <div className="mt-8">
+                <StepIndicator steps={steps} currentStep={step} />
               </div>
+            </div>
+
+            {/* Content */}
+            <div className="px-8 pb-8">
+              {step === 1 && (
+                <CompanyInfoStep
+                  onNext={handleCompanySubmit}
+                  onBack={() => router.push('/')}
+                />
+              )}
+
+              {step === 2 && (
+                <DocumentStep
+                  kigaliContract={kigaliContract}
+                  setKigaliContract={setKigaliContract}
+                  remaDocument={remaDocument}
+                  setRemaDocument={setRemaDocument}
+                  rdbDocument={rdbDocument}
+                  setRdbDocument={setRdbDocument}
+                  onBack={() => setStep(1)}
+                  onSubmit={handleFinalSubmit}
+                  isSubmitting={isSubmitting}
+                />
+              )}
             </div>
           </div>
 
-          {/* Step Indicator */}
-          {step !== 3 && (
-            <StepIndicator steps={steps} currentStep={step} />
-          )}
-
-          {/* Step Content */}
-          {step !== 3 ? (
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              {/* Left Side - Visual Content */}
-              <OnboardingVisual step={step} />
-
-              {/* Right Side - Form Content */}
-              <div className="w-full">
-                {step === 1 && (
-                  <CompanyInfoStep
-                    onNext={handleCompanySubmit}
-                    onBack={() => router.push('/')}
-                  />
-                )}
-
-                {step === 2 && (
-                  <DocumentStep
-                    kigaliContract={kigaliContract}
-                    setKigaliContract={setKigaliContract}
-                    remaDocument={remaDocument}
-                    setRemaDocument={setRemaDocument}
-                    rdbDocument={rdbDocument}
-                    setRdbDocument={setRdbDocument}
-                    onBack={() => setStep(1)}
-                    onSubmit={handleFinalSubmit}
-                    isSubmitting={isSubmitting}
-                  />
-                )}
+          {/* Logo Footer */}
+          <div className="text-center mt-8">
+            <div className="inline-flex items-center gap-2.5 text-gray-600 dark:text-gray-400">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-green to-secondary-green flex items-center justify-center shadow-md">
+                <Truck className="w-5 h-5 text-white" />
               </div>
+              <span className="font-semibold text-base">GreenEx</span>
             </div>
-          ) : (
-            <SuccessStep
-              companyData={companyData}
-              onGoHome={() => router.push('/')}
-            />
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

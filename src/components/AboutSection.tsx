@@ -49,12 +49,12 @@ const AboutSection: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12 lg:mb-20">
           <div className="relative w-full order-2 lg:order-1">
-            <div className="absolute left-[38%] top-1/2 -translate-y-1/2 z-30 rounded-full bg-light-bg shadow-xl w-24 h-24 flex items-center justify-center cursor-pointer text-foreground font-semibold text-lg transition-all duration-300 hover:scale-110 dark:bg-gray-800">
+            <div className="absolute left-[38%] top-1/2 -translate-y-1/2 z-30 rounded-full bg-light-bg shadow-xl w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 flex items-center justify-center cursor-pointer text-foreground font-semibold text-sm sm:text-base lg:text-lg transition-all duration-300 hover:scale-110 dark:bg-gray-800">
               GreenEx
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2 flex flex-col gap-4">
-                <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+              <div className="col-span-1 sm:col-span-2 flex flex-col gap-2 sm:gap-4">
+                <div className="overflow-hidden rounded-lg shadow-lg group h-[200px] sm:h-[250px] lg:h-[350px] w-full sm:w-[250px] lg:w-[300px]">
                   <img
                     src="/About3.png"
                     alt="About Image 1"
@@ -62,7 +62,7 @@ const AboutSection: React.FC = () => {
                   />
                 </div>
 
-                <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px]">
+                <div className="overflow-hidden rounded-lg shadow-lg group h-[200px] sm:h-[250px] lg:h-[350px] w-full sm:w-[250px] lg:w-[300px]">
                   <img
                     src="/About3.jpg"
                     alt="About Image 2"
@@ -71,7 +71,7 @@ const AboutSection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-lg shadow-lg group h-[350px] w-[300px] mt-60 -ml-25">
+              <div className="overflow-hidden rounded-lg shadow-lg group h-[200px] sm:h-[250px] lg:h-[350px] w-full sm:w-[250px] lg:w-[300px] mt-0 sm:mt-32 lg:mt-60 -ml-0 sm:-ml-16 lg:-ml-25">
                 <img
                   src="/About2.png"
                   alt="About Image 3"
@@ -81,11 +81,11 @@ const AboutSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-6 animate-fade-in-right order-1 lg:order-2 pl-40">
-            <h2 className="text-4xl md:text-5xl font-bold text-primary-green">
+          <div className="space-y-4 sm:space-y-6 animate-fade-in-right order-1 lg:order-2 pl-0 sm:pl-8 lg:pl-40">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-green">
               About Us
             </h2>
-            <p className="text-gray-700 dark:text-foreground text-lg leading-relaxed">
+            <p className="text-gray-700 dark:text-foreground text-base sm:text-lg leading-relaxed">
               Greenex is a digital platform created to transform how waste is collected,
               tracked, and managed across Rwanda. It bridges the gap between
               households, companies, and private garbage collection companies by
@@ -94,7 +94,7 @@ const AboutSection: React.FC = () => {
 
             <Link
               href="/login"
-              className="inline-block bg-[#2E7D32] text-white px-8 py-3 font-semibold text-sm uppercase tracking-wide transition-all transform hover:scale-105 rounded-lg shadow-[0_6px_12px_rgba(0,0,0,0.15)] [clip-path:polygon(0%_0%,100%_0%,90%_100%,0%_100%)]"
+              className="inline-block bg-[#2E7D32] text-white px-6 sm:px-8 py-2 sm:py-3 font-semibold text-xs sm:text-sm uppercase tracking-wide transition-all transform hover:scale-105 rounded-lg shadow-[0_6px_12px_rgba(0,0,0,0.15)] [clip-path:polygon(0%_0%,100%_0%,90%_100%,0%_100%)]"
             >
               Explore More
             </Link>
