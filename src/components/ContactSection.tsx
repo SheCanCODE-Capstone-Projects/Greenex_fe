@@ -263,7 +263,7 @@ const ContactSection: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.83968367862!2d30.0811967749659!3d-1.944652398043902!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca7225d22be61%3A0x4d386327669c9d34!2sKacyiru%2C%20Kigali!5e0!3m2!1sen!2srw!4v1700000000000!5m2!1sen!2srw"
+                src="https://maps.google.com/maps?q=SheCanCode%20Training%20Center&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
