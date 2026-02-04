@@ -54,9 +54,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
 
   const headerBgClass = scrolled
     ? "bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg"
-    : activeSection === "home"
-      ? "bg-transparent"
-      : "bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg";
+    : "bg-transparent";
 
   const navVariants = {
     hidden: { opacity: 0, y: -20 },

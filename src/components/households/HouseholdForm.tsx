@@ -15,7 +15,7 @@ const householdSchema = z.object({
   code: z.string().min(1, 'Code is required'),
   address: z.string().min(1, 'Address is required'),
   houseType: z.enum(['resident', 'restaurant', 'vila', 'hotel', 'school', 'company', 'industry', 'other'], {
-    required_error: 'House type is required'
+    message: 'House type is required'
   }),
   otherHouseType: z.string().optional(),
 }).refine((data) => {
@@ -40,7 +40,7 @@ interface HouseholdFormProps {
 
 export function HouseholdForm({ household, zones, onSubmit, onCancel, isEditing = false }: HouseholdFormProps) {
   const [showOtherInput, setShowOtherInput] = useState(household?.houseType === 'other');
-  
+
   const {
     register,
     handleSubmit,
@@ -65,7 +65,7 @@ export function HouseholdForm({ household, zones, onSubmit, onCancel, isEditing 
   const handleFormSubmit = (data: HouseholdFormData) => {
     const submissionData = {
       ...data,
-      waste_company_id: 'comp_001', // This would come from context/auth
+      waste_company_id: 'comp_001',
       status: 'active' as const
     };
     onSubmit(submissionData);
@@ -76,7 +76,7 @@ export function HouseholdForm({ household, zones, onSubmit, onCancel, isEditing 
       <h1 className="text-2xl font-bold mb-6">
         {isEditing ? 'Edit Household' : 'Register New Household'}
       </h1>
-      
+
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
