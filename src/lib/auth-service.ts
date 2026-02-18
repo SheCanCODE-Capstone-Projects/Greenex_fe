@@ -35,18 +35,9 @@ export const authService = {
                 userType: data.userType.toUpperCase()
             };
 
-            console.log('Registration attempt with:', { ...payload, password: '***' });
             const response = await axiosInstance.post<RegisterResponse>('/api/auth/register', payload);
-            console.log('Registration successful:', response.data);
             return response.data;
         } catch (error: any) {
-            console.error('Registration error details:', {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-                code: error.code
-            });
-
             if (error.code === 'ECONNABORTED') {
                 throw new Error('Request timeout - backend server is waking up, please try again.');
             }
@@ -90,16 +81,8 @@ export const authService = {
     login: async (email: string, password: string): Promise<any> => {
         try {
             const response = await axiosInstance.post('/api/auth/login', { email, password });
-            console.log('Login response:', response.data);
             return response.data;
         } catch (error: any) {
-            console.error('Login error details:', {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-                code: error.code
-            });
-            
             if (error.code === 'ECONNABORTED') {
                 throw new Error('Request timeout - backend server is waking up, please try again.');
             }
@@ -122,7 +105,6 @@ export const authService = {
             const response = await axiosInstance.post('/api/auth/verify-otp', { otp });
             return response.data;
         } catch (error: any) {
-            console.error('OTP Verification error:', error);
             const message = error.response?.data?.message || error.message || 'OTP Verification failed';
             throw new Error(message);
         }
@@ -133,7 +115,6 @@ export const authService = {
             const response = await axiosInstance.post<CompanyRegisterResponse>('/api/auth/company/register', data);
             return response.data;
         } catch (error: any) {
-            console.error('Company Registration error:', error);
             if (error.code === 'ECONNABORTED') {
                 throw new Error('Request timeout - backend server is waking up, please try again.');
             }

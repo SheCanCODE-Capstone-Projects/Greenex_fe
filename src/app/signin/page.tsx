@@ -36,25 +36,28 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      console.log('Attempting login with:', { email });
       const response = await authService.login(email, password);
-      console.log('Login successful, response:', response);
+
+      if (!response) {
+        throw new Error('No response from server');
+      }
 
       // Store token and user info
       if (response.token) {
         localStorage.setItem("auth_token", response.token);
-        console.log('Token stored');
       } else {
-        console.warn('No token in response');
+        throw new Error('No token received from server');
       }
 
       // Decode JWT to get role
       const decodedToken = response.token ? decodeJWT(response.token) : null;
-      console.log('Decoded token:', decodedToken);
 
       // Get role from response or decoded token
       const userRole = response.role || decodedToken?.role;
-      console.log('User role:', userRole);
+
+      if (!userRole) {
+        throw new Error('User role not found');
+      }
 
       // Store the user info
       const userInfo = {
@@ -64,29 +67,24 @@ export default function Login() {
         role: userRole
       };
       localStorage.setItem("user_info", JSON.stringify(userInfo));
-      console.log('User info stored:', userInfo);
 
       toast.success("Login successful!");
 
+      // Small delay to ensure storage is complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Role-based routing
       if (userRole === "ADMIN") {
-        console.log('Redirecting to admin dashboard');
         router.push("/Supper-dashboard");
       } else if (userRole === "COMPANY_MANAGER") {
-        console.log('Redirecting to company dashboard');
         router.push("/wasteCompanyDashboard");
       } else if (userRole === "CITIZEN") {
-        console.log('Redirecting to user dashboard');
         router.push("/User-Dashboard");
       } else {
-        console.log('Unknown role, redirecting to home');
         router.push("/");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error('Login error:', error);
       toast.error(error.message || "Login failed. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -182,29 +180,6 @@ export default function Login() {
                 </>
               )}
             </button>
-
-            {/* Debug Info - Remove in production */}
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs">
-              <p className="font-semibold text-blue-900 mb-1">Debug Info:</p>
-              <p className="text-blue-700">Open browser console (F12) to see login details</p>
-              <button
-                type="button"
-                onClick={() => {
-                  console.log('=== DEBUG INFO ===');
-                  console.log('Token:', localStorage.getItem('auth_token'));
-                  console.log('User Info:', localStorage.getItem('user_info'));
-                  const userInfo = localStorage.getItem('user_info');
-                  if (userInfo) {
-                    const parsed = JSON.parse(userInfo);
-                    console.log('Parsed User:', parsed);
-                    console.log('Role:', parsed.role);
-                  }
-                }}
-                className="mt-2 px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
-              >
-                Check Login Status
-              </button>
-            </div>
           </form>
 
           <div className="relative my-8">

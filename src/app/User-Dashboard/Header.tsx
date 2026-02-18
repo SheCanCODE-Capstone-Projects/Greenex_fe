@@ -18,10 +18,9 @@ export default function Header() {
         const name = userInfo.fullName || userInfo.email || "User";
         setUserName(name);
         setUserInitials(name.substring(0, 2).toUpperCase());
-        // You can add registration date from userInfo if available
-        setRegistrationDate("01-05-2024"); // Placeholder
+        setRegistrationDate("01-05-2024");
       } catch (error) {
-        console.error('Error parsing user info:', error);
+        // Silent error handling
       }
     }
   }, []);

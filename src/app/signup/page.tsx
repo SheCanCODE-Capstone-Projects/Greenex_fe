@@ -44,8 +44,6 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      console.log('Starting registration for:', { email, userType, fullname });
-      
       const result = await authService.register({
         fullName: fullname,
         email,
@@ -54,18 +52,14 @@ export default function SignupPage() {
         userType
       });
 
-      console.log('Registration successful:', result);
-
       // save signup state
       localStorage.setItem("signup_email", email);
       localStorage.setItem("signup_user_type", userType);
       localStorage.setItem("signup_completed", "true");
-      console.log('Signup state saved, redirecting to OTP');
 
       toast.success("Account created successfully! Please check your email for verification code.");
       router.push("/pages/otp");
     } catch (err: any) {
-      console.error('Registration failed:', err);
       const errorMessage = err.message || "Something went wrong. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
