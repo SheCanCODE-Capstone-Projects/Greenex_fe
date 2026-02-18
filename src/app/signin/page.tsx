@@ -38,9 +38,15 @@ export default function Login() {
     try {
       const response = await authService.login(email, password);
 
+      if (!response) {
+        throw new Error('No response from server');
+      }
+
       // Store token and user info
       if (response.token) {
         localStorage.setItem("auth_token", response.token);
+      } else {
+        throw new Error('No token received from server');
       }
 
       // Decode JWT to get role
@@ -48,6 +54,10 @@ export default function Login() {
 
       // Get role from response or decoded token
       const userRole = response.role || decodedToken?.role;
+
+      if (!userRole) {
+        throw new Error('User role not found');
+      }
 
       // Store the user info
       const userInfo = {
@@ -60,6 +70,9 @@ export default function Login() {
 
       toast.success("Login successful!");
 
+      // Small delay to ensure storage is complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Role-based routing
       if (userRole === "ADMIN") {
         router.push("/Supper-dashboard");
@@ -70,11 +83,8 @@ export default function Login() {
       } else {
         router.push("/");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || "Login failed");
-    } finally {
+      toast.error(error.message || "Login failed. Please try again.");
       setIsLoading(false);
     }
   };

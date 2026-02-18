@@ -1,69 +1,87 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Household, dummyHouseholds } from '@/data/households';
-import { Zone, dummyZones } from '@/data/zones';
 import { HouseholdTable } from '@/components/households/HouseholdTable';
 import { HouseholdDetailsModal } from '@/components/households/HouseholdDetailsModal';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
+import householdService, { Household } from '@/lib/household-service';
+import zoneService, { Zone } from '@/lib/zone-service';
 
 export default function HouseholdsPage() {
   const router = useRouter();
   const [households, setHouseholds] = useState<Household[]>([]);
-  const [zones] = useState<Zone[]>(dummyZones);
+  const [zones, setZones] = useState<Zone[]>([]);
   const [selectedHousehold, setSelectedHousehold] = useState<Household | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [deleteHouseholdId, setDeleteHouseholdId] = useState<string | null>(null);
+  const [deleteHouseholdId, setDeleteHouseholdId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedHouseholds = localStorage.getItem('households');
-    if (savedHouseholds) {
-      setHouseholds(JSON.parse(savedHouseholds));
-    } else {
-      setHouseholds(dummyHouseholds);
-      localStorage.setItem('households', JSON.stringify(dummyHouseholds));
-    }
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [householdsData, zonesData] = await Promise.all([
+        householdService.getAll(),
+        zoneService.getAll()
+      ]);
+      setHouseholds(householdsData);
+      setZones(zonesData);
+    } catch (error) {
+      toast.error('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleView = (household: Household) => {
     setSelectedHousehold(household);
     setShowDetails(true);
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: number) => {
     router.push(`/wasteCompanyDashboard/households/${id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     setDeleteHouseholdId(id);
   };
 
-  const handleToggleStatus = (id: string) => {
-    const updatedHouseholds = households.map(household => 
-      household.id === id 
-        ? { ...household, status: household.status === 'active' ? 'inactive' : 'active' }
-        : household
-    );
-    setHouseholds(updatedHouseholds);
-    localStorage.setItem('households', JSON.stringify(updatedHouseholds));
-    
-    const household = households.find(h => h.id === id);
-    const newStatus = household?.status === 'active' ? 'inactive' : 'active';
-    toast.success(`Household ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`);
-  };
-
-  const confirmDelete = () => {
-    if (deleteHouseholdId) {
-      const updatedHouseholds = households.filter(household => household.id !== deleteHouseholdId);
-      setHouseholds(updatedHouseholds);
-      localStorage.setItem('households', JSON.stringify(updatedHouseholds));
-      setDeleteHouseholdId(null);
-      toast.success('Household deleted successfully!');
+  const handleToggleStatus = async (id: number) => {
+    try {
+      const household = households.find(h => h.id === id);
+      if (!household) return;
+      
+      const newStatus = household.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+      await householdService.update(id, { ...household, status: newStatus } as any);
+      await fetchData();
+      toast.success(`Household ${newStatus === 'ACTIVE' ? 'activated' : 'deactivated'} successfully!`);
+    } catch (error) {
+      toast.error('Failed to update status');
     }
   };
+
+  const confirmDelete = async () => {
+    if (deleteHouseholdId) {
+      try {
+        await householdService.delete(deleteHouseholdId);
+        await fetchData();
+        setDeleteHouseholdId(null);
+        toast.success('Household deleted successfully!');
+      } catch (error) {
+        toast.error('Failed to delete household');
+      }
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="p-6">

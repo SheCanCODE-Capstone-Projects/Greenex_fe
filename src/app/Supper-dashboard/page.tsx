@@ -49,6 +49,8 @@ export default function SupperDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
+  const [userName, setUserName] = useState("Admin");
+  const [userInitials, setUserInitials] = useState("AD");
   const { notifications, dismissNotification } = useCompanyNotifications();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
@@ -57,6 +59,20 @@ export default function SupperDashboard() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [loadingContactDetail, setLoadingContactDetail] = useState(false);
+
+  useEffect(() => {
+    const userInfoStr = localStorage.getItem("user_info");
+    if (userInfoStr) {
+      try {
+        const userInfo = JSON.parse(userInfoStr);
+        const name = userInfo.fullName || userInfo.email || "Admin";
+        setUserName(name);
+        setUserInitials(name.substring(0, 2).toUpperCase());
+      } catch (error) {
+        console.error('Error parsing user info:', error);
+      }
+    }
+  }, []);
 
   // Fetch contacts when user-review section is active
   const fetchContacts = async () => {
@@ -576,7 +592,7 @@ export default function SupperDashboard() {
                 Green Ex Manager
               </h1>
               <p className="text-xs md:text-sm text-gray-500">
-                supper admin Dashboard
+                Welcome, {userName}
               </p>
             </div>
           </div>
@@ -591,8 +607,9 @@ export default function SupperDashboard() {
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                title={userName}
               >
-                CM
+                {userInitials}
               </button>
 
               {isProfileOpen && (

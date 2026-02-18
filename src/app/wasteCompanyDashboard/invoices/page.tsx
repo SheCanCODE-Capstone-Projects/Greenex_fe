@@ -1,31 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Download, Eye, FileText } from "lucide-react";
-
-interface Invoice {
-  id: string;
-  date: string;
-  amount: number;
-  status: "Paid" | "Pending" | "Overdue";
-  description: string;
-}
+import { toast } from "react-toastify";
+import invoiceService, { Invoice } from "@/lib/invoice-service";
 
 export default function InvoicesPage() {
-  const [invoices] = useState<Invoice[]>([
-    { id: "INV-001", date: "2024-01-15", amount: 99, status: "Paid", description: "Premium Plan - January 2024" },
-    { id: "INV-002", date: "2023-12-15", amount: 99, status: "Paid", description: "Premium Plan - December 2023" },
-    { id: "INV-003", date: "2023-11-15", amount: 99, status: "Paid", description: "Premium Plan - November 2023" },
-    { id: "INV-004", date: "2023-10-15", amount: 99, status: "Paid", description: "Premium Plan - October 2023" },
-  ]);
-
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
   const [viewingInvoice, setViewingInvoice] = useState<Invoice | null>(null);
+
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
+
+  const fetchInvoices = async () => {
+    try {
+      setLoading(true);
+      const data = await invoiceService.getAll();
+      setInvoices(data);
+    } catch (error) {
+      toast.error('Failed to fetch invoices');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Paid": return "bg-green-100 text-green-700";
-      case "Pending": return "bg-yellow-100 text-yellow-700";
-      case "Overdue": return "bg-red-100 text-red-700";
+      case "PAID": return "bg-green-100 text-green-700";
+      case "PENDING": return "bg-yellow-100 text-yellow-700";
+      case "OVERDUE": return "bg-red-100 text-red-700";
+      case "CANCELLED": return "bg-gray-100 text-gray-700";
       default: return "bg-gray-100 text-gray-700";
     }
   };
@@ -38,26 +44,30 @@ export default function InvoicesPage() {
     const invoiceContent = `
 INVOICE
 
-Invoice ID: ${invoice.id}
-Date: ${invoice.date}
-Description: ${invoice.description}
-Amount: $${invoice.amount}
+Invoice Number: ${invoice.invoiceNumber}
+Issue Date: ${invoice.issueDate}
+Due Date: ${invoice.dueDate}
+Amount: ${invoice.amount} RWF
 Status: ${invoice.status}
 
 Thank you for your business!
-EcoCycle Solutions
+Greenex Waste Management
     `;
     
     const blob = new Blob([invoiceContent], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${invoice.id}.txt`;
+    a.download = `${invoice.invoiceNumber}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -68,9 +78,9 @@ EcoCycle Solutions
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-dark-bg">Invoice ID</th>
-                  <th className="text-left py-3 px-4 font-semibold text-dark-bg">Date</th>
-                  <th className="text-left py-3 px-4 font-semibold text-dark-bg">Description</th>
+                  <th className="text-left py-3 px-4 font-semibold text-dark-bg">Invoice Number</th>
+                  <th className="text-left py-3 px-4 font-semibold text-dark-bg">Issue Date</th>
+                  <th className="text-left py-3 px-4 font-semibold text-dark-bg">Due Date</th>
                   <th className="text-left py-3 px-4 font-semibold text-dark-bg">Amount</th>
                   <th className="text-left py-3 px-4 font-semibold text-dark-bg">Status</th>
                   <th className="text-left py-3 px-4 font-semibold text-dark-bg">Actions</th>
@@ -79,10 +89,10 @@ EcoCycle Solutions
               <tbody>
                 {invoices.map(invoice => (
                   <tr key={invoice.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 font-medium text-dark-bg">{invoice.id}</td>
-                    <td className="py-3 px-4 text-gray-700">{invoice.date}</td>
-                    <td className="py-3 px-4 text-gray-700">{invoice.description}</td>
-                    <td className="py-3 px-4 font-semibold text-dark-bg">${invoice.amount}</td>
+                    <td className="py-3 px-4 font-medium text-dark-bg">{invoice.invoiceNumber}</td>
+                    <td className="py-3 px-4 text-gray-700">{new Date(invoice.issueDate).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 text-gray-700">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 font-semibold text-dark-bg">{invoice.amount} RWF</td>
                     <td className="py-3 px-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(invoice.status)}`}>
                         {invoice.status}
@@ -131,20 +141,20 @@ EcoCycle Solutions
               
               <div className="space-y-4 border-t border-b border-gray-200 py-6">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Invoice ID:</span>
-                  <span className="font-semibold text-dark-bg">{viewingInvoice.id}</span>
+                  <span className="text-gray-600">Invoice Number:</span>
+                  <span className="font-semibold text-dark-bg">{viewingInvoice.invoiceNumber}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Date:</span>
-                  <span className="font-semibold text-dark-bg">{viewingInvoice.date}</span>
+                  <span className="text-gray-600">Issue Date:</span>
+                  <span className="font-semibold text-dark-bg">{new Date(viewingInvoice.issueDate).toLocaleDateString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Description:</span>
-                  <span className="font-semibold text-dark-bg">{viewingInvoice.description}</span>
+                  <span className="text-gray-600">Due Date:</span>
+                  <span className="font-semibold text-dark-bg">{new Date(viewingInvoice.dueDate).toLocaleDateString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Amount:</span>
-                  <span className="font-semibold text-dark-bg text-xl">${viewingInvoice.amount}</span>
+                  <span className="font-semibold text-dark-bg text-xl">{viewingInvoice.amount} RWF</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Status:</span>

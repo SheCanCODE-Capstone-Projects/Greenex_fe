@@ -1,52 +1,73 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { TariffPlan, TariffRule, dummyZones } from '@/data/tariffs';
-import { tariffStore } from '@/lib/tariff-store';
 import { TariffTable } from '@/components/tariffs/TariffTable';
 import { TariffDetailsModal } from '@/components/tariffs/TariffDetailsModal';
 import { ConfirmDialog } from '@/components/tariffs/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
+import tariffService, { Tariff } from '@/lib/tariff-service';
+import zoneService, { Zone } from '@/lib/zone-service';
 
 export default function TariffsPage() {
   const router = useRouter();
-  const [plans, setPlans] = useState<TariffPlan[]>(tariffStore.getPlans());
-  const [selectedPlan, setSelectedPlan] = useState<TariffPlan | null>(null);
-  const [selectedPlanRules, setSelectedPlanRules] = useState<TariffRule[]>([]);
+  const [tariffs, setTariffs] = useState<Tariff[]>([]);
+  const [zones, setZones] = useState<Zone[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedTariff, setSelectedTariff] = useState<Tariff | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [deletePlanId, setDeletePlanId] = useState<string | null>(null);
+  const [deleteTariffId, setDeleteTariffId] = useState<number | null>(null);
 
-  const handleView = (plan: TariffPlan) => {
-    setSelectedPlan(plan);
-    setSelectedPlanRules(tariffStore.getRulesForPlan(plan.id));
-    setShowDetails(true);
-  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const handleEdit = (id: string) => {
-    router.push(`/wasteCompanyDashboard/tariffs/${id}/edit`);
-  };
-  const handleDelete = (id: string) => {
-    setDeletePlanId(id);
-  };
-  
-  const confirmDelete = () => {
-    if (deletePlanId) {
-      const success = tariffStore.deletePlan(deletePlanId);
-      if (success) {
-        setPlans(tariffStore.getPlans());
-        toast.success('Tariff plan deleted successfully!');
-      } else {
-        toast.error('Failed to delete tariff plan.');
-      }
-      setDeletePlanId(null);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [tariffsData, zonesData] = await Promise.all([
+        tariffService.getAll(),
+        zoneService.getAll()
+      ]);
+      setTariffs(tariffsData);
+      setZones(zonesData);
+    } catch (error) {
+      toast.error('Failed to fetch data');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getRuleCount = (planId: string) => {
-    return tariffStore.getRuleCount(planId);
+  const handleView = (tariff: Tariff) => {
+    setSelectedTariff(tariff);
+    setShowDetails(true);
   };
+
+  const handleEdit = (id: number) => {
+    router.push(`/wasteCompanyDashboard/tariffs/${id}/edit`);
+  };
+
+  const handleDelete = (id: number) => {
+    setDeleteTariffId(id);
+  };
+  
+  const confirmDelete = async () => {
+    if (deleteTariffId) {
+      try {
+        await tariffService.delete(deleteTariffId);
+        await fetchData();
+        setDeleteTariffId(null);
+        toast.success('Tariff deleted successfully!');
+      } catch (error) {
+        toast.error('Failed to delete tariff');
+      }
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -59,24 +80,24 @@ export default function TariffsPage() {
         </div>
 
         <TariffTable
-          plans={plans}
-          getRuleCount={getRuleCount}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          plans={tariffs as any}
+          getRuleCount={() => 0}
+          onView={handleView as any}
+          onEdit={handleEdit as any}
+          onDelete={handleDelete as any}
         />
 
         <TariffDetailsModal
-          plan={selectedPlan}
-          rules={selectedPlanRules}
-          zones={dummyZones}
+          plan={selectedTariff as any}
+          rules={[]}
+          zones={zones as any}
           open={showDetails}
           onOpenChange={setShowDetails}
         />
 
         <ConfirmDialog
-          open={!!deletePlanId}
-          onOpenChange={() => setDeletePlanId(null)}
+          open={!!deleteTariffId}
+          onOpenChange={() => setDeleteTariffId(null)}
           title="Confirm Delete"
           message="Are you sure you want to delete this tariff plan? This will also delete all associated rules. This action cannot be undone."
           onConfirm={confirmDelete}
