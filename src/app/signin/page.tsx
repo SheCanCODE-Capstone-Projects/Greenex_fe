@@ -36,18 +36,25 @@ export default function Login() {
     setIsLoading(true);
 
     try {
+      console.log('Attempting login with:', { email });
       const response = await authService.login(email, password);
+      console.log('Login successful, response:', response);
 
       // Store token and user info
       if (response.token) {
         localStorage.setItem("auth_token", response.token);
+        console.log('Token stored');
+      } else {
+        console.warn('No token in response');
       }
 
       // Decode JWT to get role
       const decodedToken = response.token ? decodeJWT(response.token) : null;
+      console.log('Decoded token:', decodedToken);
 
       // Get role from response or decoded token
       const userRole = response.role || decodedToken?.role;
+      console.log('User role:', userRole);
 
       // Store the user info
       const userInfo = {
@@ -57,23 +64,28 @@ export default function Login() {
         role: userRole
       };
       localStorage.setItem("user_info", JSON.stringify(userInfo));
+      console.log('User info stored:', userInfo);
 
       toast.success("Login successful!");
 
       // Role-based routing
       if (userRole === "ADMIN") {
+        console.log('Redirecting to admin dashboard');
         router.push("/Supper-dashboard");
       } else if (userRole === "COMPANY_MANAGER") {
+        console.log('Redirecting to company dashboard');
         router.push("/wasteCompanyDashboard");
       } else if (userRole === "CITIZEN") {
+        console.log('Redirecting to user dashboard');
         router.push("/User-Dashboard");
       } else {
+        console.log('Unknown role, redirecting to home');
         router.push("/");
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || "Login failed");
+      console.error('Login error:', error);
+      toast.error(error.message || "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }

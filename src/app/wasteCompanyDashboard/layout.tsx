@@ -27,6 +27,19 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userName, setUserName] = useState("User");
+
+  useEffect(() => {
+    const userInfoStr = localStorage.getItem("user_info");
+    if (userInfoStr) {
+      try {
+        const userInfo = JSON.parse(userInfoStr);
+        setUserName(userInfo.fullName || userInfo.email || "User");
+      } catch (error) {
+        console.error('Error parsing user info:', error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = () => setDropdownOpen(false);
@@ -75,7 +88,7 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Green Ex Manager</h1>
-                <p className="text-sm text-gray-600">Waste Collection Company</p>
+                <p className="text-sm text-gray-600">Welcome, {userName}</p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="relative">
@@ -90,8 +103,9 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
                       setDropdownOpen(!dropdownOpen);
                     }}
                     className="w-10 h-10 rounded-full bg-green-400 flex items-center justify-center font-semibold hover:bg-green-500 transition-colors"
+                    title={userName}
                   >
-                    CM
+                    {userName.substring(0, 2).toUpperCase()}
                   </button>
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">

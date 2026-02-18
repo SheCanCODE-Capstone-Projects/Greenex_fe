@@ -1,53 +1,67 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Zone, dummyZones } from '@/data/zones';
 import { ZoneTable } from '@/components/zones/ZoneTable';
 import { ZoneDetailsModal } from '@/components/zones/ZoneDetailsModal';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
+import zoneService, { Zone } from '@/lib/zone-service';
 
 export default function ZonesPage() {
   const router = useRouter();
   const [zones, setZones] = useState<Zone[]>([]);
-  
-  useEffect(() => {
-    const savedZones = localStorage.getItem('zones');
-    if (savedZones) {
-      setZones(JSON.parse(savedZones));
-    } else {
-      setZones(dummyZones);
-      localStorage.setItem('zones', JSON.stringify(dummyZones));
-    }
-  }, []);
+  const [loading, setLoading] = useState(true);
   const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [deleteZoneId, setDeleteZoneId] = useState<string | null>(null);
+  const [deleteZoneId, setDeleteZoneId] = useState<number | null>(null);
+  
+  useEffect(() => {
+    fetchZones();
+  }, []);
+
+  const fetchZones = async () => {
+    try {
+      setLoading(true);
+      const data = await zoneService.getAll();
+      setZones(data);
+    } catch (error) {
+      toast.error('Failed to fetch zones');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleView = (zone: Zone) => {
     setSelectedZone(zone);
     setShowDetails(true);
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: number) => {
     router.push(`/wasteCompanyDashboard/zones/${id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     setDeleteZoneId(id);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteZoneId) {
-      const updatedZones = zones.filter(zone => zone.id !== deleteZoneId);
-      setZones(updatedZones);
-      localStorage.setItem('zones', JSON.stringify(updatedZones));
-      setDeleteZoneId(null);
-      toast.success('Zone deleted successfully!');
+      try {
+        await zoneService.delete(deleteZoneId);
+        await fetchZones();
+        setDeleteZoneId(null);
+        toast.success('Zone deleted successfully!');
+      } catch (error) {
+        toast.error('Failed to delete zone');
+      }
     }
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="p-6">

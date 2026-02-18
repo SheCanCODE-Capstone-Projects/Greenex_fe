@@ -1,30 +1,41 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Payment, dummyPayments } from '@/data/payments';
-import { Household, dummyHouseholds } from '@/data/households';
 import { PaymentTable } from '@/components/payments/PaymentTable';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
+import paymentService, { Payment } from '@/lib/payment-service';
+import householdService, { Household } from '@/lib/household-service';
 
 export default function PaymentsPage() {
   const router = useRouter();
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [households] = useState<Household[]>(dummyHouseholds);
+  const [households, setHouseholds] = useState<Household[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    const savedPayments = localStorage.getItem('payments');
-    if (savedPayments) {
-      setPayments(JSON.parse(savedPayments));
-    } else {
-      setPayments(dummyPayments);
-      localStorage.setItem('payments', JSON.stringify(dummyPayments));
-    }
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [paymentsData, householdsData] = await Promise.all([
+        paymentService.getAll(),
+        householdService.getAll()
+      ]);
+      setPayments(paymentsData);
+      setHouseholds(householdsData);
+    } catch (error) {
+      toast.error('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleView = (payment: Payment) => {
     setSelectedPayment(payment);
@@ -33,26 +44,24 @@ export default function PaymentsPage() {
 
 
 
-  const handleMarkPaid = (id: string) => {
-    const updatedPayments = payments.map(payment => 
-      payment.id === id 
-        ? { 
-            ...payment, 
-            status: 'paid' as const,
-            paid_at: new Date().toISOString(),
-            transaction_ref: `TXN${Date.now()}`
-          }
-        : payment
-    );
-    setPayments(updatedPayments);
-    localStorage.setItem('payments', JSON.stringify(updatedPayments));
-    toast.success('Payment marked as paid successfully!');
+  const handleMarkPaid = async (id: number) => {
+    try {
+      await paymentService.updateStatus(id, 'COMPLETED');
+      await fetchData();
+      toast.success('Payment marked as paid successfully!');
+    } catch (error) {
+      toast.error('Failed to update payment status');
+    }
   };
 
-  const getHouseholdCode = (householdId: string) => {
+  const getHouseholdCode = (householdId: number) => {
     const household = households.find(h => h.id === householdId);
-    return household?.code || 'Unknown';
+    return household?.householdName || 'Unknown';
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -65,10 +74,10 @@ export default function PaymentsPage() {
         </div>
 
         <PaymentTable
-          payments={payments}
-          households={households}
-          onView={handleView}
-          onMarkPaid={handleMarkPaid}
+          payments={payments as any}
+          households={households as any}
+          onView={handleView as any}
+          onMarkPaid={handleMarkPaid as any}
         />
 
         <Dialog open={showDetails} onOpenChange={setShowDetails}>
@@ -80,11 +89,7 @@ export default function PaymentsPage() {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-gray-600">Household</label>
-                  <p className="text-sm">{getHouseholdCode(selectedPayment.household_id)}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Period</label>
-                  <p className="text-sm">{selectedPayment.period_month}</p>
+                  <p className="text-sm">{getHouseholdCode(selectedPayment.householdId)}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-600">Amount</label>
@@ -95,17 +100,17 @@ export default function PaymentsPage() {
                   <p className="text-sm capitalize">{selectedPayment.status}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Transaction Reference</label>
-                  <p className="text-sm">{selectedPayment.transaction_ref || '-'}</p>
+                  <label className="text-sm font-medium text-gray-600">Payment Method</label>
+                  <p className="text-sm capitalize">{selectedPayment.paymentMethod}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Channel</label>
-                  <p className="text-sm capitalize">{selectedPayment.channel || '-'}</p>
+                  <label className="text-sm font-medium text-gray-600">Reference</label>
+                  <p className="text-sm">{selectedPayment.reference || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Paid At</label>
+                  <label className="text-sm font-medium text-gray-600">Payment Date</label>
                   <p className="text-sm">
-                    {selectedPayment.paid_at ? new Date(selectedPayment.paid_at).toLocaleString() : '-'}
+                    {new Date(selectedPayment.paymentDate).toLocaleString()}
                   </p>
                 </div>
                 <div className="flex justify-end">
