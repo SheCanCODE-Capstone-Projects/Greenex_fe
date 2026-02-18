@@ -182,6 +182,29 @@ export default function Login() {
                 </>
               )}
             </button>
+
+            {/* Debug Info - Remove in production */}
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs">
+              <p className="font-semibold text-blue-900 mb-1">Debug Info:</p>
+              <p className="text-blue-700">Open browser console (F12) to see login details</p>
+              <button
+                type="button"
+                onClick={() => {
+                  console.log('=== DEBUG INFO ===');
+                  console.log('Token:', localStorage.getItem('auth_token'));
+                  console.log('User Info:', localStorage.getItem('user_info'));
+                  const userInfo = localStorage.getItem('user_info');
+                  if (userInfo) {
+                    const parsed = JSON.parse(userInfo);
+                    console.log('Parsed User:', parsed);
+                    console.log('Role:', parsed.role);
+                  }
+                }}
+                className="mt-2 px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
+              >
+                Check Login Status
+              </button>
+            </div>
           </form>
 
           <div className="relative my-8">
