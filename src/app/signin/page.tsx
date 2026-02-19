@@ -82,7 +82,8 @@ export default function Login() {
         if (!onboardingDone) {
           router.push("/onboarding");
         } else {
-          router.push("/wasteCompanyDashboard");
+          // Redirect to status page - it will check approval status
+          router.push("/company-status");
         }
       } else if (userRole === "CITIZEN") {
         router.push("/User-Dashboard");

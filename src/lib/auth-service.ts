@@ -16,17 +16,6 @@ export interface RegisterResponse {
 
 }
 
-export interface CompanyRegisterData {
-    name: string;
-    contractNumber: string;
-    sectorCoverage: string;
-}
-
-export interface CompanyRegisterResponse {
-    message: string;
-    // Add other fields if returned by backend
-}
-
 export const authService = {
     register: async (data: RegisterData): Promise<RegisterResponse> => {
         try {
@@ -106,19 +95,6 @@ export const authService = {
             return response.data;
         } catch (error: any) {
             const message = error.response?.data?.message || error.message || 'OTP Verification failed';
-            throw new Error(message);
-        }
-    },
-
-    registerCompany: async (data: CompanyRegisterData): Promise<CompanyRegisterResponse> => {
-        try {
-            const response = await axiosInstance.post<CompanyRegisterResponse>('/api/auth/company/register', data);
-            return response.data;
-        } catch (error: any) {
-            if (error.code === 'ECONNABORTED') {
-                throw new Error('Request timeout - backend server is waking up, please try again.');
-            }
-            const message = error.response?.data?.message || error.message || 'Company Registration failed';
             throw new Error(message);
         }
     }

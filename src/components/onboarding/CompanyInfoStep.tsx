@@ -4,13 +4,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Building2, MapPin, FileText, ArrowRight, ChevronDown, Check, X, Search } from 'lucide-react';
+import { Building2, MapPin, ArrowRight, ChevronDown, Check, X, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { toast } from 'react-toastify';
-import { authService } from '@/lib/auth-service';
 
 const kigaliSectors = [
   "Bumbogo", "Gatsata", "Gikomero", "Gisozi", "Jabana", "Jali", "Kacyiru",
@@ -24,7 +22,6 @@ const kigaliSectors = [
 const companySchema = z.object({
   companyName: z.string().min(2, "Company name must be at least 2 characters"),
   sectors: z.array(z.string()).min(1, "Please select at least one sector"),
-  contractNumber: z.string().min(2, "Contract number must be at least 2 characters"),
 });
 
 export type CompanyFormData = z.infer<typeof companySchema>;
@@ -38,7 +35,6 @@ export function CompanyInfoStep({ onNext, onBack }: CompanyInfoStepProps) {
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [sectorsOpen, setSectorsOpen] = useState(false);
   const [sectorSearch, setSectorSearch] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, setValue, formState: { isValid } } = useForm<CompanyFormData>({
     resolver: zodResolver(companySchema),
@@ -59,24 +55,9 @@ export function CompanyInfoStep({ onNext, onBack }: CompanyInfoStepProps) {
     sector.toLowerCase().includes(sectorSearch.toLowerCase())
   );
 
-  const onSubmit = async (data: CompanyFormData) => {
-    setIsSubmitting(true);
-    try {
-      const payload = {
-        name: data.companyName,
-        contractNumber: data.contractNumber,
-        sectorCoverage: data.sectors.join(', ')
-      };
-
-      await authService.registerCompany(payload);
-
-      toast.success('Company information saved successfully!');
-      onNext(data);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to register company info');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const onSubmit = (data: CompanyFormData) => {
+    // Just pass data to parent, no API call here
+    onNext(data);
   };
 
   return (
@@ -191,39 +172,17 @@ export function CompanyInfoStep({ onNext, onBack }: CompanyInfoStepProps) {
           )}
         </div>
 
-        {/* Contract Number */}
-        <div className="space-y-3 group">
-          <Label className="text-base font-semibold flex items-center gap-3 text-gray-900 dark:text-white">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-green/10 to-primary-green/5 dark:from-primary-green/20 dark:to-primary-green/10 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary-green/20">
-              <FileText className="w-5 h-5 text-primary-green transition-transform duration-300 group-hover:scale-110" />
-            </div>
-            Contract Number
-          </Label>
-          <Input
-            {...register('contractNumber')}
-            placeholder="e.g. CN-2024-001"
-            className="h-14 text-base rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:border-primary-green focus:ring-4 focus:ring-primary-green/10 bg-white dark:bg-gray-900 transition-all duration-300 shadow-sm hover:shadow-md hover:border-primary-green/50"
-          />
-        </div>
-
         {/* Navigation Button */}
         <div className="flex justify-end pt-6">
           <Button
             type="submit"
-            disabled={!isValid || isSubmitting}
+            disabled={!isValid}
             className="bg-gradient-to-r from-primary-green to-secondary-green hover:from-secondary-green hover:to-primary-green text-white px-10 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-base font-semibold"
           >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Saving...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                Continue
-                <ArrowRight className="w-5 h-5" />
-              </span>
-            )}
+            <span className="flex items-center gap-2">
+              Continue
+              <ArrowRight className="w-5 h-5" />
+            </span>
           </Button>
         </div>
       </form>
