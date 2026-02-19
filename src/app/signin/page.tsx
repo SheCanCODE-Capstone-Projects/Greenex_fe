@@ -77,7 +77,13 @@ export default function Login() {
       if (userRole === "ADMIN") {
         router.push("/Supper-dashboard");
       } else if (userRole === "COMPANY_MANAGER") {
-        router.push("/wasteCompanyDashboard");
+        // Check if company has completed onboarding
+        const onboardingDone = localStorage.getItem("onboarding_completed");
+        if (!onboardingDone) {
+          router.push("/onboarding");
+        } else {
+          router.push("/wasteCompanyDashboard");
+        }
       } else if (userRole === "CITIZEN") {
         router.push("/User-Dashboard");
       } else {

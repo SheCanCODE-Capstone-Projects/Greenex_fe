@@ -64,9 +64,11 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (step === 3) {
+      // Mark onboarding as completed so login routes to dashboard
+      localStorage.setItem('onboarding_completed', 'true');
       const timer = setTimeout(() => {
-        router.push('/');
-      }, 10000);
+        router.push('/signin');
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [step, router]);
@@ -85,7 +87,7 @@ export default function OnboardingPage() {
       {step === 3 ? (
         <SuccessStep
           companyData={companyData}
-          onGoHome={() => router.push('/')}
+          onGoHome={() => router.push('/signin')}
         />
       ) : (
         /* Centered Modal Card */

@@ -32,7 +32,7 @@ export const authService = {
         try {
             const payload = {
                 ...data,
-                userType: data.userType.toUpperCase()
+                userType: data.userType
             };
 
             const response = await axiosInstance.post<RegisterResponse>('/api/auth/register', payload);
@@ -86,15 +86,15 @@ export const authService = {
             if (error.code === 'ECONNABORTED') {
                 throw new Error('Request timeout - backend server is waking up, please try again.');
             }
-            
+
             if (error.response?.status === 401) {
                 throw new Error('Invalid email or password');
             }
-            
+
             if (error.response?.status === 403) {
                 throw new Error('Account not verified. Please check your email for verification code.');
             }
-            
+
             const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Login failed. Please try again.';
             throw new Error(message);
         }

@@ -16,7 +16,7 @@ export default function SignupPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [userType, setUserType] = useState("citizen");
+  const [userType, setUserType] = useState("CITIZEN");
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -152,7 +152,7 @@ export default function SignupPage() {
             <div className="space-y-1">
               <label className="text-sm font-medium ml-1">Account Type</label>
               <div className="relative group">
-                {userType === 'company' ? (
+                {userType === 'COMPANY_MANAGER' ? (
                   <Truck className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-primary-green transition-colors" />
                 ) : (
                   <House className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-primary-green transition-colors" />
@@ -162,8 +162,8 @@ export default function SignupPage() {
                   onChange={(e) => setUserType(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-white/50 dark:bg-white/5 focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green transition-all outline-none appearance-none cursor-pointer"
                 >
-                  <option value="citizen">Household</option>
-                  <option value="company">Waste Company</option>
+                  <option value="CITIZEN">Household</option>
+                  <option value="COMPANY_MANAGER">Waste Company</option>
                 </select>
               </div>
             </div>
@@ -225,9 +225,9 @@ export default function SignupPage() {
               />
               <div className="text-sm">
                 <span className="text-foreground">I agree to the </span>
-                <Link href="/terms" className="font-medium text-primary-green hover:underline">Terms of Service</Link>
+                <Link href="/terms" target="_blank" rel="noopener noreferrer" className="font-medium text-primary-green hover:underline">Terms of Service</Link>
                 <span className="text-foreground"> and </span>
-                <Link href="/privacy" className="font-medium text-primary-green hover:underline">Privacy Policy</Link>
+                <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="font-medium text-primary-green hover:underline">Privacy Policy</Link>
                 {!canAgree && (
                   <p className="text-xs text-red-500 mt-1">Please fill all fields to continue</p>
                 )}
@@ -251,7 +251,7 @@ export default function SignupPage() {
             )}
           </button>
 
-          {userType !== "company" && (
+          {userType !== "COMPANY_MANAGER" && (
             <>
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">

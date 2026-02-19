@@ -76,7 +76,7 @@ export default function OTPPage() {
         const userType = localStorage.getItem("signup_user_type");
         localStorage.removeItem("signup_user_type"); // Clean up
 
-        if (userType === "company") {
+        if (userType === "COMPANY_MANAGER") {
           router.push("/onboarding");
         } else {
           router.push("/signin");
