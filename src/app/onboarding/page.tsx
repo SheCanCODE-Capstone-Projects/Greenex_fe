@@ -180,16 +180,6 @@ export default function OnboardingPage() {
               )}
             </div>
           </div>
-
-          {/* Logo Footer */}
-          <div className="text-center mt-8">
-            <div className="inline-flex items-center gap-2.5 text-gray-600 dark:text-gray-400">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-green to-secondary-green flex items-center justify-center shadow-md">
-                <Truck className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-semibold text-base">GreenEx</span>
-            </div>
-          </div>
         </div>
       )}
     </div>
