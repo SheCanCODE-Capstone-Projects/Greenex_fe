@@ -79,12 +79,19 @@ export default function Login() {
       } else if (userRole === "COMPANY_MANAGER") {
         router.push("/wasteCompanyDashboard");
       } else if (userRole === "CITIZEN") {
-        router.push("/User-Dashboard");
+        // Check if household details already submitted
+        const detailsSubmitted = localStorage.getItem("household_details_submitted");
+        if (detailsSubmitted === "true") {
+          router.push("/User-Dashboard");
+        } else {
+          router.push("/household-details");
+        }
       } else {
         router.push("/");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Login failed. Please try again.");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Login failed. Please try again.";
+      toast.error(errorMessage);
       setIsLoading(false);
     }
   };
