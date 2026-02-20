@@ -56,6 +56,10 @@ export default function SupperDashboard() {
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [pendingCompanies, setPendingCompanies] = useState<AdminCompany[]>([]);
   const [loadingCompanies, setLoadingCompanies] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageSize] = useState(10);
+  const [totalElements, setTotalElements] = useState(0);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [loadingContactDetail, setLoadingContactDetail] = useState(false);
@@ -153,16 +157,26 @@ export default function SupperDashboard() {
   };
 
   // Fetch pending companies
-  const fetchPendingCompanies = async () => {
+  const fetchPendingCompanies = async (page = currentPage) => {
     setLoadingCompanies(true);
     try {
-      const data = await adminService.getPendingCompanies();
-      setPendingCompanies(data);
+      const response = await adminService.getPendingCompanies(page, pageSize);
+      setPendingCompanies(response.content);
+      setTotalPages(response.totalPages);
+      setTotalElements(response.totalElements);
+      setCurrentPage(response.number);
     } catch (error: any) {
       console.error('Failed to fetch pending companies:', error);
       toast.error(error.message || "Failed to fetch pending companies");
     } finally {
       setLoadingCompanies(false);
+    }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
+      fetchPendingCompanies(newPage);
     }
   };
 
@@ -456,7 +470,7 @@ export default function SupperDashboard() {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Companies Registration</h2>
             <button
-              onClick={fetchPendingCompanies}
+              onClick={() => fetchPendingCompanies()}
               className="text-sm text-green-600 hover:text-green-700 font-medium"
             >
               Refresh
@@ -471,27 +485,114 @@ export default function SupperDashboard() {
                 <p className="text-sm text-gray-500 mt-2">All registration requests have been processed</p>
               </Card>
             ) : (
-              pendingCompanies.map((company) => (
-                <CompanyDetailCard
-                  key={company._id}
-                  id={company._id}
-                  name={company.name}
-                  status={company.status === 'PENDING' ? 'In Process' : company.status === 'APPROVED' ? 'Approved' : 'Rejected'}
-                  registrationDate={new Date(company.createdAt).toLocaleDateString()}
-                  documents={{
-                    kigaliContract: { status: company.documents?.kigaliContract ? 'Verified' : 'Missing', filename: company.documents?.kigaliContract || '' },
-                    remaDocument: { status: company.documents?.remaCertificate ? 'Verified' : 'Missing', filename: company.documents?.remaCertificate || '' },
-                    rdbDocument: { status: company.documents?.rdbCertificate ? 'Verified' : 'Missing', filename: company.documents?.rdbCertificate || '' },
-                    insurancePolicy: { status: company.documents?.insurancePolicy ? 'Verified' : 'Missing', filename: company.documents?.insurancePolicy || '' },
-                    vehicleRegistration: { status: company.documents?.vehicleRegistration ? 'Verified' : 'Missing', filename: company.documents?.vehicleRegistration || '' },
-                  }}
-                  routes={0} // Placeholder if not in API
-                  households={0} // Placeholder if not in API
-                  contact={company.sectorCoverage} // Using sector coverage as info for now
-                  onApprove={() => handleApprove(company._id)}
-                  onReject={() => handleReject(company._id)}
-                />
-              ))
+              <>
+                <div className="space-y-6">
+                  {pendingCompanies.map((company, index) => (
+                    <CompanyDetailCard
+                      key={company._id || company.id || index}
+                      id={company._id || company.id || "unknown"}
+                      name={company.name}
+                      status={
+                        company.status?.toUpperCase() === 'PENDING' ? 'In Process' :
+                          company.status?.toUpperCase() === 'APPROVED' ? 'Approved' :
+                            company.status?.toUpperCase() === 'REJECTED' ? 'Rejected' :
+                              'In Process' // Default for pending list
+                      }
+                      registrationDate={new Date(company.createdAt).toLocaleDateString()}
+                      documents={{
+                        kigaliContract: {
+                          status: (company.documents?.cityOfKigaliDocument || (company as any).cityOfKigaliDocument) ? 'Verified' : 'Missing',
+                          filename: company.documents?.cityOfKigaliDocument || (company as any).cityOfKigaliDocument || ''
+                        },
+                        remaDocument: {
+                          status: (company.documents?.remaDocument || (company as any).remaDocument) ? 'Verified' : 'Missing',
+                          filename: company.documents?.remaDocument || (company as any).remaDocument || ''
+                        },
+                        rdbDocument: {
+                          status: (company.documents?.rdbDocument || (company as any).rdbDocument) ? 'Verified' : 'Missing',
+                          filename: company.documents?.rdbDocument || (company as any).rdbDocument || ''
+                        },
+                      }}
+                      routes={0}
+                      households={0}
+                      contact={company.sectorCoverage}
+                      onApprove={() => handleApprove(company._id || company.id || "")}
+                      onReject={() => handleReject(company._id || company.id || "")}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6 rounded-xl shadow-sm border mt-4">
+                    <div className="flex flex-1 justify-between sm:hidden">
+                      <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 0}
+                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages - 1}
+                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    </div>
+                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm text-gray-700">
+                          Showing <span className="font-medium">{currentPage * pageSize + 1}</span> to{' '}
+                          <span className="font-medium">
+                            {Math.min((currentPage + 1) * pageSize, totalElements)}
+                          </span>{' '}
+                          of <span className="font-medium">{totalElements}</span> results
+                        </p>
+                      </div>
+                      <div>
+                        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                          <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 0}
+                            className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                          >
+                            <span className="sr-only">Previous</span>
+                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                              <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+
+                          {[...Array(totalPages)].map((_, i) => (
+                            <button
+                              key={i}
+                              onClick={() => handlePageChange(i)}
+                              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === i
+                                ? 'z-10 bg-green-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'
+                                : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                                }`}
+                            >
+                              {i + 1}
+                            </button>
+                          ))}
+
+                          <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages - 1}
+                            className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                          >
+                            <span className="sr-only">Next</span>
+                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                              <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -719,8 +820,6 @@ function CompanyDetailCard({
     kigaliContract: { status: string; filename: string };
     remaDocument: { status: string; filename: string };
     rdbDocument: { status: string; filename: string };
-    insurancePolicy: { status: string; filename: string };
-    vehicleRegistration: { status: string; filename: string };
   };
   routes: number;
   households: number;
@@ -838,20 +937,6 @@ function CompanyDetailCard({
                 onView={handleViewDocument}
                 onDownload={handleDownloadDocument}
               />
-              <DocumentRow
-                label="Insurance Policy"
-                document={documents.insurancePolicy}
-                getStatusColor={getDocumentStatus}
-                onView={handleViewDocument}
-                onDownload={handleDownloadDocument}
-              />
-              <DocumentRow
-                label="Vehicle Registration"
-                document={documents.vehicleRegistration}
-                getStatusColor={getDocumentStatus}
-                onView={handleViewDocument}
-                onDownload={handleDownloadDocument}
-              />
             </div>
           </div>
 
@@ -861,7 +946,7 @@ function CompanyDetailCard({
               <p>Active Routes: <span className="font-medium text-gray-900">{routes}</span></p>
               <p>Households Served: <span className="font-medium text-gray-900">{households}</span></p>
               <p>Document Progress: <span className="font-medium text-gray-900">
-                {Object.values(documents).filter(doc => doc.status === 'Verified').length}/5 Verified
+                {Object.values(documents).filter(doc => doc.status === 'Verified').length}/3 Verified
               </span></p>
               <p>Registration Status: <span className={`font-medium ${status === 'Approved' ? 'text-green-600' :
                 status === 'In Process' ? 'text-yellow-600' : 'text-red-600'
