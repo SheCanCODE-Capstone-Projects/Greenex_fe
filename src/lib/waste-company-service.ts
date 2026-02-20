@@ -23,8 +23,12 @@ export interface ApprovalRequest {
 
 class WasteCompanyService {
   async getAllCompanies(): Promise<WasteCompany[]> {
-    const response = await axiosInstance.get('/api/admin/waste-companies');
-    return response.data;
+    const response = await axiosInstance.get('/api/admin/companies/pending');
+    // Handle both plain array and paginated response
+    if (response.data?.content && Array.isArray(response.data.content)) {
+      return response.data.content;
+    }
+    return Array.isArray(response.data) ? response.data : [];
   }
 
   async getCompanyById(id: number): Promise<WasteCompany> {
