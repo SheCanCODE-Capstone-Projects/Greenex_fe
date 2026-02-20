@@ -2,10 +2,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: 'https://greenex-be-28wt.onrender.com',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 60000,
+  timeout: 120000,
 });
 
 axiosInstance.interceptors.request.use(
@@ -14,6 +11,13 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Only set Content-Type for non-FormData requests
+    if (!(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
+    }
+    // For FormData, let the browser set Content-Type with boundary
+    
     return config;
   },
   (error) => {

@@ -28,8 +28,17 @@ export function DocumentStep({
   isSubmitting
 }: DocumentStepProps) {
   const handleSubmit = () => {
+    // Validate all required files
     if (!kigaliContract) {
-      toast.error('Kigali contract is required');
+      toast.error('City of Kigali contract is required');
+      return;
+    }
+    if (!remaDocument) {
+      toast.error('REMA document is required');
+      return;
+    }
+    if (!rdbDocument) {
+      toast.error('RDB document is required');
       return;
     }
     onSubmit();
@@ -39,8 +48,8 @@ export function DocumentStep({
     <div className="w-full mt-10">
       <div className="space-y-6">
         <FileUpload
-          label="Kigali Contract"
-          description="Upload your Kigali City contract (PDF, max 5MB)"
+          label="City of Kigali Contract"
+          description="Upload your City of Kigali contract (PDF, max 5MB)"
           file={kigaliContract}
           onFileChange={setKigaliContract}
           icon={<FileCheck className="w-5 h-5" />}
@@ -48,19 +57,21 @@ export function DocumentStep({
         />
 
         <FileUpload
-          label="REMA License"
-          description="Upload REMA environmental license (PDF, max 5MB)"
+          label="REMA Document"
+          description="Upload REMA environmental document (PDF, max 5MB)"
           file={remaDocument}
           onFileChange={setRemaDocument}
           icon={<Truck className="w-5 h-5" />}
+          required
         />
 
         <FileUpload
-          label="RDB Certificate"
-          description="Upload RDB business certificate (PDF, max 5MB)"
+          label="RDB Document"
+          description="Upload RDB business document (PDF, max 5MB)"
           file={rdbDocument}
           onFileChange={setRdbDocument}
           icon={<FileText className="w-5 h-5" />}
+          required
         />
       </div>
 
@@ -78,7 +89,7 @@ export function DocumentStep({
 
         <Button
           onClick={handleSubmit}
-          disabled={!kigaliContract || isSubmitting}
+          disabled={!kigaliContract || !remaDocument || !rdbDocument || isSubmitting}
           className="bg-gradient-to-r from-primary-green to-secondary-green hover:from-secondary-green hover:to-primary-green text-white px-10 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-base font-semibold"
         >
           {isSubmitting ? (

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 interface Truck {
   id: string;
@@ -47,12 +48,23 @@ interface Stats {
 export default function Dashboard() {
   const router = useRouter();
   const [animateCharts, setAnimateCharts] = useState(false);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [stats, setStats] = useState<Stats>({
     households: 2847,
     pickups: { completed: 156, total: 160 },
     revenue: 85000,
     complaints: 12,
   });
+
+  // Check company approval status from localStorage
+  useEffect(() => {
+    const companyStatus = localStorage.getItem('company_status');
+    if (companyStatus !== 'APPROVED') {
+      router.push('/company-status');
+      return;
+    }
+    setIsCheckingStatus(false);
+  }, [router]);
 
   const [zones, setZones] = useState<Zone[]>([
     { id: "1", name: "Kicukiro Zone A", households: 245, status: "Active" },
@@ -159,6 +171,14 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  if (isCheckingStatus) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-primary-green animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <section className="p-6 space-y-8">

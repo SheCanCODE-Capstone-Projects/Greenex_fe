@@ -2,12 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Building2, FileText, CheckCircle2, Truck, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
 import { StepIndicator } from '@/components/onboarding/StepIndicator';
 import { CompanyInfoStep, CompanyFormData } from '@/components/onboarding/CompanyInfoStep';
 import { DocumentStep } from '@/components/onboarding/DocumentStep';
 import { SuccessStep } from '@/components/onboarding/SuccessStep';
+import RoleGuard from '@/components/auth/RoleGuard';
+import onboardingService from '@/lib/onboarding-service';
 
 const steps = [
   { number: 1, label: 'Company Info', icon: Building2 },
@@ -31,32 +32,34 @@ export default function OnboardingPage() {
   };
 
   const handleFinalSubmit = async () => {
-    if (!companyData || !kigaliContract) return;
+    // Validate all required fields
+    if (!companyData) {
+      toast.error('Company information is missing');
+      return;
+    }
+    
+    if (!kigaliContract || !remaDocument || !rdbDocument) {
+      toast.error('All three documents are required');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      const formData = new FormData();
-      formData.append('companyName', companyData.companyName);
-      formData.append('contractNumber', companyData.contractNumber);
-      formData.append('sectors', JSON.stringify(companyData.sectors));
-      formData.append('kigaliContract', kigaliContract);
-      if (remaDocument) formData.append('remaCertificate', remaDocument);
-      if (rdbDocument) formData.append('rdbCertificate', rdbDocument);
-
-      const response = await fetch('/api/onboarding', {
-        method: 'POST',
-        body: formData,
+      // Submit all data in one request
+      const result = await onboardingService.submitOnboarding({
+        name: companyData.companyName,
+        sectorCoverage: companyData.sectors.join(', '),
+        cityOfKigaliDocument: kigaliContract,
+        remaDocument: remaDocument,
+        rdbDocument: rdbDocument,
       });
 
-      if (!response.ok) throw new Error('Upload failed');
-
-      const result = await response.json();
       console.log('Registration successful:', result);
-      toast.success('Registration completed successfully!');
+      toast.success(result.message || 'Registration completed successfully!');
       setStep(3);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Submission error:', error);
-      toast.error('Submission failed. Please try again.');
+      toast.error(error.message || 'Submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -64,9 +67,11 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (step === 3) {
+      // Mark onboarding as completed
+      localStorage.setItem('onboarding_completed', 'true');
       const timer = setTimeout(() => {
-        router.push('/');
-      }, 10000);
+        router.push('/company-status');
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [step, router]);
@@ -80,12 +85,13 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-light-bg dark:bg-gray-900 transition-colors duration-300 py-12 px-4">
+    <RoleGuard allowedRoles={['COMPANY_MANAGER']}>
+      <div className="min-h-screen bg-light-bg dark:bg-gray-900 transition-colors duration-300 py-12 px-4">
       {/* Success Step - Full Screen */}
       {step === 3 ? (
         <SuccessStep
           companyData={companyData}
-          onGoHome={() => router.push('/')}
+          onGoHome={() => router.push('/signin')}
         />
       ) : (
         /* Centered Modal Card */
@@ -155,7 +161,7 @@ export default function OnboardingPage() {
               {step === 1 && (
                 <CompanyInfoStep
                   onNext={handleCompanySubmit}
-                  onBack={() => router.push('/')}
+                  onBack={() => {}}
                 />
               )}
 
@@ -174,18 +180,9 @@ export default function OnboardingPage() {
               )}
             </div>
           </div>
-
-          {/* Logo Footer */}
-          <div className="text-center mt-8">
-            <div className="inline-flex items-center gap-2.5 text-gray-600 dark:text-gray-400">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-green to-secondary-green flex items-center justify-center shadow-md">
-                <Truck className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-semibold text-base">GreenEx</span>
-            </div>
-          </div>
         </div>
       )}
     </div>
+    </RoleGuard>
   );
 }

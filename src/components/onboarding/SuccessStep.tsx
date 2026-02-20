@@ -106,7 +106,7 @@ export function SuccessStep({ companyData, onGoHome }: SuccessStepProps) {
             className="w-full bg-gradient-to-r from-primary-green to-secondary-green hover:from-secondary-green hover:to-primary-green text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-base font-semibold"
           >
             <ArrowRight className="w-5 h-5 mr-2" />
-            Go to Dashboard
+            Continue
           </Button>
 
           <p className="text-sm text-center text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
