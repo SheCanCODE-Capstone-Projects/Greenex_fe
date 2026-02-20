@@ -14,7 +14,7 @@ export { default as onboardingService } from './onboarding-service';
 export { default as dashboardService } from './dashboard-service';
 
 // Re-export types
-export type { RegisterData, RegisterResponse, CompanyRegisterData } from './auth-service';
+export type { RegisterData, RegisterResponse } from './auth-service';
 export type { AdminCompany } from './admin-service';
 export type { WasteCompany, ApprovalRequest } from './waste-company-service';
 export type { Household, CreateHouseholdData } from './household-service';
@@ -25,5 +25,5 @@ export type { Invoice, InvoiceItem, CreateInvoiceData } from './invoice-service'
 export type { Complaint } from './complaint-service';
 export type { Route, CreateRouteData } from './route-service-api';
 export type { UserProfile, Schedule, UserComplaint, CreateComplaintData, UserPayment } from './user-dashboard-service';
-export type { OnboardingData, OnboardingResponse } from './onboarding-service';
+export type { OnboardingFormData, OnboardingResponse } from './onboarding-service';
 export type { DashboardStats, AdminDashboardStats } from './dashboard-service';

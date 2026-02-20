@@ -27,11 +27,11 @@ interface DropdownMenuItemProps {
 const DropdownMenuContext = React.createContext<{
   open: boolean
   setOpen: (open: boolean) => void
-}>({ open: false, setOpen: () => {} })
+}>({ open: false, setOpen: () => { } })
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ children }) => {
   const [open, setOpen] = React.useState(false)
-  
+
   return (
     <DropdownMenuContext.Provider value={{ open, setOpen }}>
       <div className="relative inline-block">
@@ -43,16 +43,17 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ children }) => {
 
 const DropdownMenuTrigger: React.FC<DropdownMenuTriggerProps> = ({ asChild, children }) => {
   const { open, setOpen } = React.useContext(DropdownMenuContext)
-  
+
   const handleClick = () => setOpen(!open)
-  
+
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children, {
+    const child = children as React.ReactElement<any>;
+    return React.cloneElement(child, {
       onClick: handleClick,
-      ...children.props
+      ...child.props
     })
   }
-  
+
   return (
     <button onClick={handleClick}>
       {children}
@@ -63,31 +64,31 @@ const DropdownMenuTrigger: React.FC<DropdownMenuTriggerProps> = ({ asChild, chil
 const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({ align = "end", className, children }) => {
   const { open, setOpen } = React.useContext(DropdownMenuContext)
   const contentRef = React.useRef<HTMLDivElement>(null)
-  
+
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (contentRef.current && !contentRef.current.contains(event.target as Node)) {
         setOpen(false)
       }
     }
-    
+
     if (open) {
       document.addEventListener('mousedown', handleClickOutside)
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [open, setOpen])
-  
+
   if (!open) return null
-  
+
   const alignClass = {
     start: "left-0",
     center: "left-1/2 -translate-x-1/2",
     end: "right-0"
   }[align]
-  
+
   return (
     <div
       ref={contentRef}
@@ -104,12 +105,12 @@ const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({ align = "end"
 
 const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({ onClick, className, children }) => {
   const { setOpen } = React.useContext(DropdownMenuContext)
-  
+
   const handleClick = () => {
     onClick?.()
     setOpen(false)
   }
-  
+
   return (
     <button
       onClick={handleClick}

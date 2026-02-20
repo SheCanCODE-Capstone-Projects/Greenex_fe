@@ -11,12 +11,12 @@ export default function EditZonePage() {
   const params = useParams();
   const zoneId = params.id as string;
 
-  const [zone, setZone] = useState(null);
+  const [zone, setZone] = useState<any>(null);
 
   useEffect(() => {
     const savedZones = localStorage.getItem('zones');
-    const zones = savedZones ? JSON.parse(savedZones) : dummyZones;
-    const foundZone = zones.find(z => z.id === zoneId);
+    const zones: any[] = savedZones ? JSON.parse(savedZones) : dummyZones;
+    const foundZone = zones.find((z: any) => z.id === zoneId);
     setZone(foundZone);
   }, [zoneId]);
 
@@ -42,8 +42,8 @@ export default function EditZonePage() {
   const handleSubmit = (data: any) => {
     try {
       const savedZones = localStorage.getItem('zones');
-      const zones = savedZones ? JSON.parse(savedZones) : dummyZones;
-      const updatedZones = zones.map(z =>
+      const zones: any[] = savedZones ? JSON.parse(savedZones) : dummyZones;
+      const updatedZones = zones.map((z: any) =>
         z.id === zoneId ? { ...z, ...data } : z
       );
       localStorage.setItem('zones', JSON.stringify(updatedZones));
