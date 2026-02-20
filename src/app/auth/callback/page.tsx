@@ -31,6 +31,12 @@ export default function AuthCallback() {
       if (role === 'ADMIN') {
         router.push('/Supper-dashboard');
       } else if (role === 'COMPANY_MANAGER') {
+        // Check for status in params
+        const status = searchParams.get('status');
+        if (status) {
+          localStorage.setItem('company_status', status);
+        }
+
         const onboardingDone = localStorage.getItem('onboarding_completed');
         if (!onboardingDone) {
           router.push('/onboarding');

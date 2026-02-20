@@ -197,8 +197,11 @@ export default function SupperDashboard() {
   };
 
   const handleReject = async (companyId: string) => {
+    const reason = window.prompt("Please provide a reason for rejection:", "Registration criteria not met");
+    if (reason === null) return; // User cancelled
+
     try {
-      await adminService.rejectCompany(companyId);
+      await adminService.rejectCompany(companyId, reason);
       toast.success("Company rejected");
       fetchPendingCompanies(); // Refresh list
     } catch (error: any) {
@@ -487,39 +490,48 @@ export default function SupperDashboard() {
             ) : (
               <>
                 <div className="space-y-6">
-                  {pendingCompanies.map((company, index) => (
-                    <CompanyDetailCard
-                      key={company._id || company.id || index}
-                      id={company._id || company.id || "unknown"}
-                      name={company.name}
-                      status={
-                        company.status?.toUpperCase() === 'PENDING' ? 'In Process' :
-                          company.status?.toUpperCase() === 'APPROVED' ? 'Approved' :
-                            company.status?.toUpperCase() === 'REJECTED' ? 'Rejected' :
-                              'In Process' // Default for pending list
-                      }
-                      registrationDate={new Date(company.createdAt).toLocaleDateString()}
-                      documents={{
-                        kigaliContract: {
-                          status: (company.documents?.cityOfKigaliDocument || (company as any).cityOfKigaliDocument) ? 'Verified' : 'Missing',
-                          filename: company.documents?.cityOfKigaliDocument || (company as any).cityOfKigaliDocument || ''
-                        },
-                        remaDocument: {
-                          status: (company.documents?.remaDocument || (company as any).remaDocument) ? 'Verified' : 'Missing',
-                          filename: company.documents?.remaDocument || (company as any).remaDocument || ''
-                        },
-                        rdbDocument: {
-                          status: (company.documents?.rdbDocument || (company as any).rdbDocument) ? 'Verified' : 'Missing',
-                          filename: company.documents?.rdbDocument || (company as any).rdbDocument || ''
-                        },
-                      }}
-                      routes={0}
-                      households={0}
-                      contact={company.sectorCoverage}
-                      onApprove={() => handleApprove(company._id || company.id || "")}
-                      onReject={() => handleReject(company._id || company.id || "")}
-                    />
-                  ))}
+                  {pendingCompanies.map((company, index) => {
+                    const companyId = company._id || company.id || `temp-${index}`;
+                    const displayStatus =
+                      company.status?.toUpperCase() === 'APPROVED' ? 'Approved' :
+                        company.status?.toUpperCase() === 'REJECTED' ? 'Rejected' :
+                          'In Process';
+
+                    // Extract documents from all possible locations
+                    const d = company.documents || {};
+                    const kigali = d.cityOfKigaliDocument || d.kigaliContractUrl || company.cityOfKigaliDocument || company.kigaliContractUrl;
+                    const rema = d.remaDocument || d.remaCertificateUrl || company.remaDocument || company.remaCertificateUrl;
+                    const rdb = d.rdbDocument || d.rdbCertificateUrl || company.rdbDocument || company.rdbCertificateUrl;
+
+                    return (
+                      <CompanyDetailCard
+                        key={companyId}
+                        id={companyId}
+                        name={company.name || company.companyName || "Unknown Company"}
+                        status={displayStatus}
+                        registrationDate={new Date(company.createdAt).toLocaleDateString()}
+                        documents={{
+                          kigaliContract: {
+                            status: kigali ? 'Verified' : 'Missing',
+                            filename: kigali || ''
+                          },
+                          remaDocument: {
+                            status: rema ? 'Verified' : 'Missing',
+                            filename: rema || ''
+                          },
+                          rdbDocument: {
+                            status: rdb ? 'Verified' : 'Missing',
+                            filename: rdb || ''
+                          },
+                        }}
+                        routes={0}
+                        households={0}
+                        contact={company.sectorCoverage || company.contact || ""}
+                        onApprove={() => handleApprove(companyId)}
+                        onReject={() => handleReject(companyId)}
+                      />
+                    );
+                  })}
                 </div>
 
                 {/* Pagination Controls */}

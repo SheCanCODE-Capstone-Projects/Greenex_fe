@@ -20,17 +20,27 @@ export interface PageResponse<T> {
 export interface AdminCompany {
     _id?: string;
     id?: string;
-    name: string;
-    contractNumber: string;
-    sectorCoverage: string;
-    status: string; // Keep as string for case-insensitive handling
+    name?: string;
+    companyName?: string; // fallback
+    contractNumber?: string;
+    sectorCoverage?: string;
+    status?: string;
+    registrationStatus?: string; // from backend response
     createdAt: string;
     documents?: {
         cityOfKigaliDocument?: string;
         remaDocument?: string;
         rdbDocument?: string;
-        // Insurance and vehicle are not sent/needed for this view
+        kigaliContractUrl?: string;
+        remaCertificateUrl?: string;
+        rdbCertificateUrl?: string;
     };
+    cityOfKigaliDocument?: string; // sometimes at top level
+    remaDocument?: string;
+    rdbDocument?: string;
+    kigaliContractUrl?: string;
+    remaCertificateUrl?: string;
+    rdbCertificateUrl?: string;
     contact?: string;
 }
 
@@ -81,9 +91,12 @@ export const adminService = {
         }
     },
 
-    rejectCompany: async (companyId: string): Promise<any> => {
+    rejectCompany: async (companyId: string, reason: string = "Registration criteria not met"): Promise<any> => {
         try {
-            const response = await axiosInstance.post(`/api/admin/companies/${companyId}/reject`);
+            // Backend expects RejectCompanyRequest in the body
+            const response = await axiosInstance.post(`/api/admin/companies/${companyId}/reject`, {
+                reason: reason
+            });
             return response.data;
         } catch (error: any) {
             console.error(`Failed to reject company ${companyId}:`, error);
