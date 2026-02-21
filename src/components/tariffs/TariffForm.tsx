@@ -9,12 +9,12 @@ import { TariffPlan } from '@/data/tariffs';
 const tariffPlanSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
   billing_frequency: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY'], {
-    required_error: 'Billing frequency is required'
+    message: 'Billing frequency is required'
   }),
   active_from: z.string().min(1, 'Active from date is required'),
   active_to: z.string().min(1, 'Active to date is required'),
   status: z.enum(['ACTIVE', 'INACTIVE'], {
-    required_error: 'Status is required'
+    message: 'Status is required'
   }),
 }).refine((data) => {
   const fromDate = new Date(data.active_from);
@@ -58,7 +58,7 @@ export function TariffForm({ plan, onSubmit, onCancel, isEditing = false }: Tari
       <h1 className="text-2xl font-bold mb-6">
         {isEditing ? 'Edit Tariff Plan' : 'Create Tariff Plan'}
       </h1>
-      
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>

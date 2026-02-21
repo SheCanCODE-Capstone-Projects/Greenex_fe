@@ -7,16 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
-import householdService, { Household } from '@/lib/household-service';
-import zoneService, { Zone } from '@/lib/zone-service';
+import householdService from '@/lib/household-service';
+import zoneService from '@/lib/zone-service';
+import { Household as UIHousehold } from '@/data/households';
+import { Zone as UIZone } from '@/data/zones';
 
 export default function HouseholdsPage() {
   const router = useRouter();
-  const [households, setHouseholds] = useState<Household[]>([]);
-  const [zones, setZones] = useState<Zone[]>([]);
-  const [selectedHousehold, setSelectedHousehold] = useState<Household | null>(null);
+  const [households, setHouseholds] = useState<UIHousehold[]>([]);
+  const [zones, setZones] = useState<UIZone[]>([]);
+  const [selectedHousehold, setSelectedHousehold] = useState<UIHousehold | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [deleteHouseholdId, setDeleteHouseholdId] = useState<number | null>(null);
+  const [deleteHouseholdId, setDeleteHouseholdId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,8 +32,35 @@ export default function HouseholdsPage() {
         householdService.getAll(),
         zoneService.getAll()
       ]);
-      setHouseholds(householdsData);
-      setZones(zonesData);
+
+      // Map API Households to UI Households
+      const mappedHouseholds: UIHousehold[] = householdsData.map(h => ({
+        id: String(h.id),
+        waste_company_id: 'comp_001', // Fallback as API doesn't provide this in the current interface
+        zone_id: String(h.zoneId),
+        code: h.householdName, // Mapping name to code as fallback
+        address: h.address,
+        houseType: 'resident', // Defaulting since API doesn't have this field yet
+        status: h.status.toLowerCase() as 'active' | 'inactive'
+      }));
+
+      // Map API Zones to UI Zones
+      const mappedZones: UIZone[] = zonesData.map(z => ({
+        id: String(z.id),
+        district: z.district,
+        districtName: z.district,
+        sector: z.sector,
+        sectorName: z.sector,
+        cell: z.cell || '',
+        cellName: z.cell || '',
+        village: '', // Missing in API
+        villageName: '',
+        code: z.zoneName,
+        description: z.description || ''
+      }));
+
+      setHouseholds(mappedHouseholds);
+      setZones(mappedZones);
     } catch (error) {
       toast.error('Failed to fetch data');
     } finally {
@@ -39,26 +68,30 @@ export default function HouseholdsPage() {
     }
   };
 
-  const handleView = (household: Household) => {
+  const handleView = (household: UIHousehold) => {
     setSelectedHousehold(household);
     setShowDetails(true);
   };
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     router.push(`/wasteCompanyDashboard/households/${id}/edit`);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     setDeleteHouseholdId(id);
   };
 
-  const handleToggleStatus = async (id: number) => {
+  const handleToggleStatus = async (id: string) => {
     try {
       const household = households.find(h => h.id === id);
       if (!household) return;
-      
-      const newStatus = household.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-      await householdService.update(id, { ...household, status: newStatus } as any);
+
+      const newStatus = household.status === 'active' ? 'INACTIVE' : 'ACTIVE';
+      // We need to find the original API object or reconstruct it
+      // For now, updating with what we have
+      await householdService.update(Number(id), {
+        status: newStatus
+      } as any);
       await fetchData();
       toast.success(`Household ${newStatus === 'ACTIVE' ? 'activated' : 'deactivated'} successfully!`);
     } catch (error) {
@@ -69,7 +102,7 @@ export default function HouseholdsPage() {
   const confirmDelete = async () => {
     if (deleteHouseholdId) {
       try {
-        await householdService.delete(deleteHouseholdId);
+        await householdService.delete(Number(deleteHouseholdId));
         await fetchData();
         setDeleteHouseholdId(null);
         toast.success('Household deleted successfully!');

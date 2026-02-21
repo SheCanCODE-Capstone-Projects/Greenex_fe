@@ -1,29 +1,78 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from './axios';
 
+export interface Pageable {
+    page: number;
+    size: number;
+    sort: string[];
+}
+
+export interface PageResponse<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+}
+
 export interface AdminCompany {
-    _id: string;
-    name: string;
-    contractNumber: string;
-    sectorCoverage: string;
-    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    _id?: string;
+    id?: string;
+    name?: string;
+    companyName?: string; // fallback
+    contractNumber?: string;
+    sectorCoverage?: string;
+    status?: string;
+    registrationStatus?: string; // from backend response
     createdAt: string;
-    // Documents might come as an object or just status
     documents?: {
-        kigaliContract?: string;
-        remaCertificate?: string;
-        rdbCertificate?: string;
-        insurancePolicy?: string;
-        vehicleRegistration?: string;
+        cityOfKigaliDocument?: string;
+        remaDocument?: string;
+        rdbDocument?: string;
+        kigaliContractUrl?: string;
+        remaCertificateUrl?: string;
+        rdbCertificateUrl?: string;
     };
-    contact?: string; // If available
+    cityOfKigaliDocument?: string; // sometimes at top level
+    remaDocument?: string;
+    rdbDocument?: string;
+    kigaliContractUrl?: string;
+    remaCertificateUrl?: string;
+    rdbCertificateUrl?: string;
+    contact?: string;
 }
 
 export const adminService = {
-    getPendingCompanies: async (): Promise<AdminCompany[]> => {
+    getPendingCompanies: async (page = 0, size = 10, sort = ["id"]): Promise<PageResponse<AdminCompany>> => {
         try {
-            const response = await axiosInstance.get('/api/admin/companies/pending');
-            return Array.isArray(response.data) ? response.data : response.data.companies || [];
+            // Construct the pageable object as requested
+            const pageable = {
+                page,
+                size,
+                sort
+            };
+
+            // The example showed: ?pageable={"page":0,"size":10,"sort":["id"]}
+            // Axios will encode this. If the backend expects a raw JSON string:
+            const response = await axiosInstance.get('/api/admin/companies/pending', {
+                params: {
+                    pageable: JSON.stringify(pageable)
+                }
+            });
+
+            // Handle both structure where response.data is the PageResponse 
+            // or if it's wrapped in another object
+            return response.data.content ? response.data : {
+                content: response.data.companies || response.data || [],
+                totalElements: response.data.totalElements || 0,
+                totalPages: response.data.totalPages || 0,
+                size: response.data.size || size,
+                number: response.data.number || page,
+                first: response.data.first ?? true,
+                last: response.data.last ?? true
+            };
         } catch (error: any) {
             console.error('Failed to fetch pending companies:', error);
             const message = error.response?.data?.message || 'Failed to fetch pending companies';
@@ -42,9 +91,12 @@ export const adminService = {
         }
     },
 
-    rejectCompany: async (companyId: string): Promise<any> => {
+    rejectCompany: async (companyId: string, reason: string = "Registration criteria not met"): Promise<any> => {
         try {
-            const response = await axiosInstance.post(`/api/admin/companies/${companyId}/reject`);
+            // Backend expects RejectCompanyRequest in the body
+            const response = await axiosInstance.post(`/api/admin/companies/${companyId}/reject`, {
+                reason: reason
+            });
             return response.data;
         } catch (error: any) {
             console.error(`Failed to reject company ${companyId}:`, error);

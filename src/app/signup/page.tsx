@@ -264,7 +264,7 @@ export default function SignupPage() {
 
               <button
                 type="button"
-                onClick={() => window.location.href = "https://greenex-be.onrender.com/oauth2/authorization/google"}
+                onClick={() => window.location.href = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_URL || ""}
                 className="w-full py-3 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors flex items-center justify-center gap-3 group"
               >
                 <Image

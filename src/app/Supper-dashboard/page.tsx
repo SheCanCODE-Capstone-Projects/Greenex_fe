@@ -34,6 +34,7 @@ import { NotificationDropdown } from "@/components/ui/notification";
 import { useCompanyNotifications } from "@/lib/useCompanyNotifications";
 import { contactService, type Contact } from "@/lib/contact-service";
 import { adminService, type AdminCompany } from "@/lib/admin-service";
+import wasteCompanyService from "@/lib/waste-company-service";
 import { toast } from "react-toastify";
 
 ChartJS.register(
@@ -54,8 +55,13 @@ export default function SupperDashboard() {
   const { notifications, dismissNotification } = useCompanyNotifications();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
+  const [viewMode, setViewMode] = useState<'pending' | 'all'>('pending');
   const [pendingCompanies, setPendingCompanies] = useState<AdminCompany[]>([]);
   const [loadingCompanies, setLoadingCompanies] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageSize] = useState(10);
+  const [totalElements, setTotalElements] = useState(0);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [loadingContactDetail, setLoadingContactDetail] = useState(false);
@@ -104,6 +110,32 @@ export default function SupperDashboard() {
     }
   };
 
+  const executeApprove = async (companyId: string) => {
+    try {
+      await adminService.approveCompany(companyId);
+      toast.success("Company approved successfully");
+      // Update local state instead of full refresh to keep the data visible
+      setPendingCompanies(prev => prev.map(c =>
+        (c._id === companyId || c.id === companyId) ? { ...c, status: 'APPROVED' } : c
+      ));
+    } catch (error: any) {
+      toast.error(error.message || "Failed to approve company");
+    }
+  };
+
+  const executeReject = async (companyId: string, reason: string) => {
+    try {
+      await adminService.rejectCompany(companyId, reason);
+      toast.success("Company rejected");
+      // Update local state instead of full refresh to keep the data visible
+      setPendingCompanies(prev => prev.map(c =>
+        (c._id === companyId || c.id === companyId) ? { ...c, status: 'REJECTED' } : c
+      ));
+    } catch (error: any) {
+      toast.error(error.message || "Failed to reject company");
+    }
+  };
+
   const handleDeleteContact = (id: string) => {
     const ConfirmToast = ({ closeToast }: { closeToast: () => void }) => (
       <div className="flex flex-col gap-3 p-1">
@@ -133,7 +165,6 @@ export default function SupperDashboard() {
       position: "top-center",
       autoClose: false,
       closeOnClick: false,
-      draggable: false,
       closeButton: false,
     });
   };
@@ -152,44 +183,122 @@ export default function SupperDashboard() {
     }
   };
 
-  // Fetch pending companies
-  const fetchPendingCompanies = async () => {
+  // Fetch companies based on view mode
+  const fetchCompanies = async (page = currentPage) => {
     setLoadingCompanies(true);
     try {
-      const data = await adminService.getPendingCompanies();
-      setPendingCompanies(data);
+      let response;
+      if (viewMode === 'pending') {
+        response = await adminService.getPendingCompanies(page, pageSize);
+      } else {
+        // For 'all', we might not have a paginated endpoint in wasteCompanyService yet
+        // but let's assume it returns a list for now or adapt if needed
+        const data = await wasteCompanyService.getAllCompanies();
+        response = {
+          content: data.map((c: any) => ({
+            ...c,
+            id: c.id?.toString(),
+            name: c.companyName,
+            phone: c.phoneNumber,
+            createdAt: c.createdAt // Ensure createdAt exists for the date formatter
+          })) as AdminCompany[],
+          totalPages: 1,
+          totalElements: data.length,
+          number: 0
+        };
+      }
+      setPendingCompanies(response.content);
+      setTotalPages(response.totalPages);
+      setTotalElements(response.totalElements);
+      setCurrentPage(response.number);
     } catch (error: any) {
-      console.error('Failed to fetch pending companies:', error);
-      toast.error(error.message || "Failed to fetch pending companies");
+      console.error('Failed to fetch companies:', error);
+      toast.error(error.message || "Failed to fetch companies");
     } finally {
       setLoadingCompanies(false);
     }
   };
 
-  useEffect(() => {
-    if (activeSection === 'companies') {
-      fetchPendingCompanies();
-    }
-  }, [activeSection]);
-
-  const handleApprove = async (companyId: string) => {
-    try {
-      await adminService.approveCompany(companyId);
-      toast.success("Company approved successfully");
-      fetchPendingCompanies(); // Refresh list
-    } catch (error: any) {
-      toast.error(error.message || "Failed to approve company");
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
+      fetchCompanies(newPage);
     }
   };
 
-  const handleReject = async (companyId: string) => {
-    try {
-      await adminService.rejectCompany(companyId);
-      toast.success("Company rejected");
-      fetchPendingCompanies(); // Refresh list
-    } catch (error: any) {
-      toast.error(error.message || "Failed to reject company");
+  useEffect(() => {
+    if (activeSection === 'companies') {
+      fetchCompanies(0); // Reset to first page when switching section or mode
     }
+  }, [activeSection, viewMode]);
+
+  const handleApprove = async (companyId: string) => {
+    const ConfirmToast = ({ closeToast }: { closeToast: () => void }) => (
+      <div className="flex flex-col gap-3 p-1">
+        <p className="font-semibold text-gray-900">Confirm Approval</p>
+        <p className="text-sm text-gray-600">Are you sure you want to approve this company? They will be granted access immediately.</p>
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={() => {
+              executeApprove(companyId);
+              closeToast();
+            }}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg text-xs font-bold hover:bg-green-700 transition-colors"
+          >
+            Approve
+          </button>
+          <button
+            onClick={closeToast}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+
+    toast(<ConfirmToast closeToast={() => { }} />, {
+      position: "top-center",
+      autoClose: false,
+      closeOnClick: false,
+      closeButton: false,
+    });
+  };
+
+  const handleReject = async (companyId: string) => {
+    const reason = window.prompt("Please provide a reason for rejection:", "Registration criteria not met");
+    if (reason === null) return; // User cancelled
+
+    const ConfirmToast = ({ closeToast }: { closeToast: () => void }) => (
+      <div className="flex flex-col gap-3 p-1">
+        <p className="font-semibold text-gray-900">Confirm Rejection</p>
+        <p className="text-sm text-gray-600">Are you sure you want to reject this company? They will be informed of your decision.</p>
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={() => {
+              executeReject(companyId, reason);
+              closeToast();
+            }}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-colors"
+          >
+            Reject
+          </button>
+          <button
+            onClick={closeToast}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+
+    toast(<ConfirmToast closeToast={() => { }} />, {
+      position: "top-center",
+      autoClose: false,
+      closeOnClick: false,
+      closeButton: false,
+    });
   };
 
   const barData = {
@@ -454,9 +563,31 @@ export default function SupperDashboard() {
       return (
         <div className="mt-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Companies Registration</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl font-bold">Companies Registration</h2>
+              <div className="flex bg-gray-100 p-1 rounded-xl">
+                <button
+                  onClick={() => setViewMode('pending')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'pending'
+                    ? 'bg-white text-green-700 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                >
+                  Pending
+                </button>
+                <button
+                  onClick={() => setViewMode('all')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'all'
+                    ? 'bg-white text-green-700 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                >
+                  Show All
+                </button>
+              </div>
+            </div>
             <button
-              onClick={fetchPendingCompanies}
+              onClick={() => fetchCompanies()}
               className="text-sm text-green-600 hover:text-green-700 font-medium"
             >
               Refresh
@@ -467,31 +598,131 @@ export default function SupperDashboard() {
             {pendingCompanies.length === 0 ? (
               <Card className="p-12 rounded-2xl shadow text-center">
                 <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No pending companies found</p>
-                <p className="text-sm text-gray-500 mt-2">All registration requests have been processed</p>
+                <p className="text-gray-600">{viewMode === 'pending' ? 'No pending companies found' : 'No companies found'}</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  {viewMode === 'pending'
+                    ? 'All registration requests have been processed'
+                    : 'There are no waste companies registered in the system'}
+                </p>
               </Card>
             ) : (
-              pendingCompanies.map((company) => (
-                <CompanyDetailCard
-                  key={company._id}
-                  id={company._id}
-                  name={company.name}
-                  status={company.status === 'PENDING' ? 'In Process' : company.status === 'APPROVED' ? 'Approved' : 'Rejected'}
-                  registrationDate={new Date(company.createdAt).toLocaleDateString()}
-                  documents={{
-                    kigaliContract: { status: company.documents?.kigaliContract ? 'Verified' : 'Missing', filename: company.documents?.kigaliContract || '' },
-                    remaDocument: { status: company.documents?.remaCertificate ? 'Verified' : 'Missing', filename: company.documents?.remaCertificate || '' },
-                    rdbDocument: { status: company.documents?.rdbCertificate ? 'Verified' : 'Missing', filename: company.documents?.rdbCertificate || '' },
-                    insurancePolicy: { status: company.documents?.insurancePolicy ? 'Verified' : 'Missing', filename: company.documents?.insurancePolicy || '' },
-                    vehicleRegistration: { status: company.documents?.vehicleRegistration ? 'Verified' : 'Missing', filename: company.documents?.vehicleRegistration || '' },
-                  }}
-                  routes={0} // Placeholder if not in API
-                  households={0} // Placeholder if not in API
-                  contact={company.sectorCoverage} // Using sector coverage as info for now
-                  onApprove={() => handleApprove(company._id)}
-                  onReject={() => handleReject(company._id)}
-                />
-              ))
+              <>
+                <div className="space-y-6">
+                  {pendingCompanies.map((company, index) => {
+                    const companyId = company._id || company.id || `temp-${index}`;
+                    const displayStatus =
+                      company.status?.toUpperCase() === 'APPROVED' ? 'Approved' :
+                        company.status?.toUpperCase() === 'REJECTED' ? 'Rejected' :
+                          'In Process';
+
+                    // Extract documents from all possible locations
+                    const d = company.documents || {};
+                    const kigali = d.cityOfKigaliDocument || d.kigaliContractUrl || company.cityOfKigaliDocument || company.kigaliContractUrl;
+                    const rema = d.remaDocument || d.remaCertificateUrl || company.remaDocument || company.remaCertificateUrl;
+                    const rdb = d.rdbDocument || d.rdbCertificateUrl || company.rdbDocument || company.rdbCertificateUrl;
+
+                    return (
+                      <CompanyDetailCard
+                        key={companyId}
+                        id={companyId}
+                        name={company.name || company.companyName || "Unknown Company"}
+                        status={displayStatus}
+                        registrationDate={new Date(company.createdAt).toLocaleDateString()}
+                        documents={{
+                          kigaliContract: {
+                            status: kigali ? 'Verified' : 'Missing',
+                            filename: kigali || ''
+                          },
+                          remaDocument: {
+                            status: rema ? 'Verified' : 'Missing',
+                            filename: rema || ''
+                          },
+                          rdbDocument: {
+                            status: rdb ? 'Verified' : 'Missing',
+                            filename: rdb || ''
+                          },
+                        }}
+                        routes={0}
+                        households={0}
+                        contact={company.sectorCoverage || company.contact || ""}
+                        onApprove={() => handleApprove(companyId)}
+                        onReject={() => handleReject(companyId)}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6 rounded-xl shadow-sm border mt-4">
+                    <div className="flex flex-1 justify-between sm:hidden">
+                      <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 0}
+                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages - 1}
+                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    </div>
+                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm text-gray-700">
+                          Showing <span className="font-medium">{currentPage * pageSize + 1}</span> to{' '}
+                          <span className="font-medium">
+                            {Math.min((currentPage + 1) * pageSize, totalElements)}
+                          </span>{' '}
+                          of <span className="font-medium">{totalElements}</span> results
+                        </p>
+                      </div>
+                      <div>
+                        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                          <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 0}
+                            className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                          >
+                            <span className="sr-only">Previous</span>
+                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                              <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+
+                          {[...Array(totalPages)].map((_, i) => (
+                            <button
+                              key={i}
+                              onClick={() => handlePageChange(i)}
+                              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === i
+                                ? 'z-10 bg-green-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'
+                                : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                                }`}
+                            >
+                              {i + 1}
+                            </button>
+                          ))}
+
+                          <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages - 1}
+                            className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                          >
+                            <span className="sr-only">Next</span>
+                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                              <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -719,8 +950,6 @@ function CompanyDetailCard({
     kigaliContract: { status: string; filename: string };
     remaDocument: { status: string; filename: string };
     rdbDocument: { status: string; filename: string };
-    insurancePolicy: { status: string; filename: string };
-    vehicleRegistration: { status: string; filename: string };
   };
   routes: number;
   households: number;
@@ -786,12 +1015,12 @@ function CompanyDetailCard({
             <p className="text-sm text-gray-600">Registered: {registrationDate}</p>
             <p className="text-sm text-gray-600">Contact: {contact}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
               {status}
             </span>
-            {status === 'In Process' && (
-              <div className="flex gap-1">
+            <div className="flex gap-1">
+              {status !== 'Approved' && (
                 <button
                   onClick={handleApproveAction}
                   disabled={isProcessing}
@@ -800,6 +1029,8 @@ function CompanyDetailCard({
                 >
                   {isProcessing ? <Clock size={16} className="animate-spin" /> : <Check size={16} />}
                 </button>
+              )}
+              {status !== 'Rejected' && (
                 <button
                   onClick={handleRejectAction}
                   disabled={isProcessing}
@@ -808,8 +1039,8 @@ function CompanyDetailCard({
                 >
                   <X size={16} />
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
@@ -838,20 +1069,6 @@ function CompanyDetailCard({
                 onView={handleViewDocument}
                 onDownload={handleDownloadDocument}
               />
-              <DocumentRow
-                label="Insurance Policy"
-                document={documents.insurancePolicy}
-                getStatusColor={getDocumentStatus}
-                onView={handleViewDocument}
-                onDownload={handleDownloadDocument}
-              />
-              <DocumentRow
-                label="Vehicle Registration"
-                document={documents.vehicleRegistration}
-                getStatusColor={getDocumentStatus}
-                onView={handleViewDocument}
-                onDownload={handleDownloadDocument}
-              />
             </div>
           </div>
 
@@ -861,7 +1078,7 @@ function CompanyDetailCard({
               <p>Active Routes: <span className="font-medium text-gray-900">{routes}</span></p>
               <p>Households Served: <span className="font-medium text-gray-900">{households}</span></p>
               <p>Document Progress: <span className="font-medium text-gray-900">
-                {Object.values(documents).filter(doc => doc.status === 'Verified').length}/5 Verified
+                {Object.values(documents).filter(doc => doc.status === 'Verified').length}/3 Verified
               </span></p>
               <p>Registration Status: <span className={`font-medium ${status === 'Approved' ? 'text-green-600' :
                 status === 'In Process' ? 'text-yellow-600' : 'text-red-600'

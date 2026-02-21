@@ -77,6 +77,11 @@ export default function Login() {
       if (userRole === "ADMIN") {
         router.push("/Supper-dashboard");
       } else if (userRole === "COMPANY_MANAGER") {
+        // Store status if available in response
+        if (response.status || response.registrationStatus) {
+          localStorage.setItem("company_status", response.status || response.registrationStatus);
+        }
+
         // Check if company has completed onboarding
         const onboardingDone = localStorage.getItem("onboarding_completed");
         if (!onboardingDone) {
@@ -207,7 +212,7 @@ export default function Login() {
 
           <button
             type="button"
-            onClick={() => window.location.href = "https://greenex-be-28wt.onrender.com/oauth2/authorization/google"}
+            onClick={() => window.location.href = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_URL || ""}
             className="w-full py-3 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors flex items-center justify-center gap-3 group"
           >
             <Image
