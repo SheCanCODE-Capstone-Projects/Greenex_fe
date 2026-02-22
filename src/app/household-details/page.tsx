@@ -139,7 +139,7 @@ export default function HouseholdDetailsPage() {
                   />
                 </div>
 
-                {/* Cell */}
+                
                 <div className="space-y-1">
                   <label className="text-sm font-medium ml-1">
                     Cell <span className="text-red-500">*</span>
