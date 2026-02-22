@@ -4,8 +4,6 @@ import { useRouter } from 'next/navigation';
 import { HouseholdForm } from '@/components/households/HouseholdForm';
 import { dummyZones } from '@/data/zones';
 import { toast } from 'react-toastify';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-
 export default function CreateHouseholdPage() {
   const router = useRouter();
   const [zones] = useState(dummyZones);
@@ -16,12 +14,12 @@ export default function CreateHouseholdPage() {
         id: Date.now().toString(),
         ...data,
       };
-      
+
       const savedHouseholds = localStorage.getItem('households');
       const households = savedHouseholds ? JSON.parse(savedHouseholds) : [];
       const updatedHouseholds = [...households, newHousehold];
       localStorage.setItem('households', JSON.stringify(updatedHouseholds));
-      
+
       toast.success('Household registered successfully!');
       router.push('/wasteCompanyDashboard/households');
     } catch (error) {
@@ -34,14 +32,12 @@ export default function CreateHouseholdPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-4xl mx-auto">
-        <HouseholdForm
-          zones={zones}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-        />
-      </div>
-    </DashboardLayout>
+    <div className="max-w-4xl mx-auto py-8">
+      <HouseholdForm
+        zones={zones}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
+    </div>
   );
 }

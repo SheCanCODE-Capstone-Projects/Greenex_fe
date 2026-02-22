@@ -9,6 +9,7 @@ import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
 import zoneService from '@/lib/zone-service';
 import { Zone as UIZone } from '@/data/zones';
+import { getDistrictBySectorId } from '@/data/rwanda-admin';
 
 export default function ZonesPage() {
   const router = useRouter();
@@ -27,19 +28,22 @@ export default function ZonesPage() {
       setLoading(true);
       const data = await zoneService.getAll();
 
-      const mappedZones: UIZone[] = data.map(z => ({
-        id: String(z.id),
-        district: z.district,
-        districtName: z.district,
-        sector: z.sector,
-        sectorName: z.sector,
-        cell: z.cell || '',
-        cellName: z.cell || '',
-        village: '', // Missing in API
-        villageName: '',
-        code: z.zoneName,
-        description: z.description || ''
-      }));
+      const mappedZones: UIZone[] = data.map(z => {
+        const district = getDistrictBySectorId(z.sector);
+        return {
+          id: String(z.id),
+          district: district?.id || '',
+          districtName: district?.name || '',
+          sector: z.sector,
+          sectorName: z.sector,
+          cell: z.cell || '',
+          cellName: z.cell || '',
+          village: z.village || '',
+          villageName: z.village || '',
+          code: z.code,
+          description: z.description || ''
+        };
+      });
 
       setZones(mappedZones);
     } catch (error) {

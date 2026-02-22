@@ -8,13 +8,12 @@ import { ConfirmDialog } from '@/components/tariffs/ConfirmDialog';
 import { tariffStore } from '@/lib/tariff-store';
 import { dummyZones, TariffPlan, TariffRule } from '@/data/tariffs';
 import { toast } from 'react-toastify';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export default function EditTariffPage() {
   const router = useRouter();
   const params = useParams();
   const planId = params.id as string;
-  
+
   const [plan, setPlan] = useState<TariffPlan | null>(null);
   const [rules, setRules] = useState<TariffRule[]>([]);
   const [showRuleModal, setShowRuleModal] = useState(false);
@@ -44,20 +43,18 @@ export default function EditTariffPage() {
 
   if (!plan) {
     return (
-      <DashboardLayout>
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <h1 className="text-2xl font-bold mb-4">Tariff Plan Not Found</h1>
-            <p className="text-gray-600 mb-4">The tariff plan you're looking for doesn't exist.</p>
-            <button
-              onClick={() => router.push('/wasteCompanyDashboard/tariffs')}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-            >
-              Back to Tariff Plans
-            </button>
-          </div>
+      <div className="max-w-4xl mx-auto py-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 text-center border border-gray-200">
+          <h1 className="text-2xl font-bold mb-4 text-gray-900">Tariff Plan Not Found</h1>
+          <p className="text-gray-600 mb-6">The tariff plan you're looking for doesn't exist.</p>
+          <button
+            onClick={() => router.push('/wasteCompanyDashboard/tariffs')}
+            className="bg-primary-green text-white px-6 py-2 rounded-lg hover:bg-secondary-green transition-colors"
+          >
+            Back to Tariff Plans
+          </button>
         </div>
-      </DashboardLayout>
+      </div>
     );
   }
 
@@ -135,41 +132,39 @@ export default function EditTariffPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-6xl mx-auto space-y-8">
-        <TariffForm
-          plan={plan}
-          onSubmit={handlePlanSubmit}
-          onCancel={handleCancel}
-          isEditing={true}
-        />
+    <div className="max-w-6xl mx-auto space-y-8 py-8">
+      <TariffForm
+        plan={plan}
+        onSubmit={handlePlanSubmit}
+        onCancel={handleCancel}
+        isEditing={true}
+      />
 
-        <RuleTable
-          rules={rules}
-          zones={dummyZones}
-          onAdd={handleAddRule}
-          onEdit={handleEditRule}
-          onDelete={handleDeleteRule}
-        />
+      <RuleTable
+        rules={rules}
+        zones={dummyZones}
+        onAdd={handleAddRule}
+        onEdit={handleEditRule}
+        onDelete={handleDeleteRule}
+      />
 
-        <RuleFormModal
-          open={showRuleModal}
-          onOpenChange={setShowRuleModal}
-          rule={editingRule}
-          zones={dummyZones}
-          onSubmit={handleRuleSubmit}
-        />
+      <RuleFormModal
+        open={showRuleModal}
+        onOpenChange={setShowRuleModal}
+        rule={editingRule}
+        zones={dummyZones}
+        onSubmit={handleRuleSubmit}
+      />
 
-        <ConfirmDialog
-          open={!!deleteRuleId}
-          onOpenChange={() => setDeleteRuleId(null)}
-          title="Confirm Delete"
-          message="Are you sure you want to delete this rule? This action cannot be undone."
-          onConfirm={confirmDeleteRule}
-          confirmText="Delete"
-          variant="destructive"
-        />
-      </div>
-    </DashboardLayout>
+      <ConfirmDialog
+        open={!!deleteRuleId}
+        onOpenChange={() => setDeleteRuleId(null)}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this rule? This action cannot be undone."
+        onConfirm={confirmDeleteRule}
+        confirmText="Delete"
+        variant="destructive"
+      />
+    </div>
   );
 }
