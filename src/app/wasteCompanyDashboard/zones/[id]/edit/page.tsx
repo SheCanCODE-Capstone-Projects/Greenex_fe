@@ -15,39 +15,55 @@ export default function EditZonePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchZone = async () => {
+    const loadZone = () => {
       try {
         setLoading(true);
-        const data = await zoneService.getById(Number(zoneId));
 
-        // Map backend data to UI format
-        // Find district based on sector
-        const district = getDistrictBySectorId(data.sector);
+        // First try loading from localStorage (set by zones list on Edit click)
+        const cached = localStorage.getItem('editing_zone');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          // Only use if the ID matches
+          if (String(parsed.id) === String(zoneId)) {
+            console.log('Loaded zone from cache:', parsed);
+            setZone(parsed);
+            localStorage.removeItem('editing_zone');
+            setLoading(false);
+            return;
+          }
+        }
 
-        // Map names to IDs if necessary
-        const sector = district?.sectors.find(s => s.name === data.sector || s.id === data.sector);
-        const cell = sector?.cells.find(c => c.name === data.cell || c.id === data.cell);
-        const village = cell?.villages.find(v => v.name === data.village || v.id === data.village);
+        // Fallback: try getById (may fail if backend has issues)
+        zoneService.getById(zoneId).then(data => {
+          const district = getDistrictBySectorId(data.sector);
+          const sector = district?.sectors.find(s => s.name === data.sector || s.id === data.sector);
+          const cell = sector?.cells.find(c => c.name === data.cell || c.id === data.cell);
+          const village = cell?.villages.find(v => v.name === data.village || v.id === data.village);
 
-        setZone({
-          id: String(data.id),
-          district: district?.id || '',
-          sector: sector?.id || data.sector,
-          cell: cell?.id || data.cell,
-          village: village?.id || (data as any).village,
-          code: data.code,
-          description: data.description || ''
+          setZone({
+            id: String(data.id),
+            district: district?.id || '',
+            sector: sector?.id || data.sector,
+            cell: cell?.id || data.cell,
+            village: village?.id || (data as any).village,
+            code: data.code,
+            description: data.description || ''
+          });
+        }).catch(error => {
+          console.error('Failed to fetch zone:', error);
+          toast.error('Failed to load zone data');
+        }).finally(() => {
+          setLoading(false);
         });
       } catch (error) {
-        console.error('Failed to fetch zone:', error);
+        console.error('Error loading zone:', error);
         toast.error('Failed to load zone data');
-      } finally {
         setLoading(false);
       }
     };
 
     if (zoneId) {
-      fetchZone();
+      loadZone();
     }
   }, [zoneId]);
 
@@ -82,7 +98,7 @@ export default function EditZonePage() {
         description: data.description,
       };
 
-      await zoneService.update(Number(zoneId), zoneData);
+      await zoneService.update(zoneId, zoneData);
 
       toast.success('Zone updated successfully!');
       router.push('/wasteCompanyDashboard/zones');
