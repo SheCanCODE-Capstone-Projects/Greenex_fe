@@ -35,6 +35,7 @@ class ZoneService {
 
   async getById(id: number): Promise<Zone> {
     const response = await axiosInstance.get(`/api/manager/zones/${id}`);
+    console.log(`GET /api/manager/zones/${id} response:`, response.data);
     return response.data;
   }
 
