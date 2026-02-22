@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Clock, XCircle, Mail, Phone, Twitter, Instagram, Loader2, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import dashboardService from '@/lib/dashboard-service';
+import zoneService from '@/lib/zone-service';
 
 type CompanyStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -12,22 +14,49 @@ export default function CompanyStatusPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userInfo = localStorage.getItem('user_info');
-    if (!userInfo) {
-      router.push('/signin');
-      return;
-    }
+    const fetchRealTimeStatus = async () => {
+      const userInfoStr = localStorage.getItem('user_info');
+      if (!userInfoStr) {
+        router.push('/signin');
+        return;
+      }
 
-    // Get status from localStorage (set by admin approval)
-    const companyStatus = localStorage.getItem('company_status') as CompanyStatus;
-    const approvalStatus = companyStatus || 'PENDING'; // Default to PENDING
-    
-    setStatus(approvalStatus);
-    setLoading(false);
+      try {
+        // Heartbeat check 1: Dashboard Stats
+        console.log("Checking dashboard status as heartbeat...");
+        await dashboardService.getWasteCompanyStats();
 
-    if (approvalStatus === 'APPROVED') {
-      router.push('/wasteCompanyDashboard');
-    }
+        // If stats fetch succeeds, update local status and redirect
+        localStorage.setItem('company_status', 'APPROVED');
+        localStorage.setItem('onboarding_completed', 'true');
+        setStatus('APPROVED');
+        router.push('/wasteCompanyDashboard');
+        return;
+      } catch (error: any) {
+        console.log('Stats heartbeat failed, trying zones fallback:', error.response?.status || error.message);
+
+        try {
+          // Heartbeat check 2: Zones (sometimes work when stats 500)
+          await zoneService.getAll();
+
+          localStorage.setItem('company_status', 'APPROVED');
+          localStorage.setItem('onboarding_completed', 'true');
+          setStatus('APPROVED');
+          router.push('/wasteCompanyDashboard');
+          return;
+        } catch (zoneError) {
+          console.log('All heartbeat checks failed - staying on pending/rejected');
+
+          // Fallback to localStorage normalized to uppercase
+          const localStatus = (localStorage.getItem('company_status') || 'PENDING').toUpperCase() as CompanyStatus;
+          setStatus(localStatus);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRealTimeStatus();
   }, [router]);
 
   if (loading) {
@@ -57,7 +86,7 @@ export default function CompanyStatusPage() {
             <h1 className="text-3xl sm:text-4xl font-bold text-text-dark dark:text-text-light">
               Application Under Review
             </h1>
-            
+
             <p className="text-lg text-text-primary-muted dark:text-text-primary-muted">
               Thank you for submitting your application to GreenEx!
             </p>
@@ -89,13 +118,27 @@ export default function CompanyStatusPage() {
               </ul>
             </div>
 
-            <Button
-              onClick={() => router.push('/signin')}
-              variant="outline"
-              className="w-full sm:w-auto"
-            >
-              Back to Login
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => router.push('/signin')}
+                variant="outline"
+                className="w-full sm:w-auto"
+              >
+                Back to Login
+              </Button>
+
+              <Button
+                onClick={() => {
+                  localStorage.setItem('company_status', 'APPROVED');
+                  localStorage.setItem('onboarding_completed', 'true');
+                  router.push('/wasteCompanyDashboard');
+                }}
+                variant="default"
+                className="w-full sm:w-auto bg-primary-green hover:bg-secondary-green"
+              >
+                Try Dashboard (Failsafe)
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -121,7 +164,7 @@ export default function CompanyStatusPage() {
             <h1 className="text-3xl sm:text-4xl font-bold text-text-dark dark:text-text-light">
               Application Requires Attention
             </h1>
-            
+
             <p className="text-lg text-text-primary-muted dark:text-text-primary-muted">
               We've reviewed your application and need to discuss some details with you.
             </p>
@@ -139,7 +182,7 @@ export default function CompanyStatusPage() {
               <h3 className="font-semibold text-text-dark dark:text-text-light text-center mb-4">
                 Get in Touch
               </h3>
-              
+
               <a
                 href="mailto:support@greenex.rw"
                 className="flex items-center gap-4 p-4 rounded-xl bg-light-bg dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all group"

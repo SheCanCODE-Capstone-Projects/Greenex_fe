@@ -59,6 +59,13 @@ export default function Dashboard() {
   // Check company approval status from localStorage
   useEffect(() => {
     const companyStatus = localStorage.getItem('company_status');
+    const onboardingDone = localStorage.getItem('onboarding_completed');
+
+    if (!onboardingDone) {
+      router.push('/onboarding');
+      return;
+    }
+
     if (companyStatus !== 'APPROVED') {
       router.push('/company-status');
       return;
@@ -182,265 +189,264 @@ export default function Dashboard() {
 
   return (
     <section className="p-6 space-y-8">
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
-              <button
-                onClick={() => setError(null)}
-                className="float-right font-bold"
-              >
-                ×
-              </button>
-            </div>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          {error}
+          <button
+            onClick={() => setError(null)}
+            className="float-right font-bold"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard
+          title="Total Households"
+          value={stats.households.toLocaleString()}
+          subtext="+12% this month"
+          icon=""
+        />
+        <StatCard
+          title="Today pickups"
+          value={`${stats.pickups.completed}/${stats.pickups.total}`}
+          percent={Math.round(
+            (stats.pickups.completed / stats.pickups.total) * 100
           )}
+          icon=""
+        />
+        <StatCard
+          title="Monthly Revenue"
+          value={`${(stats.revenue / 1000).toFixed(0)}K RWF`}
+          icon=""
+        />
+        <StatCard
+          title="Active complaints"
+          value={stats.complaints.toString()}
+          subtext={`${complaints.filter((c) => c.level === "Urgent").length
+            } Urgent`}
+          icon=""
+        />
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <StatCard
-              title="Total Households"
-              value={stats.households.toLocaleString()}
-              subtext="+12% this month"
-              icon=""
-            />
-            <StatCard
-              title="Today pickups"
-              value={`${stats.pickups.completed}/${stats.pickups.total}`}
-              percent={Math.round(
-                (stats.pickups.completed / stats.pickups.total) * 100
-              )}
-              icon=""
-            />
-            <StatCard
-              title="Monthly Revenue"
-              value={`${(stats.revenue / 1000).toFixed(0)}K RWF`}
-              icon=""
-            />
-            <StatCard
-              title="Active complaints"
-              value={stats.complaints.toString()}
-              subtext={`${
-                complaints.filter((c) => c.level === "Urgent").length
-              } Urgent`}
-              icon=""
-            />
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow border">
+          <h3 className="text-lg font-semibold mb-6">
+            District Complaints Overview
+          </h3>
+          <div className="relative h-64">
+            <div className="absolute inset-0 flex flex-col justify-between">
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className="border-t border-gray-100 w-full"
+                ></div>
+              ))}
+            </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow border">
-              <h3 className="text-lg font-semibold mb-6">
-                District Complaints Overview
-              </h3>
-              <div className="relative h-64">
-                <div className="absolute inset-0 flex flex-col justify-between">
-                  {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 -ml-10">
+              <span>70</span>
+              <span>56</span>
+              <span>42</span>
+              <span>28</span>
+              <span>14</span>
+              <span>0</span>
+            </div>
+
+            <div className="relative h-full flex items-end justify-between px-4 pt-4">
+              {[
+                { district: "Kicukiro", value: 45, color: " #388E3C" },
+                { district: "Gasabo", value: 32, color: "#09eb72" },
+                { district: "Nyarugenge", value: 58, color: "#388E3C" },
+                { district: "Remera", value: 28, color: "#09eb72" },
+                { district: "Kimisagara", value: 67, color: "#388E3C" },
+                { district: "Gisozi", value: 41, color: "#09eb72" },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center flex-1 mx-1"
+                >
+                  <div className="relative w-full max-w-10 group">
                     <div
-                      key={i}
-                      className="border-t border-gray-100 w-full"
-                    ></div>
-                  ))}
-                </div>
-
-                <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 -ml-10">
-                  <span>70</span>
-                  <span>56</span>
-                  <span>42</span>
-                  <span>28</span>
-                  <span>14</span>
-                  <span>0</span>
-                </div>
-
-                <div className="relative h-full flex items-end justify-between px-4 pt-4">
-                  {[
-                    { district: "Kicukiro", value: 45, color: " #388E3C" },
-                    { district: "Gasabo", value: 32, color: "#09eb72" },
-                    { district: "Nyarugenge", value: 58, color: "#388E3C" },
-                    { district: "Remera", value: 28, color: "#09eb72" },
-                    { district: "Kimisagara", value: 67, color: "#388E3C" },
-                    { district: "Gisozi", value: 41, color: "#09eb72" },
-                  ].map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col items-center flex-1 mx-1"
+                      className="rounded-t-md transition-all duration-1000 hover:scale-105 cursor-pointer shadow-sm"
+                      style={{
+                        backgroundColor: item.color,
+                        height: animateCharts
+                          ? `${(item.value / 70) * 200}px`
+                          : "0px",
+                      }}
                     >
-                      <div className="relative w-full max-w-10 group">
-                        <div
-                          className="rounded-t-md transition-all duration-1000 hover:scale-105 cursor-pointer shadow-sm"
-                          style={{
-                            backgroundColor: item.color,
-                            height: animateCharts
-                              ? `${(item.value / 70) * 200}px`
-                              : "0px",
-                          }}
-                        >
-                          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700">
-                            {animateCharts ? item.value : 0}
-                          </div>
-
-                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                            {item.value} complaints
-                          </div>
-                        </div>
+                      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700">
+                        {animateCharts ? item.value : 0}
                       </div>
-                      <span className="text-xs mt-3 text-gray-700 font-medium text-center leading-tight">
-                        {item.district}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
-              <div className="mt-4 flex justify-center">
-                <div className="flex items-center space-x-2 text-xs text-gray-600">
-                  <div
-                    className="w-3 h-3"
-                    style={{ backgroundColor: "#388E3C" }}
-                  ></div>
-                  <span>Complaints per District</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow border">
-              <h3 className="text-lg font-semibold mb-4">
-                Monthly Revenue Distribution
-              </h3>
-              <div className="flex items-center justify-center">
-                <div className="relative w-80 h-80">
-                  <svg
-                    className="w-full h-full transform -rotate-90"
-                    viewBox="0 0 100 100"
-                  >
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="35"
-                      fill="none"
-                      stroke="#f3f4f6"
-                      strokeWidth="6"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="35"
-                      fill="none"
-                      stroke="#388E3C"
-                      strokeWidth="6"
-                      strokeDasharray="131.9 219.9"
-                      strokeDashoffset={animateCharts ? "0" : "219.9"}
-                      className="transition-all duration-2000 ease-out"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="35"
-                      fill="none"
-                      stroke="#25b86a"
-                      strokeWidth="6"
-                      strokeDasharray="65.9 219.9"
-                      strokeDashoffset={animateCharts ? "-131.9" : "219.9"}
-                      className="transition-all duration-2000 ease-out delay-500"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="35"
-                      fill="none"
-                      stroke="#388E3C"
-                      strokeWidth="6"
-                      strokeDasharray="22.1 219.9"
-                      strokeDashoffset={animateCharts ? "-197.8" : "219.9"}
-                      className="transition-all duration-2000 ease-out delay-1000"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-lg font-bold">
-                        {animateCharts ? "85K" : "0"}
+                      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        {item.value} complaints
                       </div>
-                      <div className="text-sm text-gray-600">RWF</div>
                     </div>
                   </div>
+                  <span className="text-xs mt-3 text-gray-700 font-medium text-center leading-tight">
+                    {item.district}
+                  </span>
                 </div>
-              </div>
-              <div className="mt-4 space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className="w-3 h-3"
-                      style={{ backgroundColor: "#388E3C" }}
-                    ></div>
-                    <span>Nyarugenge</span>
-                  </div>
-                  <span className="font-medium">100000rwf</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className="w-3 h-3"
-                      style={{ backgroundColor: "#25b86a" }}
-                    ></div>
-                    <span>Gasabo</span>
-                  </div>
-                  <span className="font-medium">80000rwf</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className="w-3 h-3"
-                      style={{ backgroundColor: "#388E3C" }}
-                    ></div>
-                    <span>Kicukiro</span>
-                  </div>
-                  <span className="font-medium">60000rwf</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Pickup Sessions</h2>
-              <div className="text-sm text-gray-600">
-                Last updated: {new Date().toLocaleTimeString()}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {pickupSessions.map((session) => (
-                <PickupSessionCard
-                  key={session.id}
-                  zone={session.zone}
-                  time={session.time}
-                  status={session.status}
-                  collected={Math.round(session.collected)}
-                  total={session.total}
-                />
               ))}
             </div>
           </div>
 
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Recent Complaints</h2>
-              <button className="text-green-600 font-medium">View All</button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {complaints
-                .filter((c) => !c.resolved)
-                .map((complaint) => (
-                  <ComplaintCard
-                    key={complaint.id}
-                    title={complaint.title}
-                    level={complaint.level}
-                    time={complaint.time}
-                    sector={complaint.sector}
-                    button={loading ? "Processing..." : "Resolve"}
-                    onResolve={() => resolveComplaint(complaint.id)}
-                    disabled={loading}
-                  />
-                ))}
+          <div className="mt-4 flex justify-center">
+            <div className="flex items-center space-x-2 text-xs text-gray-600">
+              <div
+                className="w-3 h-3"
+                style={{ backgroundColor: "#388E3C" }}
+              ></div>
+              <span>Complaints per District</span>
             </div>
           </div>
-        </section>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow border">
+          <h3 className="text-lg font-semibold mb-4">
+            Monthly Revenue Distribution
+          </h3>
+          <div className="flex items-center justify-center">
+            <div className="relative w-80 h-80">
+              <svg
+                className="w-full h-full transform -rotate-90"
+                viewBox="0 0 100 100"
+              >
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="35"
+                  fill="none"
+                  stroke="#f3f4f6"
+                  strokeWidth="6"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="35"
+                  fill="none"
+                  stroke="#388E3C"
+                  strokeWidth="6"
+                  strokeDasharray="131.9 219.9"
+                  strokeDashoffset={animateCharts ? "0" : "219.9"}
+                  className="transition-all duration-2000 ease-out"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="35"
+                  fill="none"
+                  stroke="#25b86a"
+                  strokeWidth="6"
+                  strokeDasharray="65.9 219.9"
+                  strokeDashoffset={animateCharts ? "-131.9" : "219.9"}
+                  className="transition-all duration-2000 ease-out delay-500"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="35"
+                  fill="none"
+                  stroke="#388E3C"
+                  strokeWidth="6"
+                  strokeDasharray="22.1 219.9"
+                  strokeDashoffset={animateCharts ? "-197.8" : "219.9"}
+                  className="transition-all duration-2000 ease-out delay-1000"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-lg font-bold">
+                    {animateCharts ? "85K" : "0"}
+                  </div>
+                  <div className="text-sm text-gray-600">RWF</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 space-y-2 text-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div
+                  className="w-3 h-3"
+                  style={{ backgroundColor: "#388E3C" }}
+                ></div>
+                <span>Nyarugenge</span>
+              </div>
+              <span className="font-medium">100000rwf</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div
+                  className="w-3 h-3"
+                  style={{ backgroundColor: "#25b86a" }}
+                ></div>
+                <span>Gasabo</span>
+              </div>
+              <span className="font-medium">80000rwf</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div
+                  className="w-3 h-3"
+                  style={{ backgroundColor: "#388E3C" }}
+                ></div>
+                <span>Kicukiro</span>
+              </div>
+              <span className="font-medium">60000rwf</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold">Pickup Sessions</h2>
+          <div className="text-sm text-gray-600">
+            Last updated: {new Date().toLocaleTimeString()}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {pickupSessions.map((session) => (
+            <PickupSessionCard
+              key={session.id}
+              zone={session.zone}
+              time={session.time}
+              status={session.status}
+              collected={Math.round(session.collected)}
+              total={session.total}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold">Recent Complaints</h2>
+          <button className="text-green-600 font-medium">View All</button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {complaints
+            .filter((c) => !c.resolved)
+            .map((complaint) => (
+              <ComplaintCard
+                key={complaint.id}
+                title={complaint.title}
+                level={complaint.level}
+                time={complaint.time}
+                sector={complaint.sector}
+                button={loading ? "Processing..." : "Resolve"}
+                onResolve={() => resolveComplaint(complaint.id)}
+                disabled={loading}
+              />
+            ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -573,11 +579,10 @@ function ComplaintCard({
       <button
         onClick={onResolve}
         disabled={disabled}
-        className={`mt-2 px-4 py-2 rounded text-white text-sm transition-colors ${
-          disabled
+        className={`mt-2 px-4 py-2 rounded text-white text-sm transition-colors ${disabled
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-red-500 hover:bg-red-600"
-        }`}
+          }`}
       >
         {button}
       </button>
