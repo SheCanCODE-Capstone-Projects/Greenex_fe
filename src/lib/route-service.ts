@@ -1,7 +1,7 @@
 import axiosInstance from './axios';
 
 export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
-export type Shift = 'MORNING' | 'AFTERNOON' | 'EVENING';
+export type Shift = 'MORNING' | 'AFTERNOON' | 'EVENING' | 'NIGHT';
 
 export interface Route {
   id: string;
