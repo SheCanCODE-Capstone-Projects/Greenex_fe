@@ -10,7 +10,7 @@ import { ZoneSelect } from './ZoneSelect';
 
 const ruleSchema = z.object({
   zone_id: z.string().min(1, 'Zone is required'),
-  house_type: z.enum(['Apartment', 'Bungalow', 'Duplex', 'Other'], {
+  house_type: z.enum(['RESIDENTIAL', 'COMMERCIAL', 'INDUSTRIAL'], {
     message: 'House type is required'
   }),
   pickup_frequency_per_week: z.number().min(0, 'Frequency must be 0 or greater'),
@@ -38,10 +38,10 @@ export function RuleFormModal({ open, onOpenChange, rule, zones, onSubmit }: Rul
   } = useForm<RuleFormData>({
     resolver: zodResolver(ruleSchema),
     defaultValues: rule ? {
-      zone_id: rule.zone_id,
-      house_type: rule.house_type,
-      pickup_frequency_per_week: rule.pickup_frequency_per_week,
-      amount: rule.amount,
+      zone_id: rule.zoneId || rule.zone_id,
+      house_type: rule.houseType || rule.house_type,
+      pickup_frequency_per_week: Number(rule.pickupFrequencyPerWeek || rule.pickup_frequency_per_week) || 1,
+      amount: Number(rule.amount) || 0,
     } : {
       pickup_frequency_per_week: 1,
       amount: 0,
@@ -89,10 +89,9 @@ export function RuleFormModal({ open, onOpenChange, rule, zones, onSubmit }: Rul
               className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${errors.house_type ? 'border-red-500' : ''}`}
             >
               <option value="">Select house type</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Bungalow">Bungalow</option>
-              <option value="Duplex">Duplex</option>
-              <option value="Other">Other</option>
+              <option value="RESIDENTIAL">Residential</option>
+              <option value="COMMERCIAL">Commercial</option>
+              <option value="INDUSTRIAL">Industrial</option>
             </select>
             {errors.house_type && (
               <p className="text-red-500 text-sm mt-1">{errors.house_type.message}</p>

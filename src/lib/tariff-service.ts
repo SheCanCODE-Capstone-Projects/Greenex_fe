@@ -50,6 +50,17 @@ class TariffService {
   async delete(id: number): Promise<void> {
     await axiosInstance.delete(`/api/manager/tariffs/plans/${id}`);
   }
+
+  async getActivePlans(): Promise<Tariff[]> {
+    const response = await axiosInstance.get('/api/manager/tariffs/plans/active');
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    if (response.data?.content && Array.isArray(response.data.content)) {
+      return response.data.content;
+    }
+    return [];
+  }
 }
 
 export default new TariffService();
