@@ -96,18 +96,24 @@ export default function RoutesPage() {
             return;
         }
 
+        console.log('Submitting route data:', formData);
+
         try {
             if (editingRoute) {
                 await routeService.update(editingRoute.id, formData);
                 toast.success('Route updated successfully');
             } else {
-                await routeService.create(formData);
+                const result = await routeService.create(formData);
+                console.log('Route created:', result);
                 toast.success('Route created successfully');
             }
             handleCloseModal();
             fetchRoutes();
         } catch (error: any) {
-            toast.error(error.message || 'Failed to save route');
+            console.error('Route save error:', error);
+            console.error('Error response:', error.response?.data);
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to save route';
+            toast.error(errorMessage);
         }
     };
 
