@@ -1,6 +1,6 @@
 import axiosInstance from './axios';
 
-export type HouseType = 'RESIDENTIAL' | 'COMMERCIAL' | 'INDUSTRIAL';
+export type HouseType = 'RESIDENTIAL' | 'COMMERCIAL' | 'APARTMENT' | 'VILLA' | 'COMPOUND';
 
 export interface TariffRule {
   id: string;
