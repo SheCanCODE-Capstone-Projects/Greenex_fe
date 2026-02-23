@@ -37,11 +37,11 @@ class WasteCompanyService {
   }
 
   async approveCompany(companyId: number): Promise<void> {
-    await axiosInstance.put(`/api/admin/waste-companies/${companyId}/approve`);
+    await axiosInstance.post(`/api/admin/companies/${companyId}/approve`);
   }
 
   async rejectCompany(companyId: number, reason: string): Promise<void> {
-    await axiosInstance.put(`/api/admin/waste-companies/${companyId}/reject`, { reason });
+    await axiosInstance.post(`/api/admin/companies/${companyId}/reject`, { reason });
   }
 
   async downloadDocument(url: string): Promise<Blob> {

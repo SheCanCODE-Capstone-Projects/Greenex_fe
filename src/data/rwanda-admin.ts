@@ -321,3 +321,14 @@ export const getVillagesByCell = (
   const cell = sector.cells.find((c) => c.id === cellId);
   return cell ? cell.villages : [];
 };
+export const getDistrictBySectorId = (
+  sectorIdOrName: string
+): District | undefined => {
+  return rwandaAdminData.find((district) =>
+    district.sectors.some(
+      (sector) =>
+        sector.id === sectorIdOrName ||
+        sector.name.toLowerCase() === sectorIdOrName.toLowerCase()
+    )
+  );
+};

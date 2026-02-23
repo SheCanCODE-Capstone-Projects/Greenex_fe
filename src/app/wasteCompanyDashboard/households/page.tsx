@@ -47,15 +47,15 @@ export default function HouseholdsPage() {
       // Map API Zones to UI Zones
       const mappedZones: UIZone[] = zonesData.map(z => ({
         id: String(z.id),
-        district: z.district,
-        districtName: z.district,
+        district: z.sector,
+        districtName: z.sector,
         sector: z.sector,
         sectorName: z.sector,
         cell: z.cell || '',
         cellName: z.cell || '',
-        village: '', // Missing in API
-        villageName: '',
-        code: z.zoneName,
+        village: z.village || '',
+        villageName: z.village || '',
+        code: z.code,
         description: z.description || ''
       }));
 

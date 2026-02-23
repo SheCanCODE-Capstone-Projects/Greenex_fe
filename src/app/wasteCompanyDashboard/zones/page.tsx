@@ -9,6 +9,7 @@ import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
 import zoneService from '@/lib/zone-service';
 import { Zone as UIZone } from '@/data/zones';
+import { getDistrictBySectorId } from '@/data/rwanda-admin';
 
 export default function ZonesPage() {
   const router = useRouter();
@@ -27,19 +28,26 @@ export default function ZonesPage() {
       setLoading(true);
       const data = await zoneService.getAll();
 
-      const mappedZones: UIZone[] = data.map(z => ({
-        id: String(z.id),
-        district: z.district,
-        districtName: z.district,
-        sector: z.sector,
-        sectorName: z.sector,
-        cell: z.cell || '',
-        cellName: z.cell || '',
-        village: '', // Missing in API
-        villageName: '',
-        code: z.zoneName,
-        description: z.description || ''
-      }));
+      const mappedZones: UIZone[] = data.map(z => {
+        const district = getDistrictBySectorId(z.sector);
+        // Convert names → IDs so form dropdowns work correctly
+        const sector = district?.sectors.find(s => s.name === z.sector || s.id === z.sector);
+        const cell = sector?.cells.find(c => c.name === z.cell || c.id === z.cell);
+        const village = cell?.villages.find(v => v.name === z.village || v.id === z.village);
+        return {
+          id: String(z.id),
+          district: district?.id || '',
+          districtName: district?.name || '',
+          sector: sector?.id || z.sector,       // ID for form dropdown
+          sectorName: sector?.name || z.sector, // Name for display
+          cell: cell?.id || z.cell,
+          cellName: cell?.name || z.cell || '',
+          village: village?.id || z.village,
+          villageName: village?.name || z.village || '',
+          code: z.code,
+          description: z.description || ''
+        };
+      });
 
       setZones(mappedZones);
     } catch (error) {
@@ -55,6 +63,12 @@ export default function ZonesPage() {
   };
 
   const handleEdit = (id: string) => {
+    console.log('Editing zone with ID:', id);
+    // Store zone data in localStorage so edit page doesn't need to call getById
+    const zone = zones.find(z => z.id === id);
+    if (zone) {
+      localStorage.setItem('editing_zone', JSON.stringify(zone));
+    }
     router.push(`/wasteCompanyDashboard/zones/${id}/edit`);
   };
 
@@ -65,7 +79,7 @@ export default function ZonesPage() {
   const confirmDelete = async () => {
     if (deleteZoneId) {
       try {
-        await zoneService.delete(Number(deleteZoneId));
+        await zoneService.delete(deleteZoneId);
         await fetchZones();
         setDeleteZoneId(null);
         toast.success('Zone deleted successfully!');

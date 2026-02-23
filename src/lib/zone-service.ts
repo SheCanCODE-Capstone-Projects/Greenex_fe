@@ -1,47 +1,58 @@
 import axiosInstance from './axios';
 
 export interface Zone {
-  id: number;
-  zoneName: string;
-  district: string;
+  id: string;
+  code: string;
   sector: string;
-  cell?: string;
+  cell: string;
+  village: string;
   description?: string;
   status: 'ACTIVE' | 'INACTIVE';
   createdAt: string;
 }
 
 export interface CreateZoneData {
-  zoneName: string;
-  district: string;
   sector: string;
-  cell?: string;
-  description?: string;
+  cell: string;
+  village: string;
+  code: string;
+  description: string;
 }
 
 class ZoneService {
   async getAll(): Promise<Zone[]> {
-    const response = await axiosInstance.get('/api/waste-company/zones');
-    return response.data;
+    const response = await axiosInstance.get('/api/manager/zones');
+    console.log('GET /api/manager/zones response:', response.data);
+    // Handle both plain array and paginated { content: [] } responses
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    if (response.data?.content && Array.isArray(response.data.content)) {
+      return response.data.content;
+    }
+    return [];
   }
 
-  async getById(id: number): Promise<Zone> {
-    const response = await axiosInstance.get(`/api/waste-company/zones/${id}`);
+  async getById(id: string): Promise<Zone> {
+    const response = await axiosInstance.get(`/api/manager/zones/${id}`);
+    console.log(`GET /api/manager/zones/${id} response:`, response.data);
     return response.data;
   }
 
   async create(data: CreateZoneData): Promise<Zone> {
-    const response = await axiosInstance.post('/api/waste-company/zones', data);
+    const response = await axiosInstance.post('/api/manager/zones', data);
     return response.data;
   }
 
-  async update(id: number, data: Partial<CreateZoneData>): Promise<Zone> {
-    const response = await axiosInstance.put(`/api/waste-company/zones/${id}`, data);
+  async update(id: string, data: Partial<CreateZoneData>): Promise<Zone> {
+    console.log(`PUT /api/manager/zones/${id} payload:`, JSON.stringify(data, null, 2));
+    const response = await axiosInstance.put(`/api/manager/zones/${id}`, data);
+    console.log(`PUT /api/manager/zones/${id} response:`, response.data);
     return response.data;
   }
 
-  async delete(id: number): Promise<void> {
-    await axiosInstance.delete(`/api/waste-company/zones/${id}`);
+  async delete(id: string): Promise<void> {
+    await axiosInstance.delete(`/api/manager/zones/${id}`);
   }
 }
 

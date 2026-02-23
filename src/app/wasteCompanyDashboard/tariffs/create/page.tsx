@@ -2,129 +2,158 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TariffForm } from '@/components/tariffs/TariffForm';
+import { RuleTable } from '@/components/tariffs/RuleTable';
 import { RuleFormModal } from '@/components/tariffs/RuleFormModal';
-import { tariffStore } from '@/lib/tariff-store';
-import { dummyZones, TariffRule } from '@/data/tariffs';
-import { Button } from '@/components/ui/button';
-import { Plus, Trash2 } from 'lucide-react';
+import { ConfirmDialog } from '@/components/tariffs/ConfirmDialog';
 import { toast } from 'react-toastify';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import tariffService from '@/lib/tariff-service';
+import tariffRuleService from '@/lib/tariff-rule-service';
+import zoneService, { Zone } from '@/lib/zone-service';
+import { useEffect } from 'react';
 
 export default function CreateTariffPage() {
   const router = useRouter();
-  const [tempRules, setTempRules] = useState<Omit<TariffRule, 'id' | 'tariff_plan_id'>[]>([]);
+  const [createdPlanId, setCreatedPlanId] = useState<number | null>(null);
+  const [rules, setRules] = useState<any[]>([]);
+  const [zones, setZones] = useState<Zone[]>([]);
   const [showRuleModal, setShowRuleModal] = useState(false);
+  const [editingRule, setEditingRule] = useState<any>(undefined);
+  const [deleteRuleId, setDeleteRuleId] = useState<string | null>(null);
 
-  const handleSubmit = (data: any) => {
+  useEffect(() => {
+    fetchZones();
+  }, []);
+
+  const fetchZones = async () => {
     try {
-      const newPlan = tariffStore.createPlan({
-        ...data,
-        waste_company_id: 'company-1',
-      });
-
-      // Add any temporary rules
-      tempRules.forEach(rule => {
-        tariffStore.createRule({
-          ...rule,
-          tariff_plan_id: newPlan.id,
-        });
-      });
-
-      toast.success('Tariff plan created successfully!');
-      router.push('/wasteCompanyDashboard/tariffs');
+      const zonesData = await zoneService.getAll();
+      setZones(zonesData);
     } catch (error) {
-      toast.error('Failed to create tariff plan. Please try again.');
+      toast.error('Failed to fetch zones');
     }
+  };
+
+  const handleSubmit = async (data: any) => {
+    try {
+      const result = await tariffService.create(data);
+      setCreatedPlanId(result.id);
+      toast.success('Tariff plan created! Now add rules.');
+    } catch (error) {
+      toast.error('Failed to create tariff plan.');
+    }
+  };
+
+  const handleAddRule = () => {
+    setEditingRule(undefined);
+    setShowRuleModal(true);
+  };
+
+  const handleEditRule = (rule: any) => {
+    setEditingRule(rule);
+    setShowRuleModal(true);
+  };
+
+  const handleRuleSubmit = async (ruleData: any) => {
+    try {
+      const payload = {
+        tariffPlanId: createdPlanId!.toString(),
+        zoneId: ruleData.zone_id,
+        houseType: ruleData.house_type,
+        pickupFrequencyPerWeek: Number(ruleData.pickup_frequency_per_week),
+        amount: Number(ruleData.amount),
+      };
+
+      console.log('Submitting rule payload:', payload);
+
+      if (editingRule) {
+        await tariffRuleService.update(editingRule.id, payload);
+        toast.success('Rule updated!');
+      } else {
+        const result = await tariffRuleService.create(payload);
+        console.log('Created rule response:', result);
+        toast.success('Rule added!');
+      }
+      const updatedRules = await tariffRuleService.getByPlanId(createdPlanId!.toString());
+      console.log('Fetched rules:', updatedRules);
+      setRules(updatedRules);
+    } catch (error) {
+      console.error('Save rule error:', error);
+      toast.error('Failed to save rule.');
+    }
+  };
+
+  const handleDeleteRule = (id: string) => {
+    setDeleteRuleId(id);
+  };
+
+  const confirmDeleteRule = async () => {
+    if (deleteRuleId) {
+      try {
+        await tariffRuleService.delete(deleteRuleId);
+        const updatedRules = await tariffRuleService.getByPlanId(createdPlanId!.toString());
+        setRules(updatedRules);
+        toast.success('Rule deleted!');
+      } catch (error) {
+        toast.error('Failed to delete rule.');
+      }
+      setDeleteRuleId(null);
+    }
+  };
+
+  const handleFinish = () => {
+    router.push('/wasteCompanyDashboard/tariffs');
   };
 
   const handleCancel = () => {
     router.push('/wasteCompanyDashboard/tariffs');
   };
 
-  const handleAddRule = (ruleData: any) => {
-    setTempRules(prev => [...prev, ruleData]);
-    toast.success('Rule added to plan!');
-  };
-
-  const handleDeleteTempRule = (index: number) => {
-    setTempRules(prev => prev.filter((_, i) => i !== index));
-    toast.success('Rule removed from plan!');
-  };
-
-  const getZoneName = (zoneId: string) => {
-    const zone = dummyZones.find(z => z.id === zoneId);
-    return zone ? `${zone.sector} - ${zone.cell}` : 'Unknown Zone';
-  };
-
   return (
-    <DashboardLayout>
-      <div className="max-w-4xl mx-auto space-y-8">
-        <TariffForm
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-        />
+    <div className="max-w-6xl mx-auto py-8 space-y-8">
+      <TariffForm
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        isEditing={false}
+      />
 
-        {/* Optional Rules Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h2 className="text-xl font-semibold">Tariff Rules (Optional)</h2>
-              <p className="text-sm text-gray-600">You can add rules now or later when editing the plan</p>
-            </div>
-            <Button onClick={() => setShowRuleModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Rule
-            </Button>
+      {createdPlanId && (
+        <>
+          <RuleTable
+            rules={rules}
+            zones={zones as any}
+            onAdd={handleAddRule}
+            onEdit={handleEditRule}
+            onDelete={handleDeleteRule}
+          />
+
+          <div className="flex justify-end">
+            <button
+              onClick={handleFinish}
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+            >
+              Finish & View Tariffs
+            </button>
           </div>
+        </>
+      )}
 
-          {tempRules.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-medium">Zone</th>
-                    <th className="text-left py-3 px-4 font-medium">House Type</th>
-                    <th className="text-left py-3 px-4 font-medium">Frequency/Week</th>
-                    <th className="text-left py-3 px-4 font-medium">Amount (RWF)</th>
-                    <th className="text-left py-3 px-4 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tempRules.map((rule, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4">{getZoneName(rule.zone_id)}</td>
-                      <td className="py-3 px-4">{rule.house_type}</td>
-                      <td className="py-3 px-4">{rule.pickup_frequency_per_week}</td>
-                      <td className="py-3 px-4 font-medium">{rule.amount.toLocaleString()}</td>
-                      <td className="py-3 px-4">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDeleteTempRule(index)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No rules added yet. Click "Add Rule" to get started.</p>
-            </div>
-          )}
-        </div>
+      <RuleFormModal
+        open={showRuleModal}
+        onOpenChange={setShowRuleModal}
+        rule={editingRule}
+        zones={zones as any}
+        onSubmit={handleRuleSubmit}
+      />
 
-        <RuleFormModal
-          open={showRuleModal}
-          onOpenChange={setShowRuleModal}
-          zones={dummyZones}
-          onSubmit={handleAddRule}
-        />
-      </div>
-    </DashboardLayout>
+      <ConfirmDialog
+        open={!!deleteRuleId}
+        onOpenChange={() => setDeleteRuleId(null)}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this rule?"
+        onConfirm={confirmDeleteRule}
+        confirmText="Delete"
+        variant="destructive"
+      />
+    </div>
   );
 }

@@ -1,13 +1,12 @@
 'use client'
-import { TariffRule, Zone } from '@/data/tariffs';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2, Plus } from 'lucide-react';
 
 interface RuleTableProps {
-  rules: TariffRule[];
-  zones: Zone[];
+  rules: any[];
+  zones: any[];
   onAdd: () => void;
-  onEdit: (rule: TariffRule) => void;
+  onEdit: (rule: any) => void;
   onDelete: (id: string) => void;
 }
 
@@ -19,8 +18,9 @@ export function RuleTable({ rules, zones, onAdd, onEdit, onDelete }: RuleTablePr
 
   const getTotalEstimate = () => {
     return rules.reduce((total, rule) => {
-      // Simple estimate: amount × frequency × 4 weeks
-      return total + (rule.amount * rule.pickup_frequency_per_week * 4);
+      const amount = Number(rule.amount) || 0;
+      const frequency = Number(rule.pickupFrequencyPerWeek || rule.pickup_frequency_per_week) || 0;
+      return total + (amount * frequency * 4);
     }, 0);
   };
 
@@ -49,36 +49,53 @@ export function RuleTable({ rules, zones, onAdd, onEdit, onDelete }: RuleTablePr
                 </tr>
               </thead>
               <tbody>
-                {rules.map((rule) => (
-                  <tr key={rule.id} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4">{getZoneName(rule.zone_id)}</td>
-                    <td className="py-3 px-4">{rule.house_type}</td>
-                    <td className="py-3 px-4">{rule.pickup_frequency_per_week}</td>
-                    <td className="py-3 px-4 font-medium">{rule.amount.toLocaleString()}</td>
-                    <td className="py-3 px-4 text-green-600 font-medium">
-                      {(rule.amount * rule.pickup_frequency_per_week * 4).toLocaleString()}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onEdit(rule)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onDelete(rule.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {rules.map((rule) => {
+                  const zoneId = rule.zoneId || rule.zone_id;
+                  const houseType = rule.houseType || rule.house_type;
+                  const frequency = Number(rule.pickupFrequencyPerWeek || rule.pickup_frequency_per_week || rule.pickupFrequency) || 0;
+                  const amount = Number(rule.amount) || 0;
+                  
+                  return (
+                    <tr key={rule.id} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4">{getZoneName(zoneId)}</td>
+                      <td className="py-3 px-4">{houseType}</td>
+                      <td className="py-3 px-4">
+                        {frequency === 0 ? (
+                          <span className="text-red-500" title="Backend not returning frequency data">N/A</span>
+                        ) : (
+                          frequency
+                        )}
+                      </td>
+                      <td className="py-3 px-4 font-medium">{amount.toLocaleString()}</td>
+                      <td className="py-3 px-4 text-green-600 font-medium">
+                        {frequency === 0 ? (
+                          <span className="text-red-500">N/A</span>
+                        ) : (
+                          (amount * frequency * 4).toLocaleString()
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onEdit(rule)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onDelete(rule.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

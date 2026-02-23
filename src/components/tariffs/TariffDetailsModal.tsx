@@ -1,10 +1,12 @@
 'use client'
-import { TariffPlan, TariffRule, Zone } from '@/data/tariffs';
+import { Tariff } from '@/lib/tariff-service';
+import { TariffRule } from '@/lib/tariff-rule-service';
+import { Zone } from '@/lib/zone-service';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 interface TariffDetailsModalProps {
-  plan: TariffPlan | null;
+  plan: Tariff | null;
   rules: TariffRule[];
   zones: Zone[];
   open: boolean;
@@ -16,9 +18,10 @@ export function TariffDetailsModal({ plan, rules, zones, open, onOpenChange }: T
 
   const getBillingFrequencyLabel = (frequency: string) => {
     switch (frequency) {
+      case 'WEEKLY': return 'Weekly';
       case 'MONTHLY': return 'Monthly';
       case 'QUARTERLY': return 'Quarterly';
-      case 'YEARLY': return 'Yearly';
+      case 'ANNUALLY': return 'Annually';
       default: return frequency;
     }
   };
@@ -29,7 +32,10 @@ export function TariffDetailsModal({ plan, rules, zones, open, onOpenChange }: T
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    return date.toLocaleDateString();
   };
 
   return (
@@ -49,27 +55,17 @@ export function TariffDetailsModal({ plan, rules, zones, open, onOpenChange }: T
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Billing Frequency</label>
-                <p className="text-sm">{getBillingFrequencyLabel(plan.billing_frequency)}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Status</label>
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                  plan.status === 'ACTIVE' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {plan.status}
-                </span>
+                <p className="text-sm">{getBillingFrequencyLabel(plan.billingFrequency)}</p>
               </div>
             </div>
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-600">Active From</label>
-                <p className="text-sm">{formatDate(plan.active_from)}</p>
+                <p className="text-sm">{formatDate(plan.effectiveFrom)}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Active To</label>
-                <p className="text-sm">{formatDate(plan.active_to)}</p>
+                <p className="text-sm">{formatDate(plan.effectiveTo)}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Total Rules</label>
@@ -95,10 +91,10 @@ export function TariffDetailsModal({ plan, rules, zones, open, onOpenChange }: T
                   <tbody>
                     {rules.map((rule) => (
                       <tr key={rule.id} className="border-t">
-                        <td className="py-3 px-4">{getZoneName(rule.zone_id)}</td>
-                        <td className="py-3 px-4">{rule.house_type}</td>
-                        <td className="py-3 px-4">{rule.pickup_frequency_per_week}</td>
-                        <td className="py-3 px-4 font-medium">{rule.amount.toLocaleString()}</td>
+                        <td className="py-3 px-4">{getZoneName(rule.zoneId)}</td>
+                        <td className="py-3 px-4">{rule.houseType}</td>
+                        <td className="py-3 px-4">{Number(rule.pickupFrequencyPerWeek) || 0}</td>
+                        <td className="py-3 px-4 font-medium">{Number(rule.amount || 0).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -2,14 +2,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { routeService, Route, CreateRouteData } from '@/lib/route-service';
+import routeService, { Route, CreateRouteData } from '@/lib/route-service';
+import zoneService, { Zone } from '@/lib/zone-service';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Plus, Search, MapPin, Calendar, Clock, Edit, Trash2, MoreVertical } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { dummyZones, Zone } from '@/data/zones';
 
 export default function RoutesPage() {
     const [routes, setRoutes] = useState<Route[]>([]);
@@ -28,21 +28,33 @@ export default function RoutesPage() {
         shift: 'MORNING'
     });
 
-    const [zones, setZones] = useState<Zone[]>(dummyZones);
+    const [zones, setZones] = useState<Zone[]>([]);
+    const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
         fetchRoutes();
-        // In a real app, we'd fetch zones from API too
-        const savedZones = localStorage.getItem('zones');
-        if (savedZones) {
-            setZones(JSON.parse(savedZones));
-        }
+        fetchZones();
+        
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 60000);
+        
+        return () => clearInterval(timer);
     }, []);
+
+    const fetchZones = async () => {
+        try {
+            const data = await zoneService.getAll();
+            setZones(data);
+        } catch (error: any) {
+            toast.error('Failed to fetch zones');
+        }
+    };
 
     const fetchRoutes = async () => {
         setLoading(true);
         try {
-            const data = await routeService.getAllRoutes();
+            const data = await routeService.getAll();
             setRoutes(data);
         } catch (error: any) {
             toast.error(error.message || 'Failed to fetch routes');
@@ -84,18 +96,24 @@ export default function RoutesPage() {
             return;
         }
 
+        console.log('Submitting route data:', formData);
+
         try {
             if (editingRoute) {
-                await routeService.updateRoute(editingRoute._id, formData);
+                await routeService.update(editingRoute.id, formData);
                 toast.success('Route updated successfully');
             } else {
-                await routeService.createRoute(formData);
+                const result = await routeService.create(formData);
+                console.log('Route created:', result);
                 toast.success('Route created successfully');
             }
             handleCloseModal();
             fetchRoutes();
         } catch (error: any) {
-            toast.error(error.message || 'Failed to save route');
+            console.error('Route save error:', error);
+            console.error('Error response:', error.response?.data);
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to save route';
+            toast.error(errorMessage);
         }
     };
 
@@ -108,7 +126,7 @@ export default function RoutesPage() {
                     <button
                         onClick={async () => {
                             try {
-                                await routeService.deleteRoute(id);
+                                await routeService.delete(id);
                                 toast.success('Route deleted successfully');
                                 fetchRoutes();
                             } catch (error: any) {
@@ -139,9 +157,53 @@ export default function RoutesPage() {
         });
     };
 
+    const isRouteActive = (route: Route) => {
+        const now = currentTime;
+        const currentHour = now.getHours();
+        const currentDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][now.getDay()];
+        
+        if (route.dayOfWeek !== currentDay) return false;
+        
+        const shiftRanges = {
+            MORNING: { start: 6, end: 12 },
+            AFTERNOON: { start: 12, end: 18 },
+            EVENING: { start: 18, end: 22 },
+            NIGHT: { start: 22, end: 6 }
+        };
+        
+        const range = shiftRanges[route.shift];
+        if (route.shift === 'NIGHT') {
+            return currentHour >= range.start || currentHour < range.end;
+        }
+        return currentHour >= range.start && currentHour < range.end;
+    };
+
+    const isRouteNext = (route: Route) => {
+        const now = currentTime;
+        const currentHour = now.getHours();
+        const currentDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][now.getDay()];
+        
+        const shiftRanges = {
+            MORNING: { start: 6, end: 12 },
+            AFTERNOON: { start: 12, end: 18 },
+            EVENING: { start: 18, end: 22 },
+            NIGHT: { start: 22, end: 6 }
+        };
+        
+        if (route.dayOfWeek === currentDay) {
+            const range = shiftRanges[route.shift];
+            if (route.shift === 'NIGHT') {
+                return currentHour < range.start && currentHour >= 18;
+            }
+            return currentHour < range.start;
+        }
+        
+        return false;
+    };
+
     const filteredRoutes = routes.filter(route =>
         route.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        zones.find(z => z.id === route.zoneId)?.district.toLowerCase().includes(searchTerm.toLowerCase())
+        zones.find(z => z.id === route.zoneId)?.sector.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -186,11 +248,26 @@ export default function RoutesPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredRoutes.map((route) => {
                                 const zone = zones.find(z => z.id === route.zoneId);
+                                const isActive = isRouteActive(route);
+                                const isNext = isRouteNext(route);
+                                
                                 return (
-                                    <div key={route._id} className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl hover:border-green-100 transition-all duration-300">
+                                    <div key={route.id} className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl hover:border-green-100 transition-all duration-300">
                                         <div className="flex justify-between items-start mb-4">
-                                            <div className="p-3 bg-green-50 rounded-xl text-green-600">
+                                            <div className={`p-3 bg-green-50 rounded-xl text-green-600 relative ${isActive || isNext ? 'animate-bounce' : ''}`}>
                                                 <MapPin size={24} />
+                                                {isActive && (
+                                                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                                    </span>
+                                                )}
+                                                {isNext && !isActive && (
+                                                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
@@ -200,7 +277,7 @@ export default function RoutesPage() {
                                                     <Edit size={16} />
                                                 </button>
                                                 <button
-                                                    onClick={() => confirmDelete(route._id)}
+                                                    onClick={() => confirmDelete(route.id)}
                                                     className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 size={16} />
@@ -210,9 +287,9 @@ export default function RoutesPage() {
 
                                         <h3 className="text-lg font-bold text-gray-900 group-hover:text-green-700 transition-colors mb-1">{route.name}</h3>
                                         <p className="text-sm text-gray-500 mb-4 flex items-center gap-1.5">
-                                            <span className="font-medium text-gray-700">{zone?.districtName || zone?.district || 'Unknown Zone'}</span>
+                                            <span className="font-medium text-gray-700">{zone?.sector || 'Unknown Zone'}</span>
                                             <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                            <span>{zone?.sectorName || zone?.sector}</span>
+                                            <span>{zone?.cell}</span>
                                         </p>
 
                                         <div className="flex items-center gap-4 text-sm text-gray-600 bg-gray-50 p-3 rounded-xl">
@@ -280,7 +357,7 @@ export default function RoutesPage() {
                                 <option value="">Select a zone...</option>
                                 {zones.map(zone => (
                                     <option key={zone.id} value={zone.id}>
-                                        {zone.districtName || zone.district} - {zone.sectorName || zone.sector} ({zone.code})
+                                        {zone.sector} - {zone.cell} ({zone.village})
                                     </option>
                                 ))}
                             </select>

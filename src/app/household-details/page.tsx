@@ -77,8 +77,11 @@ export default function HouseholdDetailsPage() {
       
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: { message?: string }; status?: number } };
+        console.error('Error response:', axiosError.response);
         if (axiosError.response?.status === 404) {
           errorMessage = "API endpoint not found. Please check if backend server is running.";
+        } else if (axiosError.response?.status === 400) {
+          errorMessage = axiosError.response?.data?.message || "No waste management company serves your area yet. Please contact support.";
         } else {
           errorMessage = axiosError.response?.data?.message || errorMessage;
         }

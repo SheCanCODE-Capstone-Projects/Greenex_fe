@@ -59,13 +59,25 @@ export default function OTPPage() {
 
     setLoading(true);
 
-    setLoading(true);
-
     try {
-      await authService.verifyOtp(otpString);
+      const response = await authService.verifyOtp(otpString);
 
       setStep(2);
       toast.success("Account verified successfully!");
+
+      // 🔐 Store auth data if returned (assuming the backend returns token/user info on verification)
+      if (response && response.token) {
+        localStorage.setItem("auth_token", response.token);
+      }
+
+      if (response && response.user) {
+        localStorage.setItem("user_info", JSON.stringify({
+          userId: response.user.id || response.user.userId,
+          email: response.user.email,
+          fullName: response.user.fullName,
+          role: response.user.role
+        }));
+      }
 
       // 🧹 clear signup state
       localStorage.removeItem("signup_completed");
