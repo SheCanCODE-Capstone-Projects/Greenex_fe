@@ -126,6 +126,8 @@ export default function Login() {
         } else {
           router.push("/household-details");
         }
+      } else if (userRole === "COMPANY_DRIVER") {
+        router.push("/driverDashboard");
       } else {
         router.push("/");
       }
