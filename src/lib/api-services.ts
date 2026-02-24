@@ -12,6 +12,7 @@ export { default as routeService } from './route-service-api';
 export { default as userDashboardService } from './user-dashboard-service';
 export { default as onboardingService } from './onboarding-service';
 export { default as dashboardService } from './dashboard-service';
+export { default as sessionService } from './session-service';
 
 // Re-export types
 export type { RegisterData, RegisterResponse } from './auth-service';
@@ -27,3 +28,4 @@ export type { Route, CreateRouteData } from './route-service-api';
 export type { UserProfile, Schedule, UserComplaint, CreateComplaintData, UserPayment } from './user-dashboard-service';
 export type { OnboardingFormData, OnboardingResponse } from './onboarding-service';
 export type { DashboardStats, AdminDashboardStats } from './dashboard-service';
+export type { Session, CreateSessionData, SessionStop, SessionStatus } from './session-service';

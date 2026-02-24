@@ -52,6 +52,7 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
   const menuItems = [
     { label: "Dashboard", icon: LayoutDashboard, route: "/wasteCompanyDashboard" },
     { label: "Routes", icon: Route, route: "/wasteCompanyDashboard/routes" },
+    { label: "Sessions", icon: Truck, route: "/wasteCompanyDashboard/sessions" },
     { label: "Drivers", icon: User, route: "/wasteCompanyDashboard/drivers" },
     { label: "Households", icon: Home, route: "/wasteCompanyDashboard/households" },
     { label: "Zones", icon: MapPin, route: "/wasteCompanyDashboard/zones" },
@@ -59,7 +60,6 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
     { label: "Payments", icon: CreditCard, route: "/wasteCompanyDashboard/payments" },
     { label: "Invoices", icon: FileText, route: "/wasteCompanyDashboard/invoices" },
     { label: "Complaints", icon: MessageSquare, route: "/wasteCompanyDashboard/complaints" },
-    { label: "Pickup Session", icon: Truck },
   ];
 
   return (
