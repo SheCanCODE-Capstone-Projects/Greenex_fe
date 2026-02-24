@@ -13,6 +13,8 @@ export { default as userDashboardService } from './user-dashboard-service';
 export { default as onboardingService } from './onboarding-service';
 export { default as dashboardService } from './dashboard-service';
 export { default as sessionService } from './session-service';
+export { default as driverSessionService } from './driver-session-service';
+export { default as adminNotificationService } from './admin-notification-service';
 
 // Re-export types
 export type { RegisterData, RegisterResponse } from './auth-service';
@@ -29,3 +31,5 @@ export type { UserProfile, Schedule, UserComplaint, CreateComplaintData, UserPay
 export type { OnboardingFormData, OnboardingResponse } from './onboarding-service';
 export type { DashboardStats, AdminDashboardStats } from './dashboard-service';
 export type { Session, CreateSessionData, SessionStop, SessionStatus } from './session-service';
+export type { StopStatus } from './driver-session-service';
+export type { AdminNotification } from './admin-notification-service';
