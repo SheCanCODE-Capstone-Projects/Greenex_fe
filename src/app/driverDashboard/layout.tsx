@@ -10,31 +10,26 @@ import {
   Settings,
   LogOut,
   LayoutDashboard,
-  Route,
-  Home,
-  MapPin,
-  CreditCard,
-  MessageSquare,
   Truck,
-  FileText,
+  MapPin,
 } from "lucide-react";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
-export default function WasteCompanyLayout({ children }: LayoutProps) {
+export default function DriverDashboardLayout({ children }: LayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [userName, setUserName] = useState("User");
+  const [userName, setUserName] = useState("Driver");
 
   useEffect(() => {
     const userInfoStr = localStorage.getItem("user_info");
     if (userInfoStr) {
       try {
         const userInfo = JSON.parse(userInfoStr);
-        setUserName(userInfo.fullName || userInfo.email || "User");
+        setUserName(userInfo.fullName || userInfo.email || "Driver");
       } catch (error) {
         console.error('Error parsing user info:', error);
       }
@@ -50,20 +45,12 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
   }, [dropdownOpen]);
 
   const menuItems = [
-    { label: "Dashboard", icon: LayoutDashboard, route: "/wasteCompanyDashboard" },
-    { label: "Routes", icon: Route, route: "/wasteCompanyDashboard/routes" },
-    { label: "Sessions", icon: Truck, route: "/wasteCompanyDashboard/sessions" },
-    { label: "Drivers", icon: User, route: "/wasteCompanyDashboard/drivers" },
-    { label: "Households", icon: Home, route: "/wasteCompanyDashboard/households" },
-    { label: "Zones", icon: MapPin, route: "/wasteCompanyDashboard/zones" },
-    { label: "Tariffs", icon: CreditCard, route: "/wasteCompanyDashboard/tariffs" },
-    { label: "Payments", icon: CreditCard, route: "/wasteCompanyDashboard/payments" },
-    { label: "Invoices", icon: FileText, route: "/wasteCompanyDashboard/invoices" },
-    { label: "Complaints", icon: MessageSquare, route: "/wasteCompanyDashboard/complaints" },
+    { label: "Dashboard", icon: LayoutDashboard, route: "/driverDashboard" },
+    { label: "My Sessions", icon: Truck, route: "/driverDashboard/sessions" },
   ];
 
   return (
-    <RoleGuard allowedRoles={["COMPANY_MANAGER"]}>
+    <RoleGuard allowedRoles={["COMPANY_DRIVER"]}>
       <div className="min-h-screen bg-gray-50 flex">
         {/* Sidebar */}
         <aside className="w-64 bg-green-900 text-white p-6 space-y-6 hidden md:block h-screen fixed left-0 top-0 overflow-y-auto z-30">
@@ -87,7 +74,7 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
           <nav className="sticky top-0 z-40 bg-white shadow-sm border-b px-8 py-4">
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Green Ex Manager</h1>
+                <h1 className="text-xl font-bold text-gray-900">Driver Dashboard</h1>
                 <p className="text-sm text-gray-600">Welcome, {userName}</p>
               </div>
               <div className="flex items-center gap-4">
@@ -110,10 +97,7 @@ export default function WasteCompanyLayout({ children }: LayoutProps) {
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
                       <div className="py-1">
-                        <button
-                          onClick={() => router.push("/wasteCompanyDashboard/profile")}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                        >
+                        <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                           <User size={16} /> Profile
                         </button>
                         <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
