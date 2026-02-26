@@ -610,16 +610,19 @@ export default function SupperDashboard() {
                 <div className="space-y-6">
                   {pendingCompanies.map((company, index) => {
                     const companyId = company._id || company.id || `temp-${index}`;
+                    const normalizedRegStatus = (company.registrationStatus || '').toUpperCase();
+                    const normalizedStatus = (company.status || '').toUpperCase();
+
                     const displayStatus =
-                      company.status?.toUpperCase() === 'APPROVED' ? 'Approved' :
-                        company.status?.toUpperCase() === 'REJECTED' ? 'Rejected' :
+                      normalizedRegStatus === 'APPROVED' || normalizedStatus === 'APPROVED' ? 'Approved' :
+                        normalizedRegStatus === 'REJECTED' || normalizedStatus === 'REJECTED' ? 'Rejected' :
                           'In Process';
 
                     // Extract documents from all possible locations
                     const d = company.documents || {};
-                    const kigali = d.cityOfKigaliDocument || d.kigaliContractUrl || company.cityOfKigaliDocument || company.kigaliContractUrl;
-                    const rema = d.remaDocument || d.remaCertificateUrl || company.remaDocument || company.remaCertificateUrl;
-                    const rdb = d.rdbDocument || d.rdbCertificateUrl || company.rdbDocument || company.rdbCertificateUrl;
+                    const kigali = d.cityOfKigaliDocument || d.cityOfKigaliDocumentUrl || d.kigaliContractUrl || company.cityOfKigaliDocument || company.cityOfKigaliDocumentUrl || company.kigaliContractUrl;
+                    const rema = d.remaDocument || d.remaDocumentUrl || d.remaCertificateUrl || company.remaDocument || company.remaDocumentUrl || company.remaCertificateUrl;
+                    const rdb = d.rdbDocument || d.rdbDocumentUrl || d.rdbCertificateUrl || company.rdbDocument || company.rdbDocumentUrl || company.rdbCertificateUrl;
 
                     return (
                       <CompanyDetailCard

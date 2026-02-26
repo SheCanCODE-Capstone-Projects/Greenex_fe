@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/lib/auth-service";
+import axiosInstance from "@/lib/axios";
 import { toast } from "react-toastify";
 import { Mail, Lock, CheckCircle2, AlertCircle, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
@@ -80,9 +81,16 @@ export default function Login() {
         // Detailed debug log to see the actual response shape
         console.log("Full Login Response:", JSON.stringify(response, null, 2));
 
-        // Store status if available in response
-        let status = response.status ||
-          response.registrationStatus ||
+        // If they have a companyId, they've completed onboarding
+        if (response.companyId) {
+          localStorage.setItem("onboarding_completed", "true");
+        }
+
+        // Store status if available in response - prioritizing registrationStatus
+        let status = response.registrationStatus ||
+          response.status ||
+          response.company?.registrationStatus ||
+          response.company?.status ||
           response.user?.registrationStatus ||
           response.user?.status;
 
@@ -94,37 +102,43 @@ export default function Login() {
           if (possibleStatus) status = possibleStatus;
         }
 
-        // Final fallback: If we have no status but we HAVE a token and role is COMPANY_MANAGER,
-        // we'll try to treat it as APPROVED to bypass the pending screen if they are stuck.
-        if (!status) {
-          console.log("No status found in login response, but role is COMPANY_MANAGER. Defaulting to APPROVED for transition.");
-          status = "APPROVED";
-        }
-
-        // Normalize status to uppercase for easier comparison
+        // Normalize status to uppercase, default to PENDING
         status = (status || "PENDING").toString().toUpperCase();
         localStorage.setItem("company_status", status);
 
-        // Check if company has completed onboarding
-        const onboardingDone = localStorage.getItem("onboarding_completed");
+        console.log("Company Manager Login - Status:", status);
 
-        if (!onboardingDone && status !== "APPROVED") {
+        // Routing logic based on user state
+        if (!response.companyId) {
+          // No company registered yet -> proceed to onboarding
+          localStorage.removeItem("onboarding_completed");
           router.push("/onboarding");
         } else if (status === "APPROVED") {
-          // If approved, force onboarding status to true and go to dashboard
+          // Fully approved -> access dashboard
           localStorage.setItem("onboarding_completed", "true");
           router.push("/wasteCompanyDashboard");
         } else {
-          // If pending/rejected and onboarding done, go to status page
+          // Company exists but is PENDING or REJECTED -> status page
+          localStorage.setItem("onboarding_completed", "true");
           router.push("/company-status");
         }
       } else if (userRole === "CITIZEN") {
-        // Check if household details already submitted
-        const detailsSubmitted = localStorage.getItem("household_details_submitted");
-        if (detailsSubmitted === "true") {
+        // Check backend for household registration status
+        try {
+          await axiosInstance.get('/api/citizen/household');
+          // If successful, household exists - go to dashboard
+          localStorage.setItem("household_details_submitted", "true");
           router.push("/User-Dashboard");
-        } else {
-          router.push("/household-details");
+        } catch (error: any) {
+          // If 404 or error, household not registered - go to details page
+          if (error.response?.status === 404) {
+            localStorage.removeItem("household_details_submitted");
+            router.push("/household-details");
+          } else {
+            // For other errors, assume household exists to avoid blocking user
+            console.warn('Error checking household status:', error);
+            router.push("/User-Dashboard");
+          }
         }
       } else if (userRole === "COMPANY_DRIVER") {
         router.push("/driverDashboard");

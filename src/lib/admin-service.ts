@@ -34,6 +34,9 @@ export interface AdminCompany {
         kigaliContractUrl?: string;
         remaCertificateUrl?: string;
         rdbCertificateUrl?: string;
+        cityOfKigaliDocumentUrl?: string;
+        remaDocumentUrl?: string;
+        rdbDocumentUrl?: string;
     };
     cityOfKigaliDocument?: string; // sometimes at top level
     remaDocument?: string;
@@ -41,6 +44,9 @@ export interface AdminCompany {
     kigaliContractUrl?: string;
     remaCertificateUrl?: string;
     rdbCertificateUrl?: string;
+    cityOfKigaliDocumentUrl?: string;
+    remaDocumentUrl?: string;
+    rdbDocumentUrl?: string;
     contact?: string;
 }
 

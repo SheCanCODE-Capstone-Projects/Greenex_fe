@@ -18,12 +18,13 @@ export default function CompaniesPage() {
 
   useEffect(() => {
     fetchCompanies();
-  }, []);
+  }, [filter]);
 
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const data = await wasteCompanyService.getAllCompanies();
+      const statusFilter = filter === "all" ? undefined : filter;
+      const data = await wasteCompanyService.getAllCompanies(statusFilter);
       setCompanies(data);
     } catch (error) {
       toast.error("Failed to fetch companies");
@@ -77,9 +78,7 @@ export default function CompaniesPage() {
     }
   };
 
-  const filteredCompanies = filter === "all" 
-    ? companies 
-    : companies.filter(company => company.status === filter);
+  const filteredCompanies = companies;
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -116,11 +115,10 @@ export default function CompaniesPage() {
             <button
               key={status}
               onClick={() => setFilter(status as any)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium capitalize ${
-                filter === status
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium capitalize ${filter === status
+                ? "bg-green-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
             >
               {status}
             </button>
@@ -129,19 +127,19 @@ export default function CompaniesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard 
-          title="Total Companies" 
-          value={companies.length.toString()} 
+        <StatCard
+          title="Total Companies"
+          value={companies.length.toString()}
           icon={<Building2 className="w-6 h-6 text-blue-600" />}
         />
-        <StatCard 
-          title="Approved" 
-          value={companies.filter(c => c.status === "APPROVED").length.toString()} 
+        <StatCard
+          title="Approved"
+          value={companies.filter(c => c.status === "APPROVED").length.toString()}
           icon={<CheckCircle className="w-6 h-6 text-green-600" />}
         />
-        <StatCard 
-          title="Pending" 
-          value={companies.filter(c => c.status === "PENDING").length.toString()} 
+        <StatCard
+          title="Pending"
+          value={companies.filter(c => c.status === "PENDING").length.toString()}
           icon={<Clock className="w-6 h-6 text-yellow-600" />}
         />
       </div>
@@ -255,24 +253,24 @@ export default function CompaniesPage() {
                 <div>
                   <h3 className="font-semibold mb-3">Documents</h3>
                   <div className="space-y-3">
-                    {selectedCompany.kigaliContractUrl && (
-                      <DocumentRow 
-                        label="Kigali Contract" 
-                        url={selectedCompany.kigaliContractUrl}
+                    {(selectedCompany.kigaliContractUrl || selectedCompany.cityOfKigaliDocumentUrl) && (
+                      <DocumentRow
+                        label="Kigali Contract"
+                        url={(selectedCompany.kigaliContractUrl || selectedCompany.cityOfKigaliDocumentUrl)!}
                         onDownload={handleDownload}
                       />
                     )}
-                    {selectedCompany.remaCertificateUrl && (
-                      <DocumentRow 
-                        label="REMA Certificate" 
-                        url={selectedCompany.remaCertificateUrl}
+                    {(selectedCompany.remaCertificateUrl || selectedCompany.remaDocumentUrl) && (
+                      <DocumentRow
+                        label="REMA Certificate"
+                        url={(selectedCompany.remaCertificateUrl || selectedCompany.remaDocumentUrl)!}
                         onDownload={handleDownload}
                       />
                     )}
-                    {selectedCompany.rdbCertificateUrl && (
-                      <DocumentRow 
-                        label="RDB Certificate" 
-                        url={selectedCompany.rdbCertificateUrl}
+                    {(selectedCompany.rdbCertificateUrl || selectedCompany.rdbDocumentUrl) && (
+                      <DocumentRow
+                        label="RDB Certificate"
+                        url={(selectedCompany.rdbCertificateUrl || selectedCompany.rdbDocumentUrl)!}
                         onDownload={handleDownload}
                       />
                     )}
@@ -346,7 +344,7 @@ function DocumentRow({ label, url, onDownload }: { label: string; url: string; o
           <p className="text-sm text-gray-500">{url.split('/').pop()}</p>
         </div>
       </div>
-      <button 
+      <button
         onClick={() => onDownload(url, `${label}.pdf`)}
         className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200"
       >
