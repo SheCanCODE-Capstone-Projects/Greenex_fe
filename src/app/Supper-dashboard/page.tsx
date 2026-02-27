@@ -30,8 +30,8 @@ import {
   Calendar,
   Building2,
 } from "lucide-react";
-import { NotificationDropdown } from "@/components/ui/notification";
-import { useCompanyNotifications } from "@/lib/useCompanyNotifications";
+import { AdminNotificationDropdown } from "@/components/ui/admin-notification";
+import adminNotificationService, { type AdminNotification } from "@/lib/admin-notification-service";
 import { contactService, type Contact } from "@/lib/contact-service";
 import { adminService, type AdminCompany } from "@/lib/admin-service";
 import wasteCompanyService from "@/lib/waste-company-service";
@@ -52,7 +52,8 @@ export default function SupperDashboard() {
   const [activeSection, setActiveSection] = useState('overview');
   const [userName, setUserName] = useState("Admin");
   const [userInitials, setUserInitials] = useState("AD");
-  const { notifications, dismissNotification } = useCompanyNotifications();
+  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [viewMode, setViewMode] = useState<'pending' | 'all'>('pending');
@@ -66,6 +67,28 @@ export default function SupperDashboard() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [loadingContactDetail, setLoadingContactDetail] = useState(false);
 
+  const fetchNotifications = async () => {
+    setLoadingNotifications(true);
+    try {
+      const data = await adminNotificationService.getAll();
+      setNotifications(data);
+    } catch (error) {
+      console.error('Failed to fetch notifications:', error);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  const handleDismissNotification = async (id: string) => {
+    try {
+      await adminNotificationService.delete(id);
+      setNotifications(prev => prev.filter(n => n.id !== id));
+      toast.success("Notification dismissed");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to dismiss notification");
+    }
+  };
+
   useEffect(() => {
     const userInfoStr = localStorage.getItem("user_info");
     if (userInfoStr) {
@@ -78,6 +101,7 @@ export default function SupperDashboard() {
         console.error('Error parsing user info:', error);
       }
     }
+    fetchNotifications();
   }, []);
 
   // Fetch contacts when user-review section is active
@@ -832,9 +856,9 @@ export default function SupperDashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            <NotificationDropdown
+            <AdminNotificationDropdown
               notifications={notifications}
-              onDismiss={dismissNotification}
+              onDismiss={handleDismissNotification}
             />
 
             <div className="relative">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/lib/auth-service";
+import { adminService } from "@/lib/admin-service";
 import axiosInstance from "@/lib/axios";
 import { toast } from "react-toastify";
 import { Mail, Lock, CheckCircle2, AlertCircle, ArrowRight, Eye, EyeOff } from "lucide-react";
@@ -78,56 +79,70 @@ export default function Login() {
       if (userRole === "ADMIN") {
         router.push("/Supper-dashboard");
       } else if (userRole === "COMPANY_MANAGER") {
-        // Detailed debug log to see the actual response shape
         console.log("Full Login Response:", JSON.stringify(response, null, 2));
 
-        // If they have a companyId, they've completed onboarding
-        if (response.companyId) {
-          localStorage.setItem("onboarding_completed", "true");
-        }
-
-        // Store status if available in response - prioritizing registrationStatus
-        let status = response.registrationStatus ||
-          response.status ||
-          response.company?.registrationStatus ||
-          response.company?.status ||
-          response.user?.registrationStatus ||
-          response.user?.status;
-
-        // If still undefined, look at the entire object for anything that looks like status
-        if (!status) {
-          const possibleStatus = Object.entries(response).find(([key]) =>
-            key.toLowerCase().includes('status')
-          )?.[1];
-          if (possibleStatus) status = possibleStatus;
-        }
-
-        // Normalize status to uppercase, default to PENDING
-        status = (status || "PENDING").toString().toUpperCase();
-        localStorage.setItem("company_status", status);
-
-        console.log("Company Manager Login - Status:", status);
-
-        // Routing logic based on user state
+        // Check if company exists by checking companyId
         if (!response.companyId) {
-          // No company registered yet -> proceed to onboarding
+          // No company registered yet -> onboarding
           localStorage.removeItem("onboarding_completed");
+          localStorage.removeItem("company_status");
           router.push("/onboarding");
-        } else if (status === "APPROVED") {
-          // Fully approved -> access dashboard
-          localStorage.setItem("onboarding_completed", "true");
-          router.push("/wasteCompanyDashboard");
         } else {
-          // Company exists but is PENDING or REJECTED -> status page
+          // Company exists - mark onboarding as completed
           localStorage.setItem("onboarding_completed", "true");
-          router.push("/company-status");
+          
+          // First, try to get status from login response
+          let status = response.registrationStatus ||
+            response.status ||
+            response.company?.registrationStatus ||
+            response.company?.status;
+
+          if (status) {
+            // Status found in login response
+            status = status.toString().toUpperCase();
+            localStorage.setItem("company_status", status);
+            console.log("Company Status from login response:", status);
+            
+            if (status === "APPROVED") {
+              router.push("/wasteCompanyDashboard");
+            } else {
+              router.push("/company-status");
+            }
+          } else {
+            // No status in login response, fetch from companies API
+            console.log("No status in login response, fetching from API...");
+            try {
+              const companies = await adminService.getApprovedCompanies();
+              const userCompany = companies.find((c: any) => c.id === response.companyId);
+              
+              if (userCompany) {
+                localStorage.setItem("company_status", "APPROVED");
+                router.push("/wasteCompanyDashboard");
+              } else {
+                localStorage.setItem("company_status", "PENDING");
+                router.push("/company-status");
+              }
+            } catch (error: any) {
+              console.error("Error fetching approved companies:", error);
+              // Fallback: check dashboard access
+              try {
+                await axiosInstance.get('/api/manager/dashboard/stats');
+                localStorage.setItem("company_status", "APPROVED");
+                router.push("/wasteCompanyDashboard");
+              } catch (dashError) {
+                localStorage.setItem("company_status", "PENDING");
+                router.push("/company-status");
+              }
+            }
+          }
         }
       } else if (userRole === "CITIZEN") {
         // Check backend for household registration status
         try {
-          await axiosInstance.get('/api/citizen/household');
+          const householdResponse = await axiosInstance.get('/api/citizen/household');
           // If successful, household exists - go to dashboard
           localStorage.setItem("household_details_submitted", "true");
+          localStorage.setItem("household_data", JSON.stringify(householdResponse.data));
           router.push("/User-Dashboard");
         } catch (error: any) {
           // If 404 or error, household not registered - go to details page

@@ -51,6 +51,16 @@ export interface AdminCompany {
 }
 
 export const adminService = {
+    getApprovedCompanies: async (): Promise<AdminCompany[]> => {
+        try {
+            const response = await axiosInstance.get('/api/admin/companies/approved');
+            return Array.isArray(response.data) ? response.data : response.data?.content || [];
+        } catch (error: any) {
+            console.error('Failed to fetch approved companies:', error);
+            throw new Error(error.response?.data?.message || 'Failed to fetch approved companies');
+        }
+    },
+
     getPendingCompanies: async (page = 0, size = 10, sort = ["id"]): Promise<PageResponse<AdminCompany>> => {
         try {
             // Construct the pageable object as requested
