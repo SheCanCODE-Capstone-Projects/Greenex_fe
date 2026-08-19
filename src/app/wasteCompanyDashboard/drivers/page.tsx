@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -67,6 +68,7 @@ export default function DriversPage() {
             toast.success('Driver created successfully');
             handleCloseModal();
             fetchDrivers();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Driver save error:', error);
             const errorMessage = error.response?.data?.message || error.message || 'Failed to create driver';
@@ -206,7 +208,7 @@ export default function DriversPage() {
                             <Input
                                 value={formData.fullName}
                                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                placeholder="John Doe"
+                                placeholder="your name"
                                 className="h-11 rounded-xl border-gray-200 focus:border-green-500"
                                 required
                             />
@@ -218,7 +220,7 @@ export default function DriversPage() {
                                 type="email"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                placeholder="john.doe@example.com"
+                                placeholder="email@example.com"
                                 className="h-11 rounded-xl border-gray-200 focus:border-green-500"
                                 required
                             />

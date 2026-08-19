@@ -3,8 +3,8 @@ import { User, Phone, Mail, MapPin, Calendar, Edit } from 'lucide-react';
 
 export default function CustomerPage() {
   const customerInfo = {
-    name: 'John Doe',
-    email: 'john.doe@email.com',
+    name: 'your name',
+    email: 'email@example.com',
     phone: '+250 788 123 456',
     address: 'KG 123 St, Kigali City Center',
     registrationDate: '01-05-2024',

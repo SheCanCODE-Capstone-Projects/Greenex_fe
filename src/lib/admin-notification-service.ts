@@ -14,8 +14,9 @@ class AdminNotificationService {
     return Array.isArray(response.data) ? response.data : [];
   }
 
-  async deleteAll(): Promise<void> {
-    await axiosInstance.delete('/notifications');
+  async delete(id: string): Promise<AdminNotification> {
+    const response = await axiosInstance.delete(`/notifications/${id}`);
+    return response.data;
   }
 }
 
