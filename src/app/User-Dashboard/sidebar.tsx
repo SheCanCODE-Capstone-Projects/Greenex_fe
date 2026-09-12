@@ -2,19 +2,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, Route, CreditCard, History, Users, Truck, FileText } from 'lucide-react';
+import { Home, CreditCard, History, Truck, FileText } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
   
   const navItems = [
     { href: '/User-Dashboard', icon: Home, label: 'Home' },
-    { href: '/User-Dashboard/Schedule', icon: Calendar, label: 'Schedule' },
-    { href: '/User-Dashboard/Route', icon: Route, label: 'Route' },
-    { href: '/User-Dashboard/Household', icon: FileText, label: 'Household' },
     { href: '/User-Dashboard/Payments', icon: CreditCard, label: 'Payments' },
     { href: '/User-Dashboard/History', icon: History, label: 'History' },
-    { href: '/User-Dashboard/Customer', icon: Users, label: 'Customer' },
     { href: '/User-Dashboard/Complaints', icon: FileText, label: 'Complaints' },
   ];
 

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/lib/auth-service";
+import { adminService } from "@/lib/admin-service";
+import axiosInstance from "@/lib/axios";
 import { toast } from "react-toastify";
 import { Mail, Lock, CheckCircle2, AlertCircle, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
@@ -77,54 +79,81 @@ export default function Login() {
       if (userRole === "ADMIN") {
         router.push("/Supper-dashboard");
       } else if (userRole === "COMPANY_MANAGER") {
-        // Detailed debug log to see the actual response shape
         console.log("Full Login Response:", JSON.stringify(response, null, 2));
 
-        // Store status if available in response
-        let status = response.status ||
-          response.registrationStatus ||
-          response.user?.registrationStatus ||
-          response.user?.status;
-
-        // If still undefined, look at the entire object for anything that looks like status
-        if (!status) {
-          const possibleStatus = Object.entries(response).find(([key]) =>
-            key.toLowerCase().includes('status')
-          )?.[1];
-          if (possibleStatus) status = possibleStatus;
-        }
-
-        // Final fallback: If we have no status but we HAVE a token and role is COMPANY_MANAGER,
-        // we'll try to treat it as APPROVED to bypass the pending screen if they are stuck.
-        if (!status) {
-          console.log("No status found in login response, but role is COMPANY_MANAGER. Defaulting to APPROVED for transition.");
-          status = "APPROVED";
-        }
-
-        // Normalize status to uppercase for easier comparison
-        status = (status || "PENDING").toString().toUpperCase();
-        localStorage.setItem("company_status", status);
-
-        // Check if company has completed onboarding
-        const onboardingDone = localStorage.getItem("onboarding_completed");
-
-        if (!onboardingDone && status !== "APPROVED") {
+        // Check if company exists by checking companyId
+        if (!response.companyId) {
+          // No company registered yet -> onboarding
+          localStorage.removeItem("onboarding_completed");
+          localStorage.removeItem("company_status");
           router.push("/onboarding");
-        } else if (status === "APPROVED") {
-          // If approved, force onboarding status to true and go to dashboard
-          localStorage.setItem("onboarding_completed", "true");
-          router.push("/wasteCompanyDashboard");
         } else {
-          // If pending/rejected and onboarding done, go to status page
-          router.push("/company-status");
+          // Company exists - mark onboarding as completed
+          localStorage.setItem("onboarding_completed", "true");
+          
+          // First, try to get status from login response
+          let status = response.registrationStatus ||
+            response.status ||
+            response.company?.registrationStatus ||
+            response.company?.status;
+
+          if (status) {
+            // Status found in login response
+            status = status.toString().toUpperCase();
+            localStorage.setItem("company_status", status);
+            console.log("Company Status from login response:", status);
+            
+            if (status === "APPROVED") {
+              router.push("/wasteCompanyDashboard");
+            } else {
+              router.push("/company-status");
+            }
+          } else {
+            // No status in login response, fetch from companies API
+            console.log("No status in login response, fetching from API...");
+            try {
+              const companies = await adminService.getApprovedCompanies();
+              const userCompany = companies.find((c: any) => c.id === response.companyId);
+              
+              if (userCompany) {
+                localStorage.setItem("company_status", "APPROVED");
+                router.push("/wasteCompanyDashboard");
+              } else {
+                localStorage.setItem("company_status", "PENDING");
+                router.push("/company-status");
+              }
+            } catch (error: any) {
+              console.error("Error fetching approved companies:", error);
+              // Fallback: check dashboard access
+              try {
+                await axiosInstance.get('/api/manager/dashboard/stats');
+                localStorage.setItem("company_status", "APPROVED");
+                router.push("/wasteCompanyDashboard");
+              } catch (dashError) {
+                localStorage.setItem("company_status", "PENDING");
+                router.push("/company-status");
+              }
+            }
+          }
         }
       } else if (userRole === "CITIZEN") {
-        // Check if household details already submitted
-        const detailsSubmitted = localStorage.getItem("household_details_submitted");
-        if (detailsSubmitted === "true") {
+        // Check backend for household registration status
+        try {
+          const householdResponse = await axiosInstance.get('/api/citizen/household');
+          // If successful, household exists - go to dashboard
+          localStorage.setItem("household_details_submitted", "true");
+          localStorage.setItem("household_data", JSON.stringify(householdResponse.data));
           router.push("/User-Dashboard");
-        } else {
-          router.push("/household-details");
+        } catch (error: any) {
+          // If 404 or error, household not registered - go to details page
+          if (error.response?.status === 404) {
+            localStorage.removeItem("household_details_submitted");
+            router.push("/household-details");
+          } else {
+            // For other errors, assume household exists to avoid blocking user
+            console.warn('Error checking household status:', error);
+            router.push("/User-Dashboard");
+          }
         }
       } else if (userRole === "COMPANY_DRIVER") {
         router.push("/driverDashboard");

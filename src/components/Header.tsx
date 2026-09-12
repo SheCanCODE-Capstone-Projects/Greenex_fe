@@ -181,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onThemeToggle, isDarkMod
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
           >
-            Request pickup
+            Get Started
           </motion.button>
         </motion.div>
 

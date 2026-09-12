@@ -5,6 +5,7 @@ import { Clock, XCircle, Mail, Phone, Twitter, Instagram, Loader2, Truck } from 
 import { Button } from '@/components/ui/button';
 import dashboardService from '@/lib/dashboard-service';
 import zoneService from '@/lib/zone-service';
+import axiosInstance from '@/lib/axios';
 
 type CompanyStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -14,49 +15,25 @@ export default function CompanyStatusPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRealTimeStatus = async () => {
-      const userInfoStr = localStorage.getItem('user_info');
-      if (!userInfoStr) {
-        router.push('/signin');
-        return;
-      }
+    const userInfoStr = localStorage.getItem('user_info');
+    if (!userInfoStr) {
+      router.push('/signin');
+      return;
+    }
 
-      try {
-        // Heartbeat check 1: Dashboard Stats
-        console.log("Checking dashboard status as heartbeat...");
-        await dashboardService.getWasteCompanyStats();
+    // Strict Status Enforcement: No ghost APIs or heartbeats are used here.
+    // The company_status is set at Login and is the only source of truth.
+    // If a user is approved, they must re-login to update their local status.
 
-        // If stats fetch succeeds, update local status and redirect
-        localStorage.setItem('company_status', 'APPROVED');
-        localStorage.setItem('onboarding_completed', 'true');
-        setStatus('APPROVED');
-        router.push('/wasteCompanyDashboard');
-        return;
-      } catch (error: any) {
-        console.log('Stats heartbeat failed, trying zones fallback:', error.response?.status || error.message);
+    const localStatus = (localStorage.getItem('company_status') || 'PENDING').toUpperCase() as CompanyStatus;
+    console.log("Current company status from local storage:", localStatus);
+    setStatus(localStatus);
+    setLoading(false);
 
-        try {
-          // Heartbeat check 2: Zones (sometimes work when stats 500)
-          await zoneService.getAll();
-
-          localStorage.setItem('company_status', 'APPROVED');
-          localStorage.setItem('onboarding_completed', 'true');
-          setStatus('APPROVED');
-          router.push('/wasteCompanyDashboard');
-          return;
-        } catch (zoneError) {
-          console.log('All heartbeat checks failed - staying on pending/rejected');
-
-          // Fallback to localStorage normalized to uppercase
-          const localStatus = (localStorage.getItem('company_status') || 'PENDING').toUpperCase() as CompanyStatus;
-          setStatus(localStatus);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRealTimeStatus();
+    if (localStatus === 'APPROVED') {
+      localStorage.setItem('onboarding_completed', 'true');
+      router.push('/wasteCompanyDashboard');
+    }
   }, [router]);
 
   if (loading) {
@@ -125,18 +102,6 @@ export default function CompanyStatusPage() {
                 className="w-full sm:w-auto"
               >
                 Back to Login
-              </Button>
-
-              <Button
-                onClick={() => {
-                  localStorage.setItem('company_status', 'APPROVED');
-                  localStorage.setItem('onboarding_completed', 'true');
-                  router.push('/wasteCompanyDashboard');
-                }}
-                variant="default"
-                className="w-full sm:w-auto bg-primary-green hover:bg-secondary-green"
-              >
-                Try Dashboard (Failsafe)
               </Button>
             </div>
           </div>
@@ -230,11 +195,16 @@ export default function CompanyStatusPage() {
             </div>
 
             <Button
-              onClick={() => router.push('/signin')}
+              onClick={() => {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_info');
+                localStorage.removeItem('company_status');
+                router.push('/signin');
+              }}
               variant="outline"
               className="w-full sm:w-auto mt-6"
             >
-              Back to Login
+              Sign out & Re-login to Refresh
             </Button>
           </div>
         </div>

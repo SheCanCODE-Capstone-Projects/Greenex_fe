@@ -43,6 +43,8 @@ export interface UserPayment {
 }
 
 class UserDashboardService {
+  // Profile endpoints are not yet implemented on the backend
+  /*
   async getProfile(): Promise<UserProfile> {
     const response = await axiosInstance.get('/api/user/profile');
     return response.data;
@@ -52,6 +54,7 @@ class UserDashboardService {
     const response = await axiosInstance.put('/api/user/profile', data);
     return response.data;
   }
+  */
 
   async getSchedules(): Promise<Schedule[]> {
     const response = await axiosInstance.get('/api/user/schedules');

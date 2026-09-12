@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import axiosInstance from '@/lib/axios';
 
 interface Truck {
   id: string;
@@ -58,6 +59,7 @@ export default function Dashboard() {
 
   // Check company approval status from localStorage
   useEffect(() => {
+    // Rely on status set at login. If not approved, redirect to status page.
     const companyStatus = localStorage.getItem('company_status');
     const onboardingDone = localStorage.getItem('onboarding_completed');
 
@@ -67,6 +69,7 @@ export default function Dashboard() {
     }
 
     if (companyStatus !== 'APPROVED') {
+      console.log("Dashboard access denied: Company not approved.");
       router.push('/company-status');
       return;
     }
@@ -580,8 +583,8 @@ function ComplaintCard({
         onClick={onResolve}
         disabled={disabled}
         className={`mt-2 px-4 py-2 rounded text-white text-sm transition-colors ${disabled
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-red-500 hover:bg-red-600"
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-red-500 hover:bg-red-600"
           }`}
       >
         {button}
