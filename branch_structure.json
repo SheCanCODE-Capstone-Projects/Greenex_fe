@@ -1,0 +1,33 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "Feature/User-Dashboard",
+    "Features_Household",
+    "Supper-dashboard",
+    "feature-integration-of-notification",
+    "feature/integrationContinuityPhase",
+    "household/integration",
+    "main",
+    "origin"
+  ],
+  "parent": {
+    "Feature/User-Dashboard": "main",
+    "Features_Household": "main",
+    "Supper-dashboard": "main",
+    "feature-integration-of-notification": "main",
+    "feature/integrationContinuityPhase": "main",
+    "household/integration": "main",
+    "main": null,
+    "origin": "main"
+  },
+  "order": [
+    "main",
+    "Feature/User-Dashboard",
+    "Features_Household",
+    "Supper-dashboard",
+    "feature-integration-of-notification",
+    "feature/integrationContinuityPhase",
+    "household/integration",
+    "origin"
+  ]
+}
