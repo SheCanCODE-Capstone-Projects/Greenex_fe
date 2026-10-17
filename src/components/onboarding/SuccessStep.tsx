@@ -10,7 +10,7 @@ interface SuccessStepProps {
 }
 
 export function SuccessStep({ companyData, onGoHome }: SuccessStepProps) {
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     const timer = setInterval(() => {

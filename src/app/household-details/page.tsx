@@ -64,8 +64,10 @@ export default function HouseholdDetailsPage() {
         notes: notes.trim() || undefined,
       };
 
-      await axiosInstance.post("/api/citizen/household", payload);
+      const response = await axiosInstance.post("/api/citizen/household", payload);
 
+      // Store household data for complaints
+      localStorage.setItem("household_data", JSON.stringify(response.data));
       localStorage.setItem("household_details_submitted", "true");
       toast.success("Household details saved successfully!");
       
