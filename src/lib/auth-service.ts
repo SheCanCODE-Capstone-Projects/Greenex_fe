@@ -84,6 +84,10 @@ export const authService = {
                 throw new Error('Account not verified. Please check your email for verification code.');
             }
 
+            if (error.response?.status === 405) {
+                throw new Error('Login endpoint error. Please contact support.');
+            }
+
             const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Login failed. Please try again.';
             throw new Error(message);
         }
