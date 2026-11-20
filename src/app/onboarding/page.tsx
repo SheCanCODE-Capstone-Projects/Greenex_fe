@@ -37,7 +37,7 @@ export default function OnboardingPage() {
       toast.error('Company information is missing');
       return;
     }
-    
+
     if (!kigaliContract || !remaDocument || !rdbDocument) {
       toast.error('All three documents are required');
       return;
@@ -66,9 +66,28 @@ export default function OnboardingPage() {
   };
 
   useEffect(() => {
+    // Check if user already has a company registered
+    const checkExistingRegistration = async () => {
+      const localStatus = localStorage.getItem('company_status');
+      const onboardingCompleted = localStorage.getItem('onboarding_completed');
+
+      if (onboardingCompleted === 'true') {
+        if (localStatus === 'APPROVED') {
+          router.push('/wasteCompanyDashboard');
+        } else {
+          router.push('/company-status');
+        }
+      }
+    };
+
+    checkExistingRegistration();
+  }, [router]);
+
+  useEffect(() => {
     if (step === 3) {
-      // Mark onboarding as completed
+      // Mark onboarding as completed and set status to PENDING
       localStorage.setItem('onboarding_completed', 'true');
+      localStorage.setItem('company_status', 'PENDING');
       const timer = setTimeout(() => {
         router.push('/company-status');
       }, 5000);
@@ -87,102 +106,102 @@ export default function OnboardingPage() {
   return (
     <RoleGuard allowedRoles={['COMPANY_MANAGER']}>
       <div className="min-h-screen bg-light-bg dark:bg-gray-900 transition-colors duration-300 py-12 px-4">
-      {/* Success Step - Full Screen */}
-      {step === 3 ? (
-        <SuccessStep
-          companyData={companyData}
-          onGoHome={() => router.push('/signin')}
-        />
-      ) : (
-        /* Centered Modal Card */
-        <div className="max-w-3xl mx-auto">
-          {/* Modal Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            {/* Header */}
-            <div className="relative px-8 pt-8 pb-6 border-b border-gray-100 dark:border-gray-700">
-              {/* Close Button */}
-              <button
-                onClick={() => router.push('/')}
-                className="absolute top-6 right-6 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              </button>
+        {/* Success Step - Full Screen */}
+        {step === 3 ? (
+          <SuccessStep
+            companyData={companyData}
+            onGoHome={() => router.push('/company-status')}
+          />
+        ) : (
+          /* Centered Modal Card */
+          <div className="max-w-3xl mx-auto">
+            {/* Modal Card */}
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              {/* Header */}
+              <div className="relative px-8 pt-8 pb-6 border-b border-gray-100 dark:border-gray-700">
+                {/* Close Button */}
+                <button
+                  onClick={() => router.push('/')}
+                  className="absolute top-6 right-6 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                </button>
 
-              {/* Title and Progress */}
-              <div className="flex items-start justify-between pr-12">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                    {getStepTitle()}
-                  </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Step {step} of 3
-                  </p>
-                </div>
+                {/* Title and Progress */}
+                <div className="flex items-start justify-between pr-12">
+                  <div>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                      {getStepTitle()}
+                    </h1>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Step {step} of 3
+                    </p>
+                  </div>
 
-                {/* Circular Progress */}
-                <div className="relative w-16 h-16 shrink-0">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle
-                      cx="50%"
-                      cy="50%"
-                      r="28"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                      className="text-gray-200 dark:text-gray-700"
-                    />
-                    <circle
-                      cx="50%"
-                      cy="50%"
-                      r="28"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                      strokeDasharray={`${(step / 3) * 175.93} 175.93`}
-                      className="text-primary-green transition-all duration-500"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-base font-bold text-gray-900 dark:text-white">
-                      {step}/3
-                    </span>
+                  {/* Circular Progress */}
+                  <div className="relative w-16 h-16 shrink-0">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="50%"
+                        cy="50%"
+                        r="28"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                        className="text-gray-200 dark:text-gray-700"
+                      />
+                      <circle
+                        cx="50%"
+                        cy="50%"
+                        r="28"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                        strokeDasharray={`${(step / 3) * 175.93} 175.93`}
+                        className="text-primary-green transition-all duration-500"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-base font-bold text-gray-900 dark:text-white">
+                        {step}/3
+                      </span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Step Indicator */}
+                <div className="mt-8">
+                  <StepIndicator steps={steps} currentStep={step} />
+                </div>
               </div>
 
-              {/* Step Indicator */}
-              <div className="mt-8">
-                <StepIndicator steps={steps} currentStep={step} />
+              {/* Content */}
+              <div className="px-8 pb-8">
+                {step === 1 && (
+                  <CompanyInfoStep
+                    onNext={handleCompanySubmit}
+                    onBack={() => { }}
+                  />
+                )}
+
+                {step === 2 && (
+                  <DocumentStep
+                    kigaliContract={kigaliContract}
+                    setKigaliContract={setKigaliContract}
+                    remaDocument={remaDocument}
+                    setRemaDocument={setRemaDocument}
+                    rdbDocument={rdbDocument}
+                    setRdbDocument={setRdbDocument}
+                    onBack={() => setStep(1)}
+                    onSubmit={handleFinalSubmit}
+                    isSubmitting={isSubmitting}
+                  />
+                )}
               </div>
-            </div>
-
-            {/* Content */}
-            <div className="px-8 pb-8">
-              {step === 1 && (
-                <CompanyInfoStep
-                  onNext={handleCompanySubmit}
-                  onBack={() => {}}
-                />
-              )}
-
-              {step === 2 && (
-                <DocumentStep
-                  kigaliContract={kigaliContract}
-                  setKigaliContract={setKigaliContract}
-                  remaDocument={remaDocument}
-                  setRemaDocument={setRemaDocument}
-                  rdbDocument={rdbDocument}
-                  setRdbDocument={setRdbDocument}
-                  onBack={() => setStep(1)}
-                  onSubmit={handleFinalSubmit}
-                  isSubmitting={isSubmitting}
-                />
-              )}
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </RoleGuard>
   );
 }

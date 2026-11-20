@@ -19,10 +19,13 @@ export interface AdminDashboardStats {
 }
 
 class DashboardService {
+  // Waste company stats endpoint is not yet implemented on the backend
+  /*
   async getWasteCompanyStats(): Promise<DashboardStats> {
     const response = await axiosInstance.get('/api/waste-company/dashboard/stats');
     return response.data;
   }
+  */
 
   async getAdminStats(): Promise<AdminDashboardStats> {
     const response = await axiosInstance.get('/api/admin/dashboard/stats');

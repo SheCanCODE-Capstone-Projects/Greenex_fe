@@ -57,7 +57,7 @@ export const initialCertifications = [
 ];
 
 export const initialTeamMembers = [
-  { id: "1", name: "John Doe", email: "john@ecocycle.com", role: "Admin" },
+  { id: "1", name: "John ", email: "john@ecocycle.com", role: "Admin" },
   { id: "2", name: "Jane Smith", email: "jane@ecocycle.com", role: "Operations" },
   { id: "3", name: "Mike Johnson", email: "mike@ecocycle.com", role: "Member" }
 ];
