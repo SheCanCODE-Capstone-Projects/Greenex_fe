@@ -161,7 +161,7 @@ const ContactSection: React.FC = () => {
                       required
                       disabled={isSubmitting}
                       className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-foreground focus:ring-2 focus:ring-primary-green dark:focus:ring-secondary-green focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                      placeholder="John Doe"
+                      placeholder="your name"
                     />
                   </div>
                   <div>
